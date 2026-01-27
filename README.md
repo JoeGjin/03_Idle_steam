@@ -1,2 +1,4 @@
 ## License
-This project is licensed under the GPL-3.0 License.
+
+- Source code: GNU General Public License v3.0
+- Art assets (images, audio, music, UI): All rights reserved
