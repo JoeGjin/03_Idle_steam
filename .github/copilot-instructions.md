@@ -1,5 +1,11 @@
 # Copilot Instructions: Idle Steam (Godot)
 
+- 默认使用中文回复（包括 Copilot Chat）。
+- 生成的代码注释、文档注释尽量使用中文。
+- Godot 4.6 / GDScript。
+- API 名称、类名、信号名保持英文原样（如 CharacterBody2D, move_and_slide）。
+- 回复结构：先简要中文解释，再给代码示例。
+
 ## Project Overview
 
 This is a **Godot 4.6 desktop widget** - a borderless, transparent, always-on-top application featuring a draggable pet sprite. The app runs as a persistent overlay and responds to both mouse interactions and global keyboard hooks.

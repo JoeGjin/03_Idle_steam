@@ -23,5 +23,5 @@ script = ExtResource("2_rarhs")
 script = ExtResource("3_vcsgt")
 
 [node name="Pet" type="Sprite2D" parent="." unique_id=1957453893]
-position = Vector2(1483, 720)
+position = Vector2(752, 478)
 texture = ExtResource("2_0bbpv")

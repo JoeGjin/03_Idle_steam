@@ -1,28 +1,29 @@
+# 本脚本用于根据目标 Sprite2D 的位置和大小，设置鼠标穿透多边形区域
+
 extends Node
 
 @export var target:Node2D
 
 func _update_passthrough() -> void:
-	var tex :CompressedTexture2D = target.texture
-	if tex == null:
+	if not target or not target is Sprite2D: # 仅支持 Sprite2D 目标
+		get_window().set_mouse_passthrough_polygon(PackedVector2Array())
 		return
 
-	# Sprite2D 默认以中心为原点（offset=0时），这里用贴图尺寸算四个角
-	var size: Vector2 = tex.get_size()
+	var tex: CompressedTexture2D = target.texture
+	if not tex: # 无纹理则不设置穿透区域
+		get_window().set_mouse_passthrough_polygon(PackedVector2Array())
+		return
+
+	# 直接用纹理尺寸和缩放计算四个角
+	var size := tex.get_size() * target.scale
 	var half := size * 0.5
 
-	# Sprite 的四个角（Sprite 本地坐标）
+	# 计算全局坐标的多边形顶点
 	var local_pts := PackedVector2Array([
-		Vector2(-half.x, -half.y),
-		Vector2( half.x, -half.y),
-		Vector2( half.x,  half.y),
-		Vector2(-half.x,  half.y),
+		-half, Vector2(half.x, -half.y), half, Vector2(-half.x, half.y)
 	])
 
-	# 转到“窗口坐标”（也就是全局画面坐标）
 	var poly := PackedVector2Array()
-	for p in local_pts:
+	for p in local_pts: # 转换到全局坐标
 		poly.append(target.global_transform * p)
-
-	# 设置：poly 内能接收鼠标，poly 外全部穿透到系统/别的程序
 	get_window().set_mouse_passthrough_polygon(poly)
