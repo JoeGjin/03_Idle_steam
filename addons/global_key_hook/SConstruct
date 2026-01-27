@@ -1,0 +1,114 @@
+# SConstruct - Windows x86_64 (MSVC), Debug/Release dual builds for Godot 4.5 GDExtension
+#
+# Commands (MSVC Developer Command Prompt):
+#   scons target=debug
+#   scons target=release
+#
+# Output:
+#   bin/global_key_hook.windows.debug.x86_64.dll
+#   bin/global_key_hook.windows.release.x86_64.dll
+
+import os
+from SCons.Script import ARGUMENTS, Environment, Glob, Default
+
+# -----------------------
+# Config (yours)
+# -----------------------
+GODOT_CPP_PATH = r"D:\Program\Godot\godot_native\godot-cpp"
+OUT_NAME       = "global_key_hook"
+TARGET         = ARGUMENTS.get("target", "debug").lower()   # debug / release
+
+if TARGET not in ("debug", "release"):
+    raise ValueError("target must be 'debug' or 'release'")
+
+def p(*parts):
+    return os.path.normpath(os.path.join(*parts))
+
+# godot-cpp include paths
+INC_GODOT_CPP      = p(GODOT_CPP_PATH, "include")
+INC_GODOT_CPP_GEN  = p(GODOT_CPP_PATH, "gen", "include")
+INC_GDEXTENSION    = p(GODOT_CPP_PATH, "gdextension")
+LIB_DIR            = p(GODOT_CPP_PATH, "bin")
+
+# Pick the correct godot-cpp static lib (you already built these)
+if TARGET == "debug":
+    GODOT_CPP_LIB = "libgodot-cpp.windows.template_debug.x86_64"
+    OUT_DLL_STEM  = f"{OUT_NAME}.windows.debug.x86_64"
+else:
+    GODOT_CPP_LIB = "libgodot-cpp.windows.template_release.x86_64"
+    OUT_DLL_STEM  = f"{OUT_NAME}.windows.release.x86_64"
+
+# -----------------------
+# Sources
+# -----------------------
+# If your cpp files are not in src/, change this one line.
+SOURCES = Glob("src/*.cpp")
+
+# -----------------------
+# Environment (MSVC)
+# -----------------------
+env = Environment()
+
+# IMPORTANT:
+# Ensure SCons recognizes this as a DLL target.
+# If the target ends with ".x86_64", SCons thinks suffix is ".x86_64" and errors.
+env["SHLIBPREFIX"] = ""     # no "lib" prefix on Windows
+env["SHLIBSUFFIX"] = ".dll" # enforce dll suffix
+
+# Include paths
+env.Append(CPPPATH=["src", INC_GODOT_CPP, INC_GODOT_CPP_GEN, INC_GDEXTENSION])
+
+# Defines
+env.Append(CPPDEFINES=[
+    ("GDEXTENSION", 1),
+    ("GODOT_CPP", 1),
+    ("WIN32", 1),
+    ("_WINDOWS", 1),
+])
+
+if TARGET == "debug":
+    env.Append(CPPDEFINES=[("DEBUG_ENABLED", 1), ("TOOLS_ENABLED", 1)])
+else:
+    env.Append(CPPDEFINES=[("NDEBUG", 1)])
+
+# C++ standard
+env.Append(CXXFLAGS=["/std:c++17", "/utf-8"])
+
+# Runtime + optimization/debug flags
+# Recommended for extensions: /MDd (debug) and /MD (release)
+if TARGET == "debug":
+    env.Append(CXXFLAGS=["/Zi", "/Od", "/MT", "/D_ITERATOR_DEBUG_LEVEL=0"])
+    env.Append(LINKFLAGS=["/DEBUG"])
+else:
+    env.Append(CXXFLAGS=["/O2", "/MT"])
+
+# Build a DLL
+env.Append(LINKFLAGS=["/DLL"])
+
+# Link: Win32 hook APIs live in user32
+env.Append(LIBS=["user32"])
+
+# Link godot-cpp static library
+env.Append(LIBPATH=[LIB_DIR])
+env.Append(LIBS=[GODOT_CPP_LIB])
+
+# -----------------------
+# Output
+# -----------------------
+OUT_DIR = "bin"
+os.makedirs(OUT_DIR, exist_ok=True)
+
+# Give SCons a target whose *final suffix* is .dll
+target_path = os.path.join(OUT_DIR, OUT_DLL_STEM + ".dll")
+
+dll_target = env.SharedLibrary(target=target_path, source=SOURCES)
+Default(dll_target)
+
+print("")
+print("=== Build Settings ===")
+print("  target         :", TARGET)
+print("  godot_cpp_path :", GODOT_CPP_PATH)
+print("  godot_cpp_lib  :", GODOT_CPP_LIB)
+print("  output         :", target_path)
+print("======================")
+print("")

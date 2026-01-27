@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://dstqc5agwgox3"]
+
+[ext_resource type="Script" uid="uid://7egkv0utp30f" path="res://scripts/main/Main.gd" id="1_rvslj"]
+[ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://assets/icon.svg" id="2_0bbpv"]
+[ext_resource type="Script" uid="uid://bsplvrwpxwm0" path="res://scripts/main/GlobalKeyHook.gd" id="2_c01mt"]
+[ext_resource type="Script" uid="uid://cljhqpcxulnh4" path="res://scripts/main/DragController.gd" id="2_rarhs"]
+[ext_resource type="Script" uid="uid://do15sgwdc5jri" path="res://scripts/main/MousePassThroughPolygon.gd" id="3_c01mt"]
+[ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/ClickScaleAnimator.gd" id="3_vcsgt"]
+
+[node name="Main" type="Node" unique_id=987657807]
+script = ExtResource("1_rvslj")
+
+[node name="GlobalKeyHook" type="Node" parent="." unique_id=1537955954]
+script = ExtResource("2_c01mt")
+
+[node name="MousePassThroughPolygon" type="Node" parent="." unique_id=577058379]
+script = ExtResource("3_c01mt")
+
+[node name="DragController" type="Node" parent="." unique_id=105872680]
+script = ExtResource("2_rarhs")
+
+[node name="ClickScaleAnimator" type="Node" parent="." unique_id=1546089583]
+script = ExtResource("3_vcsgt")
+
+[node name="Pet" type="Sprite2D" parent="." unique_id=1957453893]
+position = Vector2(1483, 720)
+texture = ExtResource("2_0bbpv")

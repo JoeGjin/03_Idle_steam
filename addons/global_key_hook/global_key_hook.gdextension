@@ -1,0 +1,7 @@
+[configuration]
+entry_symbol = "global_key_hook_library_init"
+compatibility_minimum = "4.5"
+
+[libraries]
+windows.debug.x86_64 = "bin/global_key_hook.windows.debug.x86_64.dll"
+windows.release.x86_64 = "bin/global_key_hook.windows.release.x86_64.dll"
