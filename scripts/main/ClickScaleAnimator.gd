@@ -4,8 +4,9 @@ extends Node
 
 @export var target: Node2D
 @export var shrink_scale := 0.75
-@export var shrink_duration := 0.06
+@export var shrink_duration := 0.08
 @export var expand_duration := 0.10
+@export var base_scale: Vector2 = Vector2.ONE
 
 var _click_tween: Tween
 
@@ -17,5 +18,6 @@ func _play_click_scale_anim() -> void:
     _click_tween.set_trans(Tween.TRANS_BACK)
     _click_tween.set_ease(Tween.EASE_OUT)
     
-    _click_tween.tween_property(target, "scale", Vector2.ONE * shrink_scale, shrink_duration)
-    _click_tween.tween_property(target, "scale", Vector2.ONE, expand_duration)
+
+    _click_tween.tween_property(target, "scale", base_scale * shrink_scale, shrink_duration)
+    _click_tween.tween_property(target, "scale", base_scale, expand_duration)

@@ -1,27 +1,91 @@
 [gd_scene format=3 uid="uid://dstqc5agwgox3"]
 
 [ext_resource type="Script" uid="uid://7egkv0utp30f" path="res://scripts/main/Main.gd" id="1_rvslj"]
-[ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://assets/icon.svg" id="2_0bbpv"]
 [ext_resource type="Script" uid="uid://bsplvrwpxwm0" path="res://scripts/main/GlobalKeyHook.gd" id="2_c01mt"]
 [ext_resource type="Script" uid="uid://cljhqpcxulnh4" path="res://scripts/main/DragController.gd" id="2_rarhs"]
 [ext_resource type="Script" uid="uid://do15sgwdc5jri" path="res://scripts/main/MousePassThroughPolygon.gd" id="3_c01mt"]
 [ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/ClickScaleAnimator.gd" id="3_vcsgt"]
+[ext_resource type="Texture2D" uid="uid://dwedmkmqwvrxp" path="res://assets/worldroot/b.jpg" id="4_bckgd"]
+[ext_resource type="Texture2D" uid="uid://cx085tr31eg26" path="res://assets/worldroot/f.png" id="4_foregr"]
+[ext_resource type="Texture2D" uid="uid://cf15e8eyjil48" path="res://assets/worldroot/c.jpg" id="4_midgrd"]
+[ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/WorldRoot.gd" id="6_lhr70"]
+[ext_resource type="Texture2D" uid="uid://b13mwgbw0jqny" path="res://assets/worldroot/pet/jello_idle_11.png" id="11_3p2gp"]
+[ext_resource type="Texture2D" uid="uid://vq3enucy1fiu" path="res://assets/worldroot/pet/jello_idle_12.png" id="12_cvmbd"]
+[ext_resource type="Texture2D" uid="uid://dxbja5dphnhc" path="res://assets/worldroot/pet/jello_idle_13.png" id="13_ft6cd"]
+[ext_resource type="Texture2D" uid="uid://b7atgb2q1jm7a" path="res://assets/worldroot/pet/jello_idle_14.png" id="14_bb450"]
+[ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/jello_idle_15.png" id="15_nfivy"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1nqs0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_3p2gp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_cvmbd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_ft6cd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_bb450")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_nfivy")
+}],
+"loop": true,
+"name": &"default",
+"speed": 6.0
+}]
 
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
 
-[node name="GlobalKeyHook" type="Node" parent="." unique_id=1537955954]
+[node name="Controllers" type="Node" parent="." unique_id=650551310]
+
+[node name="GlobalKeyHook" type="Node" parent="Controllers" unique_id=1537955954]
 script = ExtResource("2_c01mt")
 
-[node name="MousePassThroughPolygon" type="Node" parent="." unique_id=577058379]
+[node name="MousePassThroughPolygon" type="Node" parent="Controllers" unique_id=577058379]
 script = ExtResource("3_c01mt")
 
-[node name="DragController" type="Node" parent="." unique_id=105872680]
+[node name="DragController" type="Node" parent="Controllers" unique_id=105872680]
 script = ExtResource("2_rarhs")
 
-[node name="ClickScaleAnimator" type="Node" parent="." unique_id=1546089583]
+[node name="ClickScaleAnimator" type="Node" parent="Controllers" unique_id=1546089583]
 script = ExtResource("3_vcsgt")
 
-[node name="Pet" type="Sprite2D" parent="." unique_id=1957453893]
-position = Vector2(752, 478)
-texture = ExtResource("2_0bbpv")
+[node name="WorldRoot" type="Node2D" parent="." unique_id=384608177]
+script = ExtResource("6_lhr70")
+
+[node name="Background" type="Parallax2D" parent="WorldRoot" unique_id=384608179]
+repeat_size = Vector2(1536, 0)
+autoscroll = Vector2(-20, 0)
+
+[node name="b" type="Sprite2D" parent="WorldRoot/Background" unique_id=1308681423]
+position = Vector2(0, -160)
+texture = ExtResource("4_bckgd")
+
+[node name="Midground" type="Parallax2D" parent="WorldRoot" unique_id=1013858590]
+repeat_size = Vector2(1536, 0)
+autoscroll = Vector2(-75, 0)
+
+[node name="c" type="Sprite2D" parent="WorldRoot/Midground" unique_id=1425775975]
+position = Vector2(0, 96)
+texture = ExtResource("4_midgrd")
+
+[node name="Pet" type="AnimatedSprite2D" parent="WorldRoot" unique_id=390694917]
+unique_name_in_owner = true
+position = Vector2(1, -34)
+scale = Vector2(0.15, 0.15)
+sprite_frames = SubResource("SpriteFrames_1nqs0")
+autoplay = "default"
+frame_progress = 0.89982843
+
+[node name="Foreground" type="Parallax2D" parent="WorldRoot" unique_id=605308785]
+repeat_size = Vector2(1536, 0)
+autoscroll = Vector2(-150, 0)
+
+[node name="f" type="Sprite2D" parent="WorldRoot/Foreground" unique_id=1348136509]
+position = Vector2(0, 40)
+texture = ExtResource("4_foregr")

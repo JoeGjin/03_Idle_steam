@@ -23,12 +23,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
     if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
         if event.pressed:
-            # 仅在点击目标时进入 PENDING 状态
-            if _hit_target(event.position):
-                _state = DragState.PENDING
-                _press_pos = event.position
-                _drag_offset = target.global_position - event.position
-                get_viewport().set_input_as_handled()
+            # 由于MousePassThroughPolygon的存在，只有点击在target可见区域才会触发此事件
+            _state = DragState.PENDING
+            _press_pos = event.position
+            _drag_offset = target.global_position - event.position
+            get_viewport().set_input_as_handled()
         else:
             match _state:
                 DragState.DRAGGING: # 完成拖拽
@@ -51,17 +50,3 @@ func _unhandled_input(event: InputEvent) -> void:
             dragged.emit(event.position + _drag_offset)
             get_viewport().set_input_as_handled()
 			
-
-func _hit_target(mouse_pos: Vector2) -> bool:
-    var local := target.to_local(mouse_pos)
-    if target is Sprite2D:
-        if target.texture == null:
-            return false
-        
-        var size: Vector2 = target.texture.get_size() * target.scale
-        var rect := Rect2(-size * 0.5, size)  # 默认居中原点
-        
-        return rect.has_point(local)
-    
-    else:
-        return false
