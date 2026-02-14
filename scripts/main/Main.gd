@@ -7,10 +7,20 @@ extends Node
 @onready var drag_controller: Node = $Controllers/DragController
 @onready var click_scale_animator: Node = $Controllers/ClickScaleAnimator
 @onready var pet: AnimatedSprite2D = %Pet
-@onready var world_root: Node2D = $WorldRoot
+@onready var world_root: Node2D = %WorldRoot
+@onready var uiroot: Control = %UIRoot
+@onready var frame: Node2D = %WorldRoot/Frame
+
+const DRAW_SCALE: Vector2 = Vector2(0.5, 0.5) # 预设的窗口缩放级别，供调试使用
 
 func _ready():
 	
+	# 初始设置缩放
+	_draw_scale_setup()
+
+	# 隐藏 frame 以免干扰视觉，但仍保留其位置和多边形数据供鼠标穿透使用
+	world_root.hide_frame()
+
 	# 初始将 pet 放在视口中心
 	world_root.global_position = get_viewport().get_visible_rect().size * 0.5
 
@@ -18,6 +28,9 @@ func _ready():
 	mouse_pass_through_polygon.target = pet
 	drag_controller.target = pet
 	click_scale_animator.target = pet
+
+	# 将 frame 赋值给 mouse_pass_through_polygon 的 frame 属性
+	mouse_pass_through_polygon.frame = frame
 
 	# 设置pet base scale
 	click_scale_animator.base_scale = pet.scale
@@ -31,7 +44,13 @@ func _ready():
 	# 调试信息
 	print("[SCENE] Pet position: ", pet.global_position)
 	print("[SCENE] Viewport size: ", get_viewport().get_visible_rect().size)
+	print("[SCENE] Frame polygon: ", frame.polygon)
 
+
+func _draw_scale_setup():
+	# 可选：根据需要调整 world_root 和 uiroot 的缩放级别
+	world_root.scale = DRAW_SCALE
+	uiroot.scale = DRAW_SCALE
 
 func _connect_signals() -> void:
 	# 使用普通的函数引用连接到本节点的处理函数（保留 _on_* 命名风格）

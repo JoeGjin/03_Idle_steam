@@ -13,7 +13,9 @@
 [ext_resource type="Texture2D" uid="uid://vq3enucy1fiu" path="res://assets/worldroot/pet/jello_idle_12.png" id="12_cvmbd"]
 [ext_resource type="Texture2D" uid="uid://dxbja5dphnhc" path="res://assets/worldroot/pet/jello_idle_13.png" id="13_ft6cd"]
 [ext_resource type="Texture2D" uid="uid://b7atgb2q1jm7a" path="res://assets/worldroot/pet/jello_idle_14.png" id="14_bb450"]
+[ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/UIRoot.gd" id="15_3p2gp"]
 [ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/jello_idle_15.png" id="15_nfivy"]
+[ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1nqs0"]
 animations = [{
@@ -55,37 +57,98 @@ script = ExtResource("2_rarhs")
 [node name="ClickScaleAnimator" type="Node" parent="Controllers" unique_id=1546089583]
 script = ExtResource("3_vcsgt")
 
+[node name="UIWindow" type="Window" parent="." unique_id=1159274380]
+transparent_bg = true
+oversampling_override = 1.0
+mode = 3
+initial_position = 1
+size = Vector2i(1920, 1080)
+visible = false
+borderless = true
+always_on_top = true
+transparent = true
+
+[node name="UIRoot" type="Control" parent="UIWindow" unique_id=955692246]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("15_3p2gp")
+
+[node name="CollectionBook" type="Control" parent="UIWindow/UIRoot" unique_id=1940227150]
+anchors_preset = 0
+
+[node name="Blocker" type="ColorRect" parent="UIWindow/UIRoot/CollectionBook" unique_id=213641762]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 0.25)
+
+[node name="Panel" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1842239225]
+anchors_preset = 0
+
+[node name="Background" type="TextureRect" parent="UIWindow/UIRoot/CollectionBook/Panel" unique_id=568253955]
+layout_mode = 0
+offset_right = 3840.0
+offset_bottom = 2160.0
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("16_cvmbd")
+
+[node name="Buttons" type="Control" parent="UIWindow/UIRoot/CollectionBook/Panel" unique_id=1499936294]
+anchors_preset = 0
+
 [node name="WorldRoot" type="Node2D" parent="." unique_id=384608177]
+unique_name_in_owner = true
+position = Vector2(960, 540)
 script = ExtResource("6_lhr70")
 
 [node name="Background" type="Parallax2D" parent="WorldRoot" unique_id=384608179]
-repeat_size = Vector2(1536, 0)
+repeat_size = Vector2(3072, 0)
 autoscroll = Vector2(-20, 0)
 
 [node name="b" type="Sprite2D" parent="WorldRoot/Background" unique_id=1308681423]
-position = Vector2(0, -160)
+position = Vector2(568, -268)
+scale = Vector2(2, 2.1897233)
 texture = ExtResource("4_bckgd")
 
 [node name="Midground" type="Parallax2D" parent="WorldRoot" unique_id=1013858590]
-repeat_size = Vector2(1536, 0)
+repeat_size = Vector2(3072, 0)
 autoscroll = Vector2(-75, 0)
 
 [node name="c" type="Sprite2D" parent="WorldRoot/Midground" unique_id=1425775975]
-position = Vector2(0, 96)
+position = Vector2(570, 277)
+scale = Vector2(2, 2.072)
 texture = ExtResource("4_midgrd")
 
 [node name="Pet" type="AnimatedSprite2D" parent="WorldRoot" unique_id=390694917]
 unique_name_in_owner = true
-position = Vector2(1, -34)
-scale = Vector2(0.15, 0.15)
+position = Vector2(1, -58)
+scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
-frame_progress = 0.89982843
+frame_progress = 0.3128155
 
 [node name="Foreground" type="Parallax2D" parent="WorldRoot" unique_id=605308785]
-repeat_size = Vector2(1536, 0)
+repeat_size = Vector2(3072, 0)
 autoscroll = Vector2(-150, 0)
 
 [node name="f" type="Sprite2D" parent="WorldRoot/Foreground" unique_id=1348136509]
-position = Vector2(0, 40)
+position = Vector2(549, 124)
+scale = Vector2(2, 2)
 texture = ExtResource("4_foregr")
+
+[node name="Frame" type="Polygon2D" parent="WorldRoot" unique_id=1114735131]
+visible = false
+color = Color(0, 0, 0, 0.39215687)
+polygon = PackedVector2Array(-960, 540, 960, 540, 960, -540, -960, -540)
+metadata/_edit_lock_ = true
