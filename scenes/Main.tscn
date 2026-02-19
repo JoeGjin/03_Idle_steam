@@ -2,12 +2,13 @@
 
 [ext_resource type="Script" uid="uid://7egkv0utp30f" path="res://scripts/main/Main.gd" id="1_rvslj"]
 [ext_resource type="Script" uid="uid://bsplvrwpxwm0" path="res://scripts/main/GlobalKeyHook.gd" id="2_c01mt"]
-[ext_resource type="Script" uid="uid://cljhqpcxulnh4" path="res://scripts/main/DragController.gd" id="2_rarhs"]
+[ext_resource type="Script" uid="uid://44gxe6vfnykv" path="res://scripts/main/MouseController.gd" id="2_rarhs"]
 [ext_resource type="Script" uid="uid://do15sgwdc5jri" path="res://scripts/main/MousePassThroughPolygon.gd" id="3_c01mt"]
 [ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/ClickScaleAnimator.gd" id="3_vcsgt"]
 [ext_resource type="Texture2D" uid="uid://dwedmkmqwvrxp" path="res://assets/worldroot/b.jpg" id="4_bckgd"]
 [ext_resource type="Texture2D" uid="uid://cx085tr31eg26" path="res://assets/worldroot/f.png" id="4_foregr"]
 [ext_resource type="Texture2D" uid="uid://cf15e8eyjil48" path="res://assets/worldroot/c.jpg" id="4_midgrd"]
+[ext_resource type="Script" uid="uid://cqs5yvp2atmdx" path="res://scripts/main/UIWindow.gd" id="6_ft6cd"]
 [ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/WorldRoot.gd" id="6_lhr70"]
 [ext_resource type="Texture2D" uid="uid://b13mwgbw0jqny" path="res://assets/worldroot/pet/jello_idle_11.png" id="11_3p2gp"]
 [ext_resource type="Texture2D" uid="uid://vq3enucy1fiu" path="res://assets/worldroot/pet/jello_idle_12.png" id="12_cvmbd"]
@@ -16,6 +17,14 @@
 [ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/UIRoot.gd" id="15_3p2gp"]
 [ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/jello_idle_15.png" id="15_nfivy"]
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ft6cd"]
+
+[sub_resource type="Theme" id="Theme_ft6cd"]
+Window/styles/embedded_border = SubResource("StyleBoxEmpty_cvmbd")
+Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1nqs0"]
 animations = [{
@@ -51,7 +60,7 @@ script = ExtResource("2_c01mt")
 [node name="MousePassThroughPolygon" type="Node" parent="Controllers" unique_id=577058379]
 script = ExtResource("3_c01mt")
 
-[node name="DragController" type="Node" parent="Controllers" unique_id=105872680]
+[node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 script = ExtResource("2_rarhs")
 
 [node name="ClickScaleAnimator" type="Node" parent="Controllers" unique_id=1546089583]
@@ -64,13 +73,15 @@ mode = 3
 initial_position = 1
 size = Vector2i(1920, 1080)
 visible = false
+transient = true
+exclusive = true
 borderless = true
-always_on_top = true
 transparent = true
+theme = SubResource("Theme_ft6cd")
+script = ExtResource("6_ft6cd")
 
 [node name="UIRoot" type="Control" parent="UIWindow" unique_id=955692246]
 unique_name_in_owner = true
-visible = false
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -88,12 +99,6 @@ script = ExtResource("15_3p2gp")
 [node name="CollectionBook" type="Control" parent="UIWindow/UIRoot" unique_id=1940227150]
 anchors_preset = 0
 
-[node name="Blocker" type="ColorRect" parent="UIWindow/UIRoot/CollectionBook" unique_id=213641762]
-layout_mode = 0
-offset_right = 1920.0
-offset_bottom = 1080.0
-color = Color(0, 0, 0, 0.25)
-
 [node name="Panel" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1842239225]
 anchors_preset = 0
 
@@ -107,10 +112,23 @@ texture = ExtResource("16_cvmbd")
 [node name="Buttons" type="Control" parent="UIWindow/UIRoot/CollectionBook/Panel" unique_id=1499936294]
 anchors_preset = 0
 
+[node name="Close" type="Button" parent="UIWindow/UIRoot/CollectionBook/Panel/Buttons" unique_id=1242206048]
+layout_mode = 0
+offset_left = 1445.0
+offset_top = 185.0
+offset_right = 1495.0
+offset_bottom = 239.0
+text = "X"
+
 [node name="WorldRoot" type="Node2D" parent="." unique_id=384608177]
 unique_name_in_owner = true
 position = Vector2(960, 540)
 script = ExtResource("6_lhr70")
+
+[node name="Frame" type="Polygon2D" parent="WorldRoot" unique_id=1114735131]
+color = Color(0, 0, 0, 0.39215687)
+polygon = PackedVector2Array(-960, 540, 960, 540, 960, -540, -960, -540)
+metadata/_edit_lock_ = true
 
 [node name="Background" type="Parallax2D" parent="WorldRoot" unique_id=384608179]
 repeat_size = Vector2(3072, 0)
@@ -147,8 +165,9 @@ position = Vector2(549, 124)
 scale = Vector2(2, 2)
 texture = ExtResource("4_foregr")
 
-[node name="Frame" type="Polygon2D" parent="WorldRoot" unique_id=1114735131]
-visible = false
-color = Color(0, 0, 0, 0.39215687)
-polygon = PackedVector2Array(-960, 540, 960, 540, 960, -540, -960, -540)
-metadata/_edit_lock_ = true
+[node name="Exit" type="Button" parent="WorldRoot" unique_id=1753071860]
+offset_left = 894.0
+offset_top = -526.0
+offset_right = 944.0
+offset_bottom = -472.0
+text = "X"

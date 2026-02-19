@@ -4,18 +4,19 @@ extends Node
 
 @export var target:Node2D # not used currently, reserved for future use
 @export var frame:Node2D
-var poly :PackedVector2Array
+var _poly :PackedVector2Array = PackedVector2Array() # 存储鼠标穿透多边形的顶点（全局坐标）
+
+
 
 func _update_passthrough() -> void:
-	poly = PackedVector2Array()
+	_poly.clear()
 	_calc_target_rect()
-	get_window().set_mouse_passthrough_polygon(poly)
+	get_window().set_mouse_passthrough_polygon(_poly)
 
 
 # 计算目标矩形的全局坐标，并更新 poly
 func _calc_target_rect():
-
 	# 转换到全局坐标
 	for p in frame.polygon: 
-		poly.append(frame.to_global(p))
+		_poly.append(frame.to_global(p))
 	

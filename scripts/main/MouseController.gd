@@ -14,7 +14,8 @@ var _press_pos := Vector2.ZERO
 signal drag_started
 signal dragged(global_pos: Vector2)
 signal drag_ended
-signal clicked
+signal left_clicked
+signal right_clicked
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -23,7 +24,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
     if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
         if event.pressed:
-            # 由于MousePassThroughPolygon的存在，只有点击在target可见区域才会触发此事件
             _state = DragState.PENDING
             _press_pos = event.position
             _drag_offset = target.global_position - event.position
@@ -36,8 +36,13 @@ func _unhandled_input(event: InputEvent) -> void:
                     get_viewport().set_input_as_handled()
                 DragState.PENDING: # 作为点击处理
                     _state = DragState.IDLE
-                    clicked.emit()
+                    left_clicked.emit()
                     get_viewport().set_input_as_handled()
+
+    elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+        if event.pressed:
+            right_clicked.emit()
+            get_viewport().set_input_as_handled()
 
     elif event is InputEventMouseMotion and _state != DragState.IDLE:
         if _state == DragState.PENDING: # 检测是否超过拖拽阈值
