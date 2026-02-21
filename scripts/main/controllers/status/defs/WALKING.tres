@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CharacterStateDef" format=3 uid="uid://dbq0jd6o6qpcp"]
+
+[ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="1_1nd0t"]
+
+[resource]
+script = ExtResource("1_1nd0t")
+state = 1
+gap = 0.5
+duration = 8.0
+metadata/_custom_type_script = "uid://ch8xwtu03a45p"

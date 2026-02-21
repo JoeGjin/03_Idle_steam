@@ -1,6 +1,7 @@
 # 本脚本用于根据目标 Node2D 的位置和大小，设置鼠标穿透多边形区域
 
 extends Node
+class_name MousePassThroughPolygon
 
 @export var target:Node2D # not used currently, reserved for future use
 @export var frame:Node2D

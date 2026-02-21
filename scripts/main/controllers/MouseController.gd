@@ -1,6 +1,7 @@
 # 本脚本用于处理拖拽和点击事件的检测与信号发射
 
 extends Node
+class_name MouseController
 
 enum DragState { IDLE, PENDING, DRAGGING } # 拖拽状态枚举
 

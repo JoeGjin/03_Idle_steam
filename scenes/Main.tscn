@@ -1,20 +1,25 @@
 [gd_scene format=3 uid="uid://dstqc5agwgox3"]
 
 [ext_resource type="Script" uid="uid://7egkv0utp30f" path="res://scripts/main/Main.gd" id="1_rvslj"]
-[ext_resource type="Script" uid="uid://bsplvrwpxwm0" path="res://scripts/main/GlobalKeyHook.gd" id="2_c01mt"]
-[ext_resource type="Script" uid="uid://44gxe6vfnykv" path="res://scripts/main/MouseController.gd" id="2_rarhs"]
-[ext_resource type="Script" uid="uid://do15sgwdc5jri" path="res://scripts/main/MousePassThroughPolygon.gd" id="3_c01mt"]
-[ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/ClickScaleAnimator.gd" id="3_vcsgt"]
+[ext_resource type="Script" uid="uid://bsplvrwpxwm0" path="res://scripts/main/controllers/GlobalKeyHook.gd" id="2_c01mt"]
+[ext_resource type="Script" uid="uid://44gxe6vfnykv" path="res://scripts/main/controllers/MouseController.gd" id="2_rarhs"]
+[ext_resource type="Script" uid="uid://do15sgwdc5jri" path="res://scripts/main/controllers/MousePassThroughPolygon.gd" id="3_c01mt"]
+[ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/controllers/CharacterAnimator.gd" id="3_vcsgt"]
 [ext_resource type="Texture2D" uid="uid://dwedmkmqwvrxp" path="res://assets/worldroot/b.jpg" id="4_bckgd"]
 [ext_resource type="Texture2D" uid="uid://cx085tr31eg26" path="res://assets/worldroot/f.png" id="4_foregr"]
 [ext_resource type="Texture2D" uid="uid://cf15e8eyjil48" path="res://assets/worldroot/c.jpg" id="4_midgrd"]
-[ext_resource type="Script" uid="uid://cqs5yvp2atmdx" path="res://scripts/main/UIWindow.gd" id="6_ft6cd"]
-[ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/WorldRoot.gd" id="6_lhr70"]
+[ext_resource type="Script" uid="uid://dlf38k8n2fmdm" path="res://scripts/main/controllers/CharacterStatus.gd" id="5_bb450"]
+[ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="6_1iba3"]
+[ext_resource type="Script" uid="uid://cqs5yvp2atmdx" path="res://scripts/main/ui/UIWindow.gd" id="6_ft6cd"]
+[ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/world/WorldRoot.gd" id="6_lhr70"]
+[ext_resource type="Resource" uid="uid://cfpmr7eqfmvhs" path="res://scripts/main/controllers/status/defs/RESTING.tres" id="7_yxlcp"]
+[ext_resource type="Resource" uid="uid://dbq0jd6o6qpcp" path="res://scripts/main/controllers/status/defs/WALKING.tres" id="8_ebg2g"]
+[ext_resource type="Script" uid="uid://c27nxw0ys71yi" path="res://scripts/main/controllers/SceneAnimator.gd" id="10_yxlcp"]
 [ext_resource type="Texture2D" uid="uid://b13mwgbw0jqny" path="res://assets/worldroot/pet/jello_idle_11.png" id="11_3p2gp"]
 [ext_resource type="Texture2D" uid="uid://vq3enucy1fiu" path="res://assets/worldroot/pet/jello_idle_12.png" id="12_cvmbd"]
 [ext_resource type="Texture2D" uid="uid://dxbja5dphnhc" path="res://assets/worldroot/pet/jello_idle_13.png" id="13_ft6cd"]
 [ext_resource type="Texture2D" uid="uid://b7atgb2q1jm7a" path="res://assets/worldroot/pet/jello_idle_14.png" id="14_bb450"]
-[ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/UIRoot.gd" id="15_3p2gp"]
+[ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/ui/UIRoot.gd" id="15_3p2gp"]
 [ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/jello_idle_15.png" id="15_nfivy"]
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
 
@@ -51,22 +56,37 @@ animations = [{
 
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
+debug_mode = true
 
 [node name="Controllers" type="Node" parent="." unique_id=650551310]
 
 [node name="GlobalKeyHook" type="Node" parent="Controllers" unique_id=1537955954]
+unique_name_in_owner = true
 script = ExtResource("2_c01mt")
 
 [node name="MousePassThroughPolygon" type="Node" parent="Controllers" unique_id=577058379]
+unique_name_in_owner = true
 script = ExtResource("3_c01mt")
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
+unique_name_in_owner = true
 script = ExtResource("2_rarhs")
 
-[node name="ClickScaleAnimator" type="Node" parent="Controllers" unique_id=1546089583]
+[node name="CharacterStatus" type="Node" parent="Controllers" unique_id=1644533593]
+unique_name_in_owner = true
+script = ExtResource("5_bb450")
+state_defs = Array[ExtResource("6_1iba3")]([ExtResource("7_yxlcp"), ExtResource("8_ebg2g")])
+
+[node name="CharacterAnimator" type="Node" parent="Controllers" unique_id=1546089583]
+unique_name_in_owner = true
 script = ExtResource("3_vcsgt")
 
+[node name="SceneAnimator" type="Node" parent="Controllers" unique_id=1164431083]
+unique_name_in_owner = true
+script = ExtResource("10_yxlcp")
+
 [node name="UIWindow" type="Window" parent="." unique_id=1159274380]
+unique_name_in_owner = true
 transparent_bg = true
 oversampling_override = 1.0
 mode = 3
@@ -131,6 +151,7 @@ polygon = PackedVector2Array(-960, 540, 960, 540, 960, -540, -960, -540)
 metadata/_edit_lock_ = true
 
 [node name="Background" type="Parallax2D" parent="WorldRoot" unique_id=384608179]
+unique_name_in_owner = true
 repeat_size = Vector2(3072, 0)
 autoscroll = Vector2(-20, 0)
 
@@ -140,6 +161,7 @@ scale = Vector2(2, 2.1897233)
 texture = ExtResource("4_bckgd")
 
 [node name="Midground" type="Parallax2D" parent="WorldRoot" unique_id=1013858590]
+unique_name_in_owner = true
 repeat_size = Vector2(3072, 0)
 autoscroll = Vector2(-75, 0)
 
@@ -156,7 +178,30 @@ sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
 frame_progress = 0.3128155
 
+[node name="Label_status" type="Label" parent="WorldRoot/Pet" unique_id=2112372900]
+visible = false
+offset_left = -663.3334
+offset_top = -586.6667
+offset_right = -534.3334
+offset_bottom = -563.6667
+scale = Vector2(10, 10)
+text = "character_status"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label_cooldown" type="Label" parent="WorldRoot/Pet" unique_id=1567517424]
+visible = false
+offset_left = -663.3334
+offset_top = -746.6666
+offset_right = -533.3334
+offset_bottom = -723.6666
+scale = Vector2(10, 10)
+text = "status_cooldown"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Foreground" type="Parallax2D" parent="WorldRoot" unique_id=605308785]
+unique_name_in_owner = true
 repeat_size = Vector2(3072, 0)
 autoscroll = Vector2(-150, 0)
 
@@ -166,8 +211,8 @@ scale = Vector2(2, 2)
 texture = ExtResource("4_foregr")
 
 [node name="Exit" type="Button" parent="WorldRoot" unique_id=1753071860]
-offset_left = 894.0
+offset_left = 843.0
 offset_top = -526.0
 offset_right = 944.0
-offset_bottom = -472.0
+offset_bottom = -438.0
 text = "X"

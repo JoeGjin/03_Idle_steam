@@ -1,6 +1,7 @@
 # 本脚本用于处理点击的所有动画效果
 
 extends Node
+class_name CharacterAnimator
 
 @export var target: Node2D
 @export var shrink_scale := 0.75
