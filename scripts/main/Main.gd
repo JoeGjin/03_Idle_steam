@@ -61,6 +61,7 @@ func _cross_assign_targets():
 	scene_animator.background = %Background
 	scene_animator.midground = %Midground
 	scene_animator.foreground = %Foreground
+	scene_animator.sky = %Sky
 
 func _draw_scale_setup():
 	# 可选：根据需要调整 world_root 的缩放级别

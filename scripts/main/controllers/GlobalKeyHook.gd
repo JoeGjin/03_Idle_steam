@@ -4,16 +4,22 @@ extends Node
 
 var _hook: GlobalKeyHook
 
+@export var hook_switch : bool = false
 signal any_key_pressed
 
 
 func _ready() -> void:
-	_hook = GlobalKeyHook.new()
-	add_child(_hook)
 	
-	_hook.any_key_pressed.connect(_on_any_key_pressed)
+	if hook_switch:
 
-	print("GlobalKeyHook ready.")
+		_hook = GlobalKeyHook.new()
+		add_child(_hook)
+	
+		_hook.any_key_pressed.connect(_on_any_key_pressed)
+
+		print("GlobalKeyHook ready.")
+	else :
+		print("GlobalKeyHook is disabled by hook_switch.")
 
 
 func _on_any_key_pressed() -> void:

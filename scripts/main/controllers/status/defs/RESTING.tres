@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_fwx8l")
 gap = 1.0
-duration = 4.0
+duration = 3.0
 metadata/_custom_type_script = "uid://ch8xwtu03a45p"
