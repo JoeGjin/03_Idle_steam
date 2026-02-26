@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://7egkv0utp30f" path="res://scripts/main/Main.gd" id="1_rvslj"]
 [ext_resource type="Script" uid="uid://bsplvrwpxwm0" path="res://scripts/main/controllers/GlobalKeyHook.gd" id="2_c01mt"]
 [ext_resource type="Script" uid="uid://44gxe6vfnykv" path="res://scripts/main/controllers/MouseController.gd" id="2_rarhs"]
-[ext_resource type="Script" uid="uid://do15sgwdc5jri" path="res://scripts/main/controllers/MousePassThroughPolygon.gd" id="3_c01mt"]
+[ext_resource type="Script" uid="uid://dap840y6qau73" path="res://scripts/main/controllers/WindowController.gd" id="3_c01mt"]
 [ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/controllers/CharacterAnimator.gd" id="3_vcsgt"]
 [ext_resource type="Script" uid="uid://dlf38k8n2fmdm" path="res://scripts/main/controllers/CharacterStatus.gd" id="5_bb450"]
 [ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="6_1iba3"]
@@ -104,7 +104,7 @@ unique_name_in_owner = true
 script = ExtResource("2_c01mt")
 hook_switch = true
 
-[node name="MousePassThroughPolygon" type="Node" parent="Controllers" unique_id=577058379]
+[node name="WindowController" type="Node" parent="Controllers" unique_id=577058379]
 unique_name_in_owner = true
 script = ExtResource("3_c01mt")
 

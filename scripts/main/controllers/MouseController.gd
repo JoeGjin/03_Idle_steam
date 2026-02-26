@@ -9,11 +9,11 @@ enum DragState { IDLE, PENDING, DRAGGING } # 拖拽状态枚举
 const DRAG_THRESHOLD := 6.0
 
 var _state := DragState.IDLE
-var _drag_offset := Vector2.ZERO
+# var _drag_offset := Vector2.ZERO
 var _press_pos := Vector2.ZERO
 
 signal drag_started
-signal dragged(global_pos: Vector2)
+# signal dragged(global_pos: Vector2)
 signal drag_ended
 signal left_clicked
 signal right_clicked
@@ -27,7 +27,7 @@ func _unhandled_input(event: InputEvent) -> void:
         if event.pressed:
             _state = DragState.PENDING
             _press_pos = event.position
-            _drag_offset = target.global_position - event.position
+            # _drag_offset = Vector2(get_window().position) - event.global_position #old: target.global_position - event.position
             get_viewport().set_input_as_handled()
         else:
             match _state:
@@ -46,13 +46,16 @@ func _unhandled_input(event: InputEvent) -> void:
             get_viewport().set_input_as_handled()
 
     elif event is InputEventMouseMotion and _state != DragState.IDLE:
-        if _state == DragState.PENDING: # 检测是否超过拖拽阈值
+        if _state == DragState.PENDING: 
+            # 检测是否超过拖拽阈值
             if event.position.distance_to(_press_pos) >= DRAG_THRESHOLD:
                 _state = DragState.DRAGGING
                 drag_started.emit()
+                DisplayServer.window_start_drag() # 交给系统原生拖窗
                 get_viewport().set_input_as_handled()
         
-        if _state == DragState.DRAGGING: # 继续拖拽
-            dragged.emit(event.position + _drag_offset)
+        if _state == DragState.DRAGGING: # 原生拖窗进行中，这里不用做任何事
+            #var new_pos :Vector2 = event.global_position + _drag_offset
+            #dragged.emit(Vector2i(new_pos.round()))
             get_viewport().set_input_as_handled()
 			
