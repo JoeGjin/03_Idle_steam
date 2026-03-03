@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CharacterStateDef" format=3 uid="uid://bunbgarelpvim"]
+
+[ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="1_lmqji"]
+
+[resource]
+script = ExtResource("1_lmqji")
+state = 2
+gap = 0.5
+duration = 2.0
+metadata/_custom_type_script = "uid://ch8xwtu03a45p"

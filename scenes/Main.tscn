@@ -11,18 +11,26 @@
 [ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/world/WorldRoot.gd" id="6_lhr70"]
 [ext_resource type="Resource" uid="uid://cfpmr7eqfmvhs" path="res://scripts/main/controllers/status/defs/RESTING.tres" id="7_yxlcp"]
 [ext_resource type="Resource" uid="uid://dbq0jd6o6qpcp" path="res://scripts/main/controllers/status/defs/WALKING.tres" id="8_ebg2g"]
+[ext_resource type="Resource" uid="uid://bunbgarelpvim" path="res://scripts/main/controllers/status/defs/RECORDING.tres" id="9_gsxep"]
+[ext_resource type="Resource" uid="uid://d1tqeypv6fcen" path="res://scripts/main/controllers/status/defs/PICKING.tres" id="10_v0vrg"]
 [ext_resource type="Script" uid="uid://c27nxw0ys71yi" path="res://scripts/main/controllers/SceneAnimator.gd" id="10_yxlcp"]
 [ext_resource type="Texture2D" uid="uid://b13mwgbw0jqny" path="res://assets/worldroot/pet/jello_idle_11.png" id="11_3p2gp"]
+[ext_resource type="Resource" uid="uid://b881gwurv7p4o" path="res://scripts/main/controllers/status/defs/GAZING.tres" id="11_dg70y"]
 [ext_resource type="Texture2D" uid="uid://vq3enucy1fiu" path="res://assets/worldroot/pet/jello_idle_12.png" id="12_cvmbd"]
+[ext_resource type="Resource" uid="uid://bxm3ppkd7o4h6" path="res://scripts/main/controllers/status/defs/GREETING.tres" id="12_pnhog"]
+[ext_resource type="Resource" uid="uid://iqqx3d6rqw3g" path="res://scripts/main/controllers/status/defs/CHANGING.tres" id="13_2c4at"]
 [ext_resource type="Texture2D" uid="uid://dxbja5dphnhc" path="res://assets/worldroot/pet/jello_idle_13.png" id="13_ft6cd"]
 [ext_resource type="Texture2D" uid="uid://b7atgb2q1jm7a" path="res://assets/worldroot/pet/jello_idle_14.png" id="14_bb450"]
+[ext_resource type="Resource" uid="uid://b02hwfcvjw2lj" path="res://scripts/main/controllers/status/defs/TRANSITING.tres" id="14_g6wdg"]
 [ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/ui/UIRoot.gd" id="15_3p2gp"]
 [ext_resource type="Texture2D" uid="uid://dhbci83o23qmc" path="res://assets/worldroot/world/a/sky.png" id="15_ebg2g"]
 [ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/jello_idle_15.png" id="15_nfivy"]
 [ext_resource type="Texture2D" uid="uid://v16pcp1mt4oq" path="res://assets/worldroot/world/a/midground.png" id="16_2ofn6"]
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
+[ext_resource type="Texture2D" uid="uid://yl0vw325863" path="res://assets/worldroot/world/a/cloud.png" id="16_xa025"]
 [ext_resource type="Texture2D" uid="uid://7tc5o2ea03vh" path="res://assets/worldroot/world/a/background.png" id="17_xa025"]
 [ext_resource type="Texture2D" uid="uid://doha6ih27u2m7" path="res://assets/worldroot/world/a/foreground.png" id="23_ebg2g"]
+[ext_resource type="Script" uid="uid://dadra0l3mlosi" path="res://scripts/main/world/Pet.gd" id="30_v0vrg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -93,6 +101,10 @@ animations = [{
 "speed": 6.0
 }]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gsxep"]
+radius = 822.44
+height = 2000.0
+
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
 debug_mode = true
@@ -115,7 +127,7 @@ script = ExtResource("2_rarhs")
 [node name="CharacterStatus" type="Node" parent="Controllers" unique_id=1644533593]
 unique_name_in_owner = true
 script = ExtResource("5_bb450")
-state_defs = Array[ExtResource("6_1iba3")]([ExtResource("7_yxlcp"), ExtResource("8_ebg2g")])
+state_defs = Array[ExtResource("6_1iba3")]([ExtResource("7_yxlcp"), ExtResource("8_ebg2g"), ExtResource("9_gsxep"), ExtResource("10_v0vrg"), ExtResource("11_dg70y"), ExtResource("12_pnhog"), ExtResource("13_2c4at"), ExtResource("14_g6wdg")])
 
 [node name="CharacterAnimator" type="Node" parent="Controllers" unique_id=1546089583]
 unique_name_in_owner = true
@@ -199,6 +211,15 @@ autoscroll = Vector2(-10, 0)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("15_ebg2g")
 
+[node name="Cloud" type="Parallax2D" parent="WorldRoot" unique_id=544529230]
+unique_name_in_owner = true
+repeat_size = Vector2(1916, 0)
+autoscroll = Vector2(-20, 0)
+
+[node name="c" type="Sprite2D" parent="WorldRoot/Cloud" unique_id=355737553]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("16_xa025")
+
 [node name="Background" type="Parallax2D" parent="WorldRoot" unique_id=384608179]
 unique_name_in_owner = true
 repeat_size = Vector2(1920, 0)
@@ -231,28 +252,86 @@ scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
 frame_progress = 0.3128155
+script = ExtResource("30_v0vrg")
 
 [node name="Label_status" type="Label" parent="WorldRoot/Pet" unique_id=2112372900]
-visible = false
 offset_left = -663.3334
-offset_top = -586.6667
+offset_top = -1666.6667
 offset_right = -534.3334
-offset_bottom = -563.6667
+offset_bottom = -1643.6667
 scale = Vector2(10, 10)
 text = "character_status"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label_cooldown" type="Label" parent="WorldRoot/Pet" unique_id=1567517424]
-visible = false
 offset_left = -663.3334
-offset_top = -746.6666
+offset_top = -1826.6666
 offset_right = -533.3334
-offset_bottom = -723.6666
+offset_bottom = -1803.6666
 scale = Vector2(10, 10)
 text = "status_cooldown"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="mood" type="Control" parent="WorldRoot/Pet" unique_id=1472757193]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1044.0
+offset_top = -1754.0
+offset_right = -1004.0
+offset_bottom = -1714.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="stay" type="Timer" parent="WorldRoot/Pet/mood" unique_id=2016656052]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="WorldRoot/Pet/mood" unique_id=41824199]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -450.0
+offset_right = 450.0
+offset_bottom = 300.0
+grow_horizontal = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="1" type="Button" parent="WorldRoot/Pet/mood/HBoxContainer" unique_id=696807687]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+mouse_filter = 1
+theme_override_colors/font_color = Color(1, 0.03529412, 0.03529412, 1)
+theme_override_font_sizes/font_size = 150
+text = "O"
+
+[node name="2" type="Button" parent="WorldRoot/Pet/mood/HBoxContainer" unique_id=1391347993]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.30588236, 0.9882353, 0, 1)
+theme_override_font_sizes/font_size = 150
+text = "O"
+
+[node name="3" type="Button" parent="WorldRoot/Pet/mood/HBoxContainer" unique_id=1058188753]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+mouse_filter = 1
+theme_override_colors/font_color = Color(0.11764706, 0.48235294, 0.92156863, 1)
+theme_override_font_sizes/font_size = 150
+text = "O"
+
+[node name="body" type="Area2D" parent="WorldRoot/Pet" unique_id=815688141]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldRoot/Pet/body" unique_id=952050975]
+position = Vector2(0, -160)
+shape = SubResource("CapsuleShape2D_gsxep")
 
 [node name="Foreground" type="Parallax2D" parent="WorldRoot" unique_id=605308785]
 unique_name_in_owner = true
@@ -270,3 +349,6 @@ offset_top = -526.0
 offset_right = 944.0
 offset_bottom = -438.0
 text = "X"
+
+[connection signal="mouse_entered" from="WorldRoot/Pet/body" to="WorldRoot/Pet" method="_on_body_mouse_entered"]
+[connection signal="mouse_exited" from="WorldRoot/Pet/body" to="WorldRoot/Pet" method="_on_body_mouse_exited"]

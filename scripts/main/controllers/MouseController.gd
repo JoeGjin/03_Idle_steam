@@ -58,4 +58,3 @@ func _unhandled_input(event: InputEvent) -> void:
             #var new_pos :Vector2 = event.global_position + _drag_offset
             #dragged.emit(Vector2i(new_pos.round()))
             get_viewport().set_input_as_handled()
-			

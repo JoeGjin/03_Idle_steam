@@ -59,11 +59,13 @@ func _cross_assign_targets():
 	# 设置pet base scale
 	character_animator.base_scale = pet.scale
 
-	# 将场景中的三个 Parallax2D 赋值给 scene_animator 的对应属性
+	# 将场景中的个 Parallax2D 赋值给 scene_animator 的对应属性
 	scene_animator.background = %Background
 	scene_animator.midground = %Midground
 	scene_animator.foreground = %Foreground
 	scene_animator.sky = %Sky
+	scene_animator.cloud = %Cloud
+
 
 func _draw_scale_setup():
 	# 可选：根据需要调整 world_root 的缩放级别
@@ -79,6 +81,8 @@ func _connect_signals() -> void:
 	mouse_controller.left_clicked.connect(_on_mouse_controller_left_clicked)
 	mouse_controller.right_clicked.connect(_on_mouse_controller_right_clicked)
 	character_status.state_changed.connect(_on_character_status_state_changed)
+	pet.mouse_entered_body.connect(_on_pet_mouse_entered_body)
+	pet.mouse_exited_body.connect(_on_pet_mouse_exited_body)
 
 
 func _setup_debug():
@@ -119,6 +123,15 @@ func _on_mouse_controller_right_clicked():
 	ui_window.show()
 
 
+func _on_pet_mouse_entered_body():
+	# print("[PET] Mouse entered body")
+	pet.mood_show(true)
+
+func _on_pet_mouse_exited_body():
+	# print("[PET] Mouse exited body")
+	pet.mood_show(false)
+
+
 func _on_global_key_hook_any_key_pressed() -> void:
 	print("[KEY] Outside window pressed any key")
 	character_animator._play_click_scale_anim()
@@ -131,14 +144,14 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
 		CharacterStates.CharacterState.WALKING:
 			scene_animator.continue_para_animation()
 		CharacterStates.CharacterState.RECORDING:
-			pass
+			scene_animator.stop_para_animation()
 		CharacterStates.CharacterState.PICKING:
-			pass
+			scene_animator.stop_para_animation()
 		CharacterStates.CharacterState.GAZING:
-			pass
+			scene_animator.stop_para_animation()
 		CharacterStates.CharacterState.GREETING:
-			pass
+			scene_animator.stop_para_animation()
 		CharacterStates.CharacterState.CHANGING:
-			pass
+			scene_animator.continue_para_animation()
 		CharacterStates.CharacterState.TRANSITING:
-			pass
+			scene_animator.stop_para_animation()
