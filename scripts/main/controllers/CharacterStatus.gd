@@ -6,7 +6,7 @@ class_name CharacterStatus
 #                                        0        1        2         3        4         5         6         7
 #CharacterStates enum CharacterState { RESTING, WALKING, RECORDING, PICKING, GAZING, GREETING, CHANGING, TRANSITING }
 
-@export var target: Node2D
+@export var pet: Node2D # 暂时未用，预留
 @export var debug_mode: bool = false
 @export var state_label: Label #调试用
 @export var state_cooldown_label: Label #调试用
@@ -14,7 +14,7 @@ class_name CharacterStatus
 
 @export var state_defs: Array[CharacterStateDef] = []
 
-signal state_changed(new_state: CharacterStates.CharacterState)
+signal state_changed(new_state: CharacterStates.CharacterState, duration: float) # 状态改变信号，携带新状态和持续时间（秒）参数
 
 enum Phase { DURATION, GAP }
 
@@ -73,7 +73,7 @@ func _enter_state_at(i: int) -> void:
 	var def := state_defs[i]
 	# 更新公开 state（对外）
 	state = def.state
-	state_changed.emit(state)
+	state_changed.emit(state, def.duration)
 	# 更新调试标签
 	if debug_mode:
 		state_label.text = CharacterStates.CharacterState.find_key(state)
@@ -108,7 +108,18 @@ func _on_phase_timeout() -> void:
 
 func _choose_next_state_index() -> int:
 	# （循环 for now）
-	return (_sequence_index + 1) % state_defs.size()
+	match _sequence_index:
+		0: return 1
+		1: return 0 
+		# 2: return 3 
+		# 3: return 4 
+		# 4: return 5 
+		# 5: return 6 
+		6: return 7 
+		7: return 1 
+		_:
+			return 1 # 默认回到 1，避免死循环在一个状态
+
 
 
 func _update_debug_countdown() -> void: # 仅在 debug 模式下被 _debug_timer 驱动，用于更新状态剩余时间的显示

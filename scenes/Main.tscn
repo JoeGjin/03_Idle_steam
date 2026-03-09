@@ -23,14 +23,16 @@
 [ext_resource type="Texture2D" uid="uid://b7atgb2q1jm7a" path="res://assets/worldroot/pet/jello_idle_14.png" id="14_bb450"]
 [ext_resource type="Resource" uid="uid://b02hwfcvjw2lj" path="res://scripts/main/controllers/status/defs/TRANSITING.tres" id="14_g6wdg"]
 [ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/ui/UIRoot.gd" id="15_3p2gp"]
-[ext_resource type="Texture2D" uid="uid://dhbci83o23qmc" path="res://assets/worldroot/world/a/sky.png" id="15_ebg2g"]
 [ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/jello_idle_15.png" id="15_nfivy"]
-[ext_resource type="Texture2D" uid="uid://v16pcp1mt4oq" path="res://assets/worldroot/world/a/midground.png" id="16_2ofn6"]
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
-[ext_resource type="Texture2D" uid="uid://yl0vw325863" path="res://assets/worldroot/world/a/cloud.png" id="16_xa025"]
-[ext_resource type="Texture2D" uid="uid://7tc5o2ea03vh" path="res://assets/worldroot/world/a/background.png" id="17_xa025"]
-[ext_resource type="Texture2D" uid="uid://doha6ih27u2m7" path="res://assets/worldroot/world/a/foreground.png" id="23_ebg2g"]
+[ext_resource type="Script" uid="uid://c0nnjmwue2ufr" path="res://scripts/main/controllers/ColorPickController.gd" id="17_dg70y"]
+[ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/ItemController.gd" id="18_pnhog"]
+[ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
+[ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
+[ext_resource type="Resource" uid="uid://p0e54pntafbv" path="res://scripts/main/controllers/world/defs/0.tres" id="21_kxyth"]
+[ext_resource type="Resource" uid="uid://cmlc3rdvf1drp" path="res://scripts/main/controllers/world/defs/1.tres" id="22_dg70y"]
 [ext_resource type="Script" uid="uid://dadra0l3mlosi" path="res://scripts/main/world/Pet.gd" id="30_v0vrg"]
+[ext_resource type="Texture2D" uid="uid://d0wxe8nsemp83" path="res://assets/worldroot/transition.png" id="33_pnhog"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -39,44 +41,6 @@
 [sub_resource type="Theme" id="Theme_ft6cd"]
 Window/styles/embedded_border = SubResource("StyleBoxEmpty_cvmbd")
 Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
-
-[sub_resource type="Animation" id="Animation_ebg2g"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Midground/m:scale:y")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0.5]
-}
-
-[sub_resource type="Animation" id="Animation_2ofn6"]
-resource_name = "wave"
-length = 10.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Midground/m:scale:y")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 3, 5, 7, 10),
-"transitions": PackedFloat32Array(0.5, 0.5, 0.5, 0.5, 0.5),
-"update": 0,
-"values": [0.5, 0.55, 0.45, 0.6, 0.5]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_xa025"]
-_data = {
-&"RESET": SubResource("Animation_ebg2g"),
-&"wave": SubResource("Animation_2ofn6")
-}
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1nqs0"]
 animations = [{
@@ -104,6 +68,77 @@ animations = [{
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gsxep"]
 radius = 822.44
 height = 2000.0
+
+[sub_resource type="Animation" id="Animation_ebg2g"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Midground/m:scale:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0.5]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("%Background/../Transition:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1384, 920)]
+}
+
+[sub_resource type="Animation" id="Animation_2ofn6"]
+resource_name = "wave"
+length = 10.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Midground/m:scale:y")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3, 5, 7, 10),
+"transitions": PackedFloat32Array(0.5, 0.5, 0.5, 0.5, 0.5),
+"update": 0,
+"values": [0.5, 0.55, 0.45, 0.6, 0.5]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xa025"]
+_data = {
+&"RESET": SubResource("Animation_ebg2g"),
+&"World_0": SubResource("Animation_2ofn6")
+}
+
+[sub_resource type="Animation" id="Animation_pnhog"]
+resource_name = "Transition"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Transition:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1384, 920), Vector2(1384, 920), Vector2(-1252, -1328)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2c4at"]
+_data = {
+&"Transition": SubResource("Animation_pnhog")
+}
 
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
@@ -136,6 +171,19 @@ script = ExtResource("3_vcsgt")
 [node name="SceneAnimator" type="Node" parent="Controllers" unique_id=1164431083]
 unique_name_in_owner = true
 script = ExtResource("10_yxlcp")
+
+[node name="ColorPickController" type="Node" parent="Controllers" unique_id=1779784933]
+unique_name_in_owner = true
+script = ExtResource("17_dg70y")
+
+[node name="ItemController" type="Node" parent="Controllers" unique_id=769164480]
+unique_name_in_owner = true
+script = ExtResource("18_pnhog")
+
+[node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
+unique_name_in_owner = true
+script = ExtResource("19_2c4at")
+world_defs = Array[ExtResource("20_hq6as")]([ExtResource("21_kxyth"), ExtResource("22_dg70y")])
 
 [node name="UIWindow" type="Window" parent="." unique_id=1159274380]
 unique_name_in_owner = true
@@ -198,6 +246,7 @@ position = Vector2(960, 540)
 script = ExtResource("6_lhr70")
 
 [node name="Frame" type="Polygon2D" parent="WorldRoot" unique_id=1114735131]
+unique_name_in_owner = true
 color = Color(0, 0, 0, 0.39215687)
 polygon = PackedVector2Array(-960, 540, 960, 540, 960, -540, -960, -540)
 metadata/_edit_lock_ = true
@@ -209,7 +258,6 @@ autoscroll = Vector2(-10, 0)
 
 [node name="s" type="Sprite2D" parent="WorldRoot/Sky" unique_id=1813847154]
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("15_ebg2g")
 
 [node name="Cloud" type="Parallax2D" parent="WorldRoot" unique_id=544529230]
 unique_name_in_owner = true
@@ -218,7 +266,6 @@ autoscroll = Vector2(-20, 0)
 
 [node name="c" type="Sprite2D" parent="WorldRoot/Cloud" unique_id=355737553]
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("16_xa025")
 
 [node name="Background" type="Parallax2D" parent="WorldRoot" unique_id=384608179]
 unique_name_in_owner = true
@@ -227,7 +274,6 @@ autoscroll = Vector2(-75, 0)
 
 [node name="b" type="Sprite2D" parent="WorldRoot/Background" unique_id=1308681423]
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("17_xa025")
 
 [node name="Midground" type="Parallax2D" parent="WorldRoot" unique_id=1013858590]
 unique_name_in_owner = true
@@ -237,13 +283,7 @@ autoscroll = Vector2(-30, 0)
 [node name="m" type="Sprite2D" parent="WorldRoot/Midground" unique_id=1425775975]
 position = Vector2(0, -72)
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("16_2ofn6")
 offset = Vector2(0, 144)
-
-[node name="wave" type="AnimationPlayer" parent="WorldRoot/Midground" unique_id=1986727739]
-root_node = NodePath("../../Background")
-libraries/ = SubResource("AnimationLibrary_xa025")
-autoplay = &"wave"
 
 [node name="Pet" type="AnimatedSprite2D" parent="WorldRoot" unique_id=390694917]
 unique_name_in_owner = true
@@ -274,7 +314,8 @@ text = "status_cooldown"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="mood" type="Control" parent="WorldRoot/Pet" unique_id=1472757193]
+[node name="ColorPicker" type="Control" parent="WorldRoot/Pet" unique_id=1472757193]
+unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -282,16 +323,16 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -1044.0
-offset_top = -1754.0
+offset_top = -2000.6666
 offset_right = -1004.0
-offset_bottom = -1714.0
+offset_bottom = -1960.6666
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="stay" type="Timer" parent="WorldRoot/Pet/mood" unique_id=2016656052]
+[node name="stay" type="Timer" parent="WorldRoot/Pet/ColorPicker" unique_id=2016656052]
 
-[node name="HBoxContainer" type="HBoxContainer" parent="WorldRoot/Pet/mood" unique_id=41824199]
+[node name="hbox" type="HBoxContainer" parent="WorldRoot/Pet/ColorPicker" unique_id=41824199]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -303,29 +344,37 @@ grow_horizontal = 2
 theme_override_constants/separation = 50
 alignment = 1
 
-[node name="1" type="Button" parent="WorldRoot/Pet/mood/HBoxContainer" unique_id=696807687]
+[node name="purple" type="Button" parent="WorldRoot/Pet/ColorPicker/hbox" unique_id=696807687]
 custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 mouse_filter = 1
-theme_override_colors/font_color = Color(1, 0.03529412, 0.03529412, 1)
+theme_override_colors/font_color = Color(0.6117647, 0, 0.83137256, 1)
 theme_override_font_sizes/font_size = 150
 text = "O"
 
-[node name="2" type="Button" parent="WorldRoot/Pet/mood/HBoxContainer" unique_id=1391347993]
+[node name="green" type="Button" parent="WorldRoot/Pet/ColorPicker/hbox" unique_id=1391347993]
 custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 mouse_filter = 1
-theme_override_colors/font_color = Color(0.30588236, 0.9882353, 0, 1)
+theme_override_colors/font_color = Color(0.5176471, 0.84705883, 0.3647059, 1)
 theme_override_font_sizes/font_size = 150
 text = "O"
 
-[node name="3" type="Button" parent="WorldRoot/Pet/mood/HBoxContainer" unique_id=1058188753]
-custom_minimum_size = Vector2(300, 300)
-layout_mode = 2
-mouse_filter = 1
-theme_override_colors/font_color = Color(0.11764706, 0.48235294, 0.92156863, 1)
-theme_override_font_sizes/font_size = 150
-text = "O"
+[node name="ItemSlot" type="TextureRect" parent="WorldRoot/Pet" unique_id=1005270995]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(800, 800)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1274.0
+offset_top = -1504.0
+offset_right = -774.0
+offset_bottom = -1004.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
 
 [node name="body" type="Area2D" parent="WorldRoot/Pet" unique_id=815688141]
 
@@ -341,7 +390,20 @@ autoscroll = Vector2(-150, 0)
 [node name="f" type="Sprite2D" parent="WorldRoot/Foreground" unique_id=1348136509]
 position = Vector2(1, 113)
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("23_ebg2g")
+
+[node name="Transition" type="Sprite2D" parent="WorldRoot" unique_id=795918223]
+position = Vector2(1384, 920)
+scale = Vector2(1.3162842, 1.3162842)
+texture = ExtResource("33_pnhog")
+
+[node name="WorldPlayer" type="AnimationPlayer" parent="WorldRoot" unique_id=1986727739]
+unique_name_in_owner = true
+root_node = NodePath("../Background")
+libraries/ = SubResource("AnimationLibrary_xa025")
+
+[node name="TransitionPlayer" type="AnimationPlayer" parent="WorldRoot" unique_id=787434035]
+unique_name_in_owner = true
+libraries/ = SubResource("AnimationLibrary_2c4at")
 
 [node name="Exit" type="Button" parent="WorldRoot" unique_id=1753071860]
 offset_left = 843.0

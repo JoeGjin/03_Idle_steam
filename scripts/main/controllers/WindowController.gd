@@ -3,7 +3,7 @@
 extends Node
 class_name WindowController
 
-@export var target:Node2D # not used currently, reserved for future use
+@export var pet:Node2D # not used currently, reserved for future use
 @export var frame:Polygon2D
 @export var world_root: Node2D
 

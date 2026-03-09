@@ -5,7 +5,7 @@ class_name MouseController
 
 enum DragState { IDLE, PENDING, DRAGGING } # 拖拽状态枚举
 
-@export var target: Node2D
+@export var pet: Node2D
 const DRAG_THRESHOLD := 6.0
 
 var _state := DragState.IDLE
@@ -20,7 +20,7 @@ signal right_clicked
 
 
 func _unhandled_input(event: InputEvent) -> void:
-    if target == null:
+    if pet == null:
         return
 
     if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:

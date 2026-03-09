@@ -7,6 +7,7 @@ class_name SceneAnimator
 @export var background : Parallax2D
 @export var midground : Parallax2D
 @export var foreground : Parallax2D
+@export var transition_player: AnimationPlayer
 
 
 var _background_speed: Vector2
@@ -36,3 +37,6 @@ func continue_para_animation() -> void:
 	foreground.autoscroll = _foreground_speed
 	sky.autoscroll = _sky_speed
 	cloud.autoscroll = _cloud_speed
+
+func play_world_transition() -> void:
+	transition_player.play("Transition")

@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="WorldDef" format=3 uid="uid://cmlc3rdvf1drp"]
+
+[ext_resource type="Texture2D" uid="uid://bspjl1koatded" path="res://assets/worldroot/world/1/background.png" id="1_53uga"]
+[ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="1_pumrm"]
+[ext_resource type="Texture2D" uid="uid://3epcwpydtsav" path="res://assets/worldroot/world/1/cloud.png" id="2_ng1so"]
+[ext_resource type="Texture2D" uid="uid://dvap66eiv85f3" path="res://assets/worldroot/world/1/foreground.png" id="3_53uga"]
+[ext_resource type="Texture2D" uid="uid://cx1u4crgp8uw4" path="res://assets/worldroot/world/1/midground.png" id="4_xuhkk"]
+[ext_resource type="Texture2D" uid="uid://i7nc6o8c561m" path="res://assets/worldroot/world/1/sky.png" id="6_hxrlw"]
+
+[resource]
+script = ExtResource("1_pumrm")
+id = 1
+name = "mountain"
+sky_texture = ExtResource("6_hxrlw")
+sky_repeat_size = Vector2(1916, 0)
+sky_scroll_speed = Vector2(-2, 0)
+cloud_texture = ExtResource("2_ng1so")
+cloud_repeat_size = Vector2(1916, 0)
+cloud_scroll_speed = Vector2(-12, 0)
+background_texture = ExtResource("1_53uga")
+background_repeat_size = Vector2(1920, 0)
+background_scroll_speed = Vector2(-25, 0)
+midground_texture = ExtResource("4_xuhkk")
+midground_repeat_size = Vector2(1920, 0)
+midground_scroll_speed = Vector2(-25, 0)
+foreground_texture = ExtResource("3_53uga")
+foreground_repeat_size = Vector2(1920, 0)
+foreground_scroll_speed = Vector2(-63, 0)
+metadata/_custom_type_script = "uid://em6c7og411w6"
