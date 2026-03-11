@@ -8,21 +8,18 @@ extends Node
 @onready var character_status: CharacterStatus = %CharacterStatus
 @onready var character_animator: CharacterAnimator = %CharacterAnimator
 @onready var scene_animator: SceneAnimator = %SceneAnimator
-# @onready var color_pick_controller: ColorPickController = %ColorPickController
 @onready var item_controller: ItemController = %ItemController
 @onready var world_assembler: WorldAssembler = %WorldAssembler
 
 @onready var world_root: Node2D = %WorldRoot
 @onready var pet: AnimatedSprite2D = %Pet
 @onready var frame: Node2D = %Frame
-#@onready var world_player: AnimationPlayer = %WorldPlayer
 @onready var transition_player: AnimationPlayer = %TransitionPlayer
 
 @onready var ui_window: Window = %UIWindow
 @onready var ui_root: Control = %UIRoot
 
-@export var debug_mode: bool = false
-
+@onready var debug_root: Control = %DebugRoot
 
 const DRAW_SCALE: Vector2 = Vector2(0.5, 0.5) # 预设的窗口缩放级别，供调试使用
 
@@ -44,12 +41,6 @@ func _ready():
 	# 初始化世界组装器
 	world_assembler.initiate_assembler()
 
-	# 设置调试模式
-	_setup_debug()
-
-	# 初始化颜色选择控制器
-	# color_pick_controller.initialize()
-	
 	# 启动角色状态机，从 WALKING 状态开始
 	character_status.start(1) 
 
@@ -62,9 +53,8 @@ func _cross_assign_targets():
 	# 将 pet 赋值给各 controller 的 target
 	window_controller.pet = pet
 	mouse_controller.pet = pet
-	character_status.pet = pet
+	# character_status.pet = pet
 	character_animator.pet = pet
-	# color_pick_controller.pet = pet
 
 	# 将 frame 和 world_root 赋值给 window_controller
 	window_controller.world_root = world_root
@@ -81,13 +71,6 @@ func _cross_assign_targets():
 	scene_animator.cloud = %Cloud
 	scene_animator.transition_player = transition_player
 
-	# 将 ColorPicker 和 stay Timer 赋值给 color_pick_controller
-	# color_pick_controller.color_picker = %ColorPicker
-	# color_pick_controller.color_picker_stay_timer = %ColorPicker/stay
-
-	# 将 item_slot 赋值给 item_controller
-	# item_controller.item_slot = %ItemSlot
-
 	# 将 world_root 赋值给 world_assembler
 	world_assembler.world_root = world_root
 
@@ -95,38 +78,23 @@ func _cross_assign_targets():
 func _draw_scale_setup():
 	# 可选：根据需要调整 world_root 的缩放级别
 	world_root.scale = DRAW_SCALE
+	debug_root.scale = DRAW_SCALE
 
 
 func _connect_signals() -> void:
 	# 使用普通的函数引用连接到本节点的处理函数（保留 _on_* 命名风格）
 	global_key_hook.any_key_pressed.connect(_on_global_key_hook_any_key_pressed)
 	mouse_controller.drag_started.connect(_on_mouse_controller_drag_started)
-	# mouse_controller.dragged.connect(_on_mouse_controller_dragged)
 	mouse_controller.drag_ended.connect(_on_mouse_controller_drag_ended)
 	mouse_controller.left_clicked.connect(_on_mouse_controller_left_clicked)
 	mouse_controller.right_clicked.connect(_on_mouse_controller_right_clicked)
 	character_status.state_changed.connect(_on_character_status_state_changed)
 	pet.mouse_entered_body.connect(_on_pet_mouse_entered_body)
 	pet.mouse_exited_body.connect(_on_pet_mouse_exited_body)
-	# # 连接颜色选择信号到处理函数
-	# color_pick_controller.color_chosen.connect(_on_color_pick_controller_color_chosen)
+	
 	# 连接世界组装器的世界切换信号到处理函数
 	world_assembler.world_changed.connect(_on_world_assembler_world_changed)
 
-
-func _setup_debug():
-	# 将 debug_mode 传递给 character_status
-	character_status.debug_mode = debug_mode
-	if debug_mode:
-		print("[DEBUG] Debug mode is ON")
-		var state_label = pet.get_child(0)
-		var state_cooldown_label = pet.get_child(1)
-		state_label.show()
-		state_cooldown_label.show()
-		character_status.state_label = state_label
-		character_status.state_cooldown_label = state_cooldown_label
-	else:
-		print("[DEBUG] Debug mode is OFF")
 
 func _on_mouse_controller_drag_started():
 	print("[MOUSE] Drag started")
@@ -134,13 +102,11 @@ func _on_mouse_controller_drag_started():
 
 func _on_mouse_controller_drag_ended():
 	print("[MOUSE] Drag ended")
-	#window_controller.update_crop_to_frame()
 
 
 func _on_mouse_controller_left_clicked():
 	#print("[MOUSE] Left clicked")
-	#character_animator._play_click_scale_anim()
-	pass
+	character_animator._play_click_scale_anim()
 
 
 func _on_mouse_controller_right_clicked():
@@ -151,11 +117,11 @@ func _on_mouse_controller_right_clicked():
 
 func _on_pet_mouse_entered_body():
 	print("[PET] Mouse entered body")
-	# color_pick_controller.color_picker_show(true)
+
 
 func _on_pet_mouse_exited_body():
 	print("[PET] Mouse exited body")
-	# color_pick_controller.color_picker_show(false)
+
 
 
 func _on_global_key_hook_any_key_pressed() -> void:
@@ -186,12 +152,6 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
 			scene_animator.play_world_transition()
 			await get_tree().create_timer(duration).timeout
 			world_assembler._assemble_world((world_assembler.current_world_id+1)%2) # 切换世界
-
-
-func _on_color_pick_controller_color_chosen(color_name: String) -> void:
-	#print("[COLOR PICK] Chosen color: %s" % color_name)
-	item_controller.pick_item(color_name)
-	character_status.start(6) # 切换到 CHANGING 状态
 
 
 func _on_world_assembler_world_changed(new_world_id: int) -> void:

@@ -31,6 +31,8 @@
 [ext_resource type="Resource" uid="uid://p0e54pntafbv" path="res://scripts/main/controllers/world/defs/0.tres" id="21_kxyth"]
 [ext_resource type="Resource" uid="uid://cmlc3rdvf1drp" path="res://scripts/main/controllers/world/defs/1.tres" id="22_dg70y"]
 [ext_resource type="Script" uid="uid://dadra0l3mlosi" path="res://scripts/main/world/Pet.gd" id="30_v0vrg"]
+[ext_resource type="Script" uid="uid://dvy6ipmh42awj" path="res://scripts/main/debug/DebugPet.gd" id="33_2c4at"]
+[ext_resource type="Script" uid="uid://dd6bk7blu32eb" path="res://scripts/main/debug/DebugRoot.gd" id="33_g6wdg"]
 [ext_resource type="Texture2D" uid="uid://d0wxe8nsemp83" path="res://assets/worldroot/transition.png" id="33_pnhog"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
@@ -141,7 +143,6 @@ _data = {
 
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
-debug_mode = true
 
 [node name="Controllers" type="Node" parent="." unique_id=650551310]
 
@@ -290,26 +291,6 @@ autoplay = "default"
 frame_progress = 0.3128155
 script = ExtResource("30_v0vrg")
 
-[node name="Label_status" type="Label" parent="WorldRoot/Pet" unique_id=2112372900]
-offset_left = -663.3334
-offset_top = -1666.6667
-offset_right = -534.3334
-offset_bottom = -1643.6667
-scale = Vector2(10, 10)
-text = "character_status"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Label_cooldown" type="Label" parent="WorldRoot/Pet" unique_id=1567517424]
-offset_left = -663.3334
-offset_top = -1826.6666
-offset_right = -533.3334
-offset_bottom = -1803.6666
-scale = Vector2(10, 10)
-text = "status_cooldown"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="body" type="Area2D" parent="WorldRoot/Pet" unique_id=815688141]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WorldRoot/Pet/body" unique_id=952050975]
@@ -345,6 +326,43 @@ offset_top = -526.0
 offset_right = 944.0
 offset_bottom = -438.0
 text = "X"
+
+[node name="DebugRoot" type="Control" parent="." unique_id=1634044007]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("33_g6wdg")
+
+[node name="DebugUI" type="Control" parent="DebugRoot" unique_id=1038599377]
+anchors_preset = 0
+
+[node name="DebugWorld" type="Node2D" parent="DebugRoot" unique_id=121059888]
+
+[node name="DebugPet" type="Node2D" parent="DebugRoot/DebugWorld" unique_id=1912209357]
+unique_name_in_owner = true
+position = Vector2(676, 589)
+scale = Vector2(0.3, 0.3)
+script = ExtResource("33_2c4at")
+
+[node name="DebugStatus" type="Label" parent="DebugRoot/DebugWorld/DebugPet" unique_id=2119181311]
+offset_left = -663.3334
+offset_top = -1666.6667
+offset_right = -534.3334
+offset_bottom = -1643.6667
+scale = Vector2(10, 10)
+text = "character_status"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DebugCooldown" type="Label" parent="DebugRoot/DebugWorld/DebugPet" unique_id=337955523]
+offset_left = -663.3334
+offset_top = -1826.6666
+offset_right = -533.3334
+offset_bottom = -1803.6666
+scale = Vector2(10, 10)
+text = "status_cooldown"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="mouse_entered" from="WorldRoot/Pet/body" to="WorldRoot/Pet" method="_on_body_mouse_entered"]
 [connection signal="mouse_exited" from="WorldRoot/Pet/body" to="WorldRoot/Pet" method="_on_body_mouse_exited"]
