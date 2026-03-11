@@ -10,7 +10,7 @@ class_name CharacterStatus
 @export var debug_mode: bool = false
 @export var state_label: Label #调试用
 @export var state_cooldown_label: Label #调试用
-@export var state: CharacterStates.CharacterState = CharacterStates.CharacterState.WALKING
+@export var state: CharacterStates.CharacterState = CharacterStates.CharacterState.WALKING # 当前状态，默认 WALKING
 
 @export var state_defs: Array[CharacterStateDef] = []
 

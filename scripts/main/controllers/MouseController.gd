@@ -9,16 +9,15 @@ enum DragState { IDLE, PENDING, DRAGGING } # 拖拽状态枚举
 const DRAG_THRESHOLD := 6.0
 
 var _state := DragState.IDLE
-# var _drag_offset := Vector2.ZERO
 var _press_pos := Vector2.ZERO
 
 signal drag_started
-# signal dragged(global_pos: Vector2)
 signal drag_ended
 signal left_clicked
 signal right_clicked
 
 
+# 处理原生窗口的输入事件，检测拖拽和点击，并发出相应的信号给main.gd中的处理函数
 func _unhandled_input(event: InputEvent) -> void:
     if pet == null:
         return
@@ -27,7 +26,6 @@ func _unhandled_input(event: InputEvent) -> void:
         if event.pressed:
             _state = DragState.PENDING
             _press_pos = event.position
-            # _drag_offset = Vector2(get_window().position) - event.global_position #old: target.global_position - event.position
             get_viewport().set_input_as_handled()
         else:
             match _state:
@@ -55,6 +53,4 @@ func _unhandled_input(event: InputEvent) -> void:
                 get_viewport().set_input_as_handled()
         
         if _state == DragState.DRAGGING: # 原生拖窗进行中，这里不用做任何事
-            #var new_pos :Vector2 = event.global_position + _drag_offset
-            #dragged.emit(Vector2i(new_pos.round()))
             get_viewport().set_input_as_handled()

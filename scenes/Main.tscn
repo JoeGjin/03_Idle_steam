@@ -155,6 +155,15 @@ hook_switch = true
 unique_name_in_owner = true
 script = ExtResource("3_c01mt")
 
+[node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
+unique_name_in_owner = true
+script = ExtResource("19_2c4at")
+world_defs = Array[ExtResource("20_hq6as")]([ExtResource("21_kxyth"), ExtResource("22_dg70y")])
+
+[node name="SceneAnimator" type="Node" parent="Controllers" unique_id=1164431083]
+unique_name_in_owner = true
+script = ExtResource("10_yxlcp")
+
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 unique_name_in_owner = true
 script = ExtResource("2_rarhs")
@@ -168,10 +177,6 @@ state_defs = Array[ExtResource("6_1iba3")]([ExtResource("7_yxlcp"), ExtResource(
 unique_name_in_owner = true
 script = ExtResource("3_vcsgt")
 
-[node name="SceneAnimator" type="Node" parent="Controllers" unique_id=1164431083]
-unique_name_in_owner = true
-script = ExtResource("10_yxlcp")
-
 [node name="ColorPickController" type="Node" parent="Controllers" unique_id=1779784933]
 unique_name_in_owner = true
 script = ExtResource("17_dg70y")
@@ -180,11 +185,6 @@ script = ExtResource("17_dg70y")
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
 
-[node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
-unique_name_in_owner = true
-script = ExtResource("19_2c4at")
-world_defs = Array[ExtResource("20_hq6as")]([ExtResource("21_kxyth"), ExtResource("22_dg70y")])
-
 [node name="UIWindow" type="Window" parent="." unique_id=1159274380]
 unique_name_in_owner = true
 transparent_bg = true
@@ -192,7 +192,6 @@ oversampling_override = 1.0
 mode = 3
 initial_position = 1
 size = Vector2i(1920, 1080)
-visible = false
 transient = true
 exclusive = true
 borderless = true
@@ -217,6 +216,7 @@ grow_vertical = 2
 script = ExtResource("15_3p2gp")
 
 [node name="CollectionBook" type="Control" parent="UIWindow/UIRoot" unique_id=1940227150]
+unique_name_in_owner = true
 anchors_preset = 0
 
 [node name="Panel" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1842239225]

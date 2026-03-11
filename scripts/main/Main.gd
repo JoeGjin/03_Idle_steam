@@ -35,9 +35,6 @@ func _ready():
 	# 交叉分配目标
 	_cross_assign_targets()
 
-	# # 初始化场景动画器的初始速度（以便后续暂停/继续）
-	# scene_animator.setup_initial_speed()
-
 	# 连接信号（集中管理）
 	_connect_signals()
 
@@ -184,6 +181,7 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
 		CharacterStates.CharacterState.CHANGING:
 			scene_animator.continue_para_animation()
 		CharacterStates.CharacterState.TRANSITING:
+			## 已知问题，目前在播放动画后没有禁用交互，可能会导致在过渡动画播放过程中触发其他状态改变，进而重复调用过渡动画
 			scene_animator.stop_para_animation()
 			scene_animator.play_world_transition()
 			await get_tree().create_timer(duration).timeout
