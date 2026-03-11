@@ -343,6 +343,7 @@ unique_name_in_owner = true
 position = Vector2(676, 589)
 scale = Vector2(0.3, 0.3)
 script = ExtResource("33_2c4at")
+debug_mode = true
 
 [node name="DebugStatus" type="Label" parent="DebugRoot/DebugWorld/DebugPet" unique_id=2119181311]
 offset_left = -663.3334
