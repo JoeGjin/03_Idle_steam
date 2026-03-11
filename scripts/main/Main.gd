@@ -8,7 +8,7 @@ extends Node
 @onready var character_status: CharacterStatus = %CharacterStatus
 @onready var character_animator: CharacterAnimator = %CharacterAnimator
 @onready var scene_animator: SceneAnimator = %SceneAnimator
-@onready var color_pick_controller: ColorPickController = %ColorPickController
+# @onready var color_pick_controller: ColorPickController = %ColorPickController
 @onready var item_controller: ItemController = %ItemController
 @onready var world_assembler: WorldAssembler = %WorldAssembler
 
@@ -48,7 +48,7 @@ func _ready():
 	_setup_debug()
 
 	# 初始化颜色选择控制器
-	color_pick_controller.initialize()
+	# color_pick_controller.initialize()
 	
 	# 启动角色状态机，从 WALKING 状态开始
 	character_status.start(1) 
@@ -64,7 +64,7 @@ func _cross_assign_targets():
 	mouse_controller.pet = pet
 	character_status.pet = pet
 	character_animator.pet = pet
-	color_pick_controller.pet = pet
+	# color_pick_controller.pet = pet
 
 	# 将 frame 和 world_root 赋值给 window_controller
 	window_controller.world_root = world_root
@@ -82,11 +82,11 @@ func _cross_assign_targets():
 	scene_animator.transition_player = transition_player
 
 	# 将 ColorPicker 和 stay Timer 赋值给 color_pick_controller
-	color_pick_controller.color_picker = %ColorPicker
-	color_pick_controller.color_picker_stay_timer = %ColorPicker/stay
+	# color_pick_controller.color_picker = %ColorPicker
+	# color_pick_controller.color_picker_stay_timer = %ColorPicker/stay
 
 	# 将 item_slot 赋值给 item_controller
-	item_controller.item_slot = %ItemSlot
+	# item_controller.item_slot = %ItemSlot
 
 	# 将 world_root 赋值给 world_assembler
 	world_assembler.world_root = world_root
@@ -108,8 +108,8 @@ func _connect_signals() -> void:
 	character_status.state_changed.connect(_on_character_status_state_changed)
 	pet.mouse_entered_body.connect(_on_pet_mouse_entered_body)
 	pet.mouse_exited_body.connect(_on_pet_mouse_exited_body)
-	# 连接颜色选择信号到处理函数
-	color_pick_controller.color_chosen.connect(_on_color_pick_controller_color_chosen)
+	# # 连接颜色选择信号到处理函数
+	# color_pick_controller.color_chosen.connect(_on_color_pick_controller_color_chosen)
 	# 连接世界组装器的世界切换信号到处理函数
 	world_assembler.world_changed.connect(_on_world_assembler_world_changed)
 
@@ -150,12 +150,12 @@ func _on_mouse_controller_right_clicked():
 
 
 func _on_pet_mouse_entered_body():
-	# print("[PET] Mouse entered body")
-	color_pick_controller.color_picker_show(true)
+	print("[PET] Mouse entered body")
+	# color_pick_controller.color_picker_show(true)
 
 func _on_pet_mouse_exited_body():
-	# print("[PET] Mouse exited body")
-	color_pick_controller.color_picker_show(false)
+	print("[PET] Mouse exited body")
+	# color_pick_controller.color_picker_show(false)
 
 
 func _on_global_key_hook_any_key_pressed() -> void:

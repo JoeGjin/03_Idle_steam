@@ -25,7 +25,6 @@
 [ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/ui/UIRoot.gd" id="15_3p2gp"]
 [ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/jello_idle_15.png" id="15_nfivy"]
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
-[ext_resource type="Script" uid="uid://c0nnjmwue2ufr" path="res://scripts/main/controllers/ColorPickController.gd" id="17_dg70y"]
 [ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/ItemController.gd" id="18_pnhog"]
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
@@ -177,10 +176,6 @@ state_defs = Array[ExtResource("6_1iba3")]([ExtResource("7_yxlcp"), ExtResource(
 unique_name_in_owner = true
 script = ExtResource("3_vcsgt")
 
-[node name="ColorPickController" type="Node" parent="Controllers" unique_id=1779784933]
-unique_name_in_owner = true
-script = ExtResource("17_dg70y")
-
 [node name="ItemController" type="Node" parent="Controllers" unique_id=769164480]
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
@@ -192,6 +187,7 @@ oversampling_override = 1.0
 mode = 3
 initial_position = 1
 size = Vector2i(1920, 1080)
+visible = false
 transient = true
 exclusive = true
 borderless = true
@@ -313,68 +309,6 @@ scale = Vector2(10, 10)
 text = "status_cooldown"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="ColorPicker" type="Control" parent="WorldRoot/Pet" unique_id=1472757193]
-unique_name_in_owner = true
-layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -1044.0
-offset_top = -2000.6666
-offset_right = -1004.0
-offset_bottom = -1960.6666
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-
-[node name="stay" type="Timer" parent="WorldRoot/Pet/ColorPicker" unique_id=2016656052]
-
-[node name="hbox" type="HBoxContainer" parent="WorldRoot/Pet/ColorPicker" unique_id=41824199]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -450.0
-offset_right = 450.0
-offset_bottom = 300.0
-grow_horizontal = 2
-theme_override_constants/separation = 50
-alignment = 1
-
-[node name="purple" type="Button" parent="WorldRoot/Pet/ColorPicker/hbox" unique_id=696807687]
-custom_minimum_size = Vector2(300, 300)
-layout_mode = 2
-mouse_filter = 1
-theme_override_colors/font_color = Color(0.6117647, 0, 0.83137256, 1)
-theme_override_font_sizes/font_size = 150
-text = "O"
-
-[node name="green" type="Button" parent="WorldRoot/Pet/ColorPicker/hbox" unique_id=1391347993]
-custom_minimum_size = Vector2(300, 300)
-layout_mode = 2
-mouse_filter = 1
-theme_override_colors/font_color = Color(0.5176471, 0.84705883, 0.3647059, 1)
-theme_override_font_sizes/font_size = 150
-text = "O"
-
-[node name="ItemSlot" type="TextureRect" parent="WorldRoot/Pet" unique_id=1005270995]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(800, 800)
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -1274.0
-offset_top = -1504.0
-offset_right = -774.0
-offset_bottom = -1004.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
 
 [node name="body" type="Area2D" parent="WorldRoot/Pet" unique_id=815688141]
 
