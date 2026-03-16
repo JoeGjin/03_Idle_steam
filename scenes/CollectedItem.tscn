@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://cmxphyeprq4qo"]
+
+[ext_resource type="Texture2D" uid="uid://cgexe3cvtbyi3" path="res://assets/uiroot/stickers/2.png" id="1_gjp07"]
+[ext_resource type="Script" uid="uid://bknfrhchiu35q" path="res://scripts/main/ui/CollectedItem.gd" id="1_iw8ne"]
+
+[node name="CollectedItem" type="Control" unique_id=1376733076]
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_iw8ne")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=841571565]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_gjp07")
+expand_mode = 1
+stretch_mode = 5

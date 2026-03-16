@@ -12,6 +12,8 @@ func _ready():
     # 连接退出按钮的信号
     _exit_button.pressed.connect(_on_exit_button_pressed)
 
+    show()
+
 
 func _on_exit_button_pressed():
     get_tree().quit()

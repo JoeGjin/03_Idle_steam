@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dxbja5dphnhc"
-path="res://.godot/imported/jello_idle_13.png-cc447ddf82c76d218899e9852a01a004.ctex"
+uid="uid://17h3l5wfpef2"
+path="res://.godot/imported/1.png-e4027e9b5f385ce666e8185f288530d2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/worldroot/pet/jello_idle_13.png"
-dest_files=["res://.godot/imported/jello_idle_13.png-cc447ddf82c76d218899e9852a01a004.ctex"]
+source_file="res://assets/uiroot/stickers/1.png"
+dest_files=["res://.godot/imported/1.png-e4027e9b5f385ce666e8185f288530d2.ctex"]
 
 [params]
 

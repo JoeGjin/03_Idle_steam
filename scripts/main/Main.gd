@@ -18,8 +18,10 @@ extends Node
 
 @onready var ui_window: Window = %UIWindow
 @onready var ui_root: Control = %UIRoot
+@onready var letter: Control = %Letter
 
-@onready var debug_root: Control = %DebugRoot
+@onready var debug_world: Node2D = %DebugWorld
+
 
 const DRAW_SCALE: Vector2 = Vector2(0.5, 0.5) # 预设的窗口缩放级别，供调试使用
 
@@ -78,7 +80,7 @@ func _cross_assign_targets():
 func _draw_scale_setup():
 	# 可选：根据需要调整 world_root 的缩放级别
 	world_root.scale = DRAW_SCALE
-	debug_root.scale = DRAW_SCALE
+	debug_world.scale = DRAW_SCALE
 
 
 func _connect_signals() -> void:
@@ -94,6 +96,9 @@ func _connect_signals() -> void:
 	
 	# 连接世界组装器的世界切换信号到处理函数
 	world_assembler.world_changed.connect(_on_world_assembler_world_changed)
+
+	# 连接 letter 的 sent 信号到处理函数
+	letter.sent.connect(_on_letter_sent)
 
 
 func _on_mouse_controller_drag_started():
@@ -112,7 +117,7 @@ func _on_mouse_controller_left_clicked():
 func _on_mouse_controller_right_clicked():
 	print("[MOUSE] Right clicked")
 	character_animator._play_click_scale_anim()
-	ui_window.show()
+	ui_window.open_uiwindow()
 
 
 func _on_pet_mouse_entered_body():
@@ -157,3 +162,15 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
 func _on_world_assembler_world_changed(new_world_id: int) -> void:
 	print("[WORLD ASSEMBLER] World changed to ID: %d" % new_world_id)
 	scene_animator.setup_initial_speed()
+
+
+
+func _on_letter_sent() -> void:
+	print("[LETTER] SENT")
+	character_status.start(CharacterStates.CharacterState.GAZING)
+	 # 临时动画 演示：钻石从天而降，心形出现
+	pet.get_node("diamond").drop_letter()
+	await get_tree().create_timer(5.0).timeout
+	pet.get_node("heart").show()
+	await get_tree().create_timer(2.0).timeout
+	pet.get_node("heart").hide()

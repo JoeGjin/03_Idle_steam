@@ -14,26 +14,32 @@
 [ext_resource type="Resource" uid="uid://bunbgarelpvim" path="res://scripts/main/controllers/status/defs/RECORDING.tres" id="9_gsxep"]
 [ext_resource type="Resource" uid="uid://d1tqeypv6fcen" path="res://scripts/main/controllers/status/defs/PICKING.tres" id="10_v0vrg"]
 [ext_resource type="Script" uid="uid://c27nxw0ys71yi" path="res://scripts/main/controllers/SceneAnimator.gd" id="10_yxlcp"]
-[ext_resource type="Texture2D" uid="uid://b13mwgbw0jqny" path="res://assets/worldroot/pet/jello_idle_11.png" id="11_3p2gp"]
+[ext_resource type="Texture2D" uid="uid://b13mwgbw0jqny" path="res://assets/worldroot/pet/animation/jello_idle_11.png" id="11_3p2gp"]
 [ext_resource type="Resource" uid="uid://b881gwurv7p4o" path="res://scripts/main/controllers/status/defs/GAZING.tres" id="11_dg70y"]
-[ext_resource type="Texture2D" uid="uid://vq3enucy1fiu" path="res://assets/worldroot/pet/jello_idle_12.png" id="12_cvmbd"]
+[ext_resource type="Texture2D" uid="uid://vq3enucy1fiu" path="res://assets/worldroot/pet/animation/jello_idle_12.png" id="12_cvmbd"]
 [ext_resource type="Resource" uid="uid://bxm3ppkd7o4h6" path="res://scripts/main/controllers/status/defs/GREETING.tres" id="12_pnhog"]
 [ext_resource type="Resource" uid="uid://iqqx3d6rqw3g" path="res://scripts/main/controllers/status/defs/CHANGING.tres" id="13_2c4at"]
-[ext_resource type="Texture2D" uid="uid://dxbja5dphnhc" path="res://assets/worldroot/pet/jello_idle_13.png" id="13_ft6cd"]
-[ext_resource type="Texture2D" uid="uid://b7atgb2q1jm7a" path="res://assets/worldroot/pet/jello_idle_14.png" id="14_bb450"]
+[ext_resource type="Texture2D" uid="uid://dxbja5dphnhc" path="res://assets/worldroot/pet/animation/jello_idle_13.png" id="13_ft6cd"]
+[ext_resource type="Texture2D" uid="uid://b7atgb2q1jm7a" path="res://assets/worldroot/pet/animation/jello_idle_14.png" id="14_bb450"]
 [ext_resource type="Resource" uid="uid://b02hwfcvjw2lj" path="res://scripts/main/controllers/status/defs/TRANSITING.tres" id="14_g6wdg"]
 [ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/ui/UIRoot.gd" id="15_3p2gp"]
-[ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/jello_idle_15.png" id="15_nfivy"]
+[ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/animation/jello_idle_15.png" id="15_nfivy"]
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
 [ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/ItemController.gd" id="18_pnhog"]
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
 [ext_resource type="Resource" uid="uid://p0e54pntafbv" path="res://scripts/main/controllers/world/defs/0.tres" id="21_kxyth"]
 [ext_resource type="Resource" uid="uid://cmlc3rdvf1drp" path="res://scripts/main/controllers/world/defs/1.tres" id="22_dg70y"]
+[ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
+[ext_resource type="Script" uid="uid://cpqxu882jrdpq" path="res://scripts/main/ui/WorkBoard.gd" id="27_cobve"]
 [ext_resource type="Script" uid="uid://dadra0l3mlosi" path="res://scripts/main/world/Pet.gd" id="30_v0vrg"]
+[ext_resource type="Script" uid="uid://yorns460rfis" path="res://scripts/main/ui/Letter.gd" id="31_8b871"]
+[ext_resource type="Script" uid="uid://dmq4phw1im2m7" path="res://scripts/main/debug/DebugUI.gd" id="32_pdwbg"]
 [ext_resource type="Script" uid="uid://dvy6ipmh42awj" path="res://scripts/main/debug/DebugPet.gd" id="33_2c4at"]
-[ext_resource type="Script" uid="uid://dd6bk7blu32eb" path="res://scripts/main/debug/DebugRoot.gd" id="33_g6wdg"]
 [ext_resource type="Texture2D" uid="uid://d0wxe8nsemp83" path="res://assets/worldroot/transition.png" id="33_pnhog"]
+[ext_resource type="Script" uid="uid://ckk37gmmb4wxy" path="res://scripts/main/world/diamond.gd" id="36_cmqll"]
+[ext_resource type="Texture2D" uid="uid://dtnbqi1tuknic" path="res://assets/worldroot/pet/test_heart.png" id="37_8cp6k"]
+[ext_resource type="Script" uid="uid://dqilwmdefk6v" path="res://scripts/main/debug/DebugWorld.gd" id="40_8b871"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -185,8 +191,8 @@ script = ExtResource("18_pnhog")
 unique_name_in_owner = true
 transparent_bg = true
 oversampling_override = 1.0
-mode = 3
-initial_position = 1
+mode = 2
+initial_position = 2
 size = Vector2i(1920, 1080)
 visible = false
 transient = true
@@ -199,6 +205,46 @@ script = ExtResource("6_ft6cd")
 [node name="UIRoot" type="Control" parent="UIWindow" unique_id=955692246]
 unique_name_in_owner = true
 layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("15_3p2gp")
+
+[node name="Back" type="ColorRect" parent="UIWindow/UIRoot" unique_id=203376277]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+metadata/_edit_lock_ = true
+
+[node name="CollectionBook" type="Control" parent="UIWindow/UIRoot" unique_id=1940227150]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Book" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1842239225]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("24_8cp6k")
+
+[node name="TextureRect" type="TextureRect" parent="UIWindow/UIRoot/CollectionBook/Book" unique_id=568253955]
+layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -206,36 +252,118 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -960.0
 offset_top = -540.0
-offset_right = 960.0
-offset_bottom = 540.0
+offset_right = 2880.0
+offset_bottom = 1620.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("15_3p2gp")
-
-[node name="CollectionBook" type="Control" parent="UIWindow/UIRoot" unique_id=1940227150]
-unique_name_in_owner = true
-anchors_preset = 0
-
-[node name="Panel" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1842239225]
-anchors_preset = 0
-
-[node name="Background" type="TextureRect" parent="UIWindow/UIRoot/CollectionBook/Panel" unique_id=568253955]
-layout_mode = 0
-offset_right = 3840.0
-offset_bottom = 2160.0
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("16_cvmbd")
 
-[node name="Buttons" type="Control" parent="UIWindow/UIRoot/CollectionBook/Panel" unique_id=1499936294]
-anchors_preset = 0
+[node name="Content" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=806666248]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 69.0
+offset_top = -320.0
+offset_right = 535.0
+offset_bottom = 322.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Close" type="Button" parent="UIWindow/UIRoot/CollectionBook/Panel/Buttons" unique_id=1242206048]
+[node name="ScrollContainer" type="ScrollContainer" parent="UIWindow/UIRoot/CollectionBook/Content" unique_id=1751766512]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="GridContainer" parent="UIWindow/UIRoot/CollectionBook/Content/ScrollContainer" unique_id=1602810836]
+layout_mode = 2
+columns = 3
+
+[node name="Letter" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=884496018]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -492.0
+offset_top = -337.0
+offset_right = -47.0
+offset_bottom = 153.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(224, 252)
+script = ExtResource("31_8b871")
+
+[node name="WorkBoard" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=212884276]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("27_cobve")
+
+[node name="Buttons" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1499936294]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CloseUI" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=1242206048]
+unique_name_in_owner = true
 layout_mode = 0
-offset_left = 1445.0
-offset_top = 185.0
-offset_right = 1495.0
-offset_bottom = 239.0
+offset_left = -532.0
+offset_top = -406.0
+offset_right = -482.0
+offset_bottom = -352.0
 text = "X"
+
+[node name="CropAndSend" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=1448343863]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = -154.0
+offset_top = 168.0
+offset_right = -62.0
+offset_bottom = 222.0
+text = "Send Letter"
+
+[node name="DebugUI" type="Control" parent="UIWindow" unique_id=193758564]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("32_pdwbg")
+metadata/_edit_lock_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UIWindow/DebugUI" unique_id=1480912861]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -215.5
+offset_right = 215.5
+offset_bottom = 77.0
+grow_horizontal = 2
+
+[node name="AddRandomItem" type="Button" parent="UIWindow/DebugUI/VBoxContainer" unique_id=1453660243]
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Add random item"
 
 [node name="WorldRoot" type="Node2D" parent="." unique_id=384608177]
 unique_name_in_owner = true
@@ -297,6 +425,21 @@ script = ExtResource("30_v0vrg")
 position = Vector2(0, -160)
 shape = SubResource("CapsuleShape2D_gsxep")
 
+[node name="diamond" type="Node2D" parent="WorldRoot/Pet" unique_id=138392431]
+visible = false
+position = Vector2(0, -2500)
+script = ExtResource("36_cmqll")
+
+[node name="Polygon2D" type="Polygon2D" parent="WorldRoot/Pet/diamond" unique_id=922637094]
+position = Vector2(-9.999918, 3.333496)
+offset = Vector2(163.33325, 2406.6665)
+polygon = PackedVector2Array(-153.33325, -2676.6665, -350, -2396.6665, -153.33325, -2123.3333, 30, -2396.6665)
+
+[node name="heart" type="Sprite2D" parent="WorldRoot/Pet" unique_id=2016059863]
+visible = false
+position = Vector2(860, -576.6666)
+texture = ExtResource("37_8cp6k")
+
 [node name="Foreground" type="Parallax2D" parent="WorldRoot" unique_id=605308785]
 unique_name_in_owner = true
 repeat_size = Vector2(1920, 0)
@@ -327,25 +470,18 @@ offset_right = 944.0
 offset_bottom = -438.0
 text = "X"
 
-[node name="DebugRoot" type="Control" parent="." unique_id=1634044007]
+[node name="DebugWorld" type="Node2D" parent="." unique_id=121059888]
 unique_name_in_owner = true
-layout_mode = 3
-anchors_preset = 0
-script = ExtResource("33_g6wdg")
+script = ExtResource("40_8b871")
 
-[node name="DebugUI" type="Control" parent="DebugRoot" unique_id=1038599377]
-anchors_preset = 0
-
-[node name="DebugWorld" type="Node2D" parent="DebugRoot" unique_id=121059888]
-
-[node name="DebugPet" type="Node2D" parent="DebugRoot/DebugWorld" unique_id=1912209357]
+[node name="DebugPet" type="Node2D" parent="DebugWorld" unique_id=1912209357]
 unique_name_in_owner = true
 position = Vector2(676, 589)
 scale = Vector2(0.3, 0.3)
 script = ExtResource("33_2c4at")
 debug_mode = true
 
-[node name="DebugStatus" type="Label" parent="DebugRoot/DebugWorld/DebugPet" unique_id=2119181311]
+[node name="DebugStatus" type="Label" parent="DebugWorld/DebugPet" unique_id=2119181311]
 offset_left = -663.3334
 offset_top = -1666.6667
 offset_right = -534.3334
@@ -355,7 +491,7 @@ text = "character_status"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DebugCooldown" type="Label" parent="DebugRoot/DebugWorld/DebugPet" unique_id=337955523]
+[node name="DebugCooldown" type="Label" parent="DebugWorld/DebugPet" unique_id=337955523]
 offset_left = -663.3334
 offset_top = -1826.6666
 offset_right = -533.3334
@@ -365,5 +501,7 @@ text = "status_cooldown"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[connection signal="pressed" from="UIWindow/UIRoot/CollectionBook/Buttons/CropAndSend" to="UIWindow/UIRoot/CollectionBook/Letter" method="_on_crop_and_send_pressed"]
+[connection signal="pressed" from="UIWindow/DebugUI/VBoxContainer/AddRandomItem" to="UIWindow/DebugUI" method="_on_add_random_item_pressed"]
 [connection signal="mouse_entered" from="WorldRoot/Pet/body" to="WorldRoot/Pet" method="_on_body_mouse_entered"]
 [connection signal="mouse_exited" from="WorldRoot/Pet/body" to="WorldRoot/Pet" method="_on_body_mouse_exited"]

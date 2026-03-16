@@ -20,7 +20,11 @@ var _foreground: Parallax2D
 var _foreground_sprite: Sprite2D
 var _world_player: AnimationPlayer
 
+
 signal world_changed(new_world_id: int)
+
+
+
 
 func initiate_assembler() -> void:
 	# print("[WorldAssembler] Initializing assembler...")
