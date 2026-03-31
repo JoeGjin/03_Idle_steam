@@ -18,6 +18,7 @@ config/name="03_Idle_steam"
 config/tags=PackedStringArray("local")
 run/main_scene="uid://dstqc5agwgox3"
 config/features=PackedStringArray("4.6", "GL Compatibility")
+run/max_fps=90
 config/icon="res://assets/icon.svg"
 
 [autoload]

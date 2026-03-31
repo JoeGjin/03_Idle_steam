@@ -52,17 +52,17 @@ Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
-shader_parameter/center_u = 0.4490000213275
-shader_parameter/center_v = 0.5090000241775
-shader_parameter/radius_u = 0.358000017005
-shader_parameter/radius_v = 0.450000021375
-shader_parameter/feather_px = 0.0
-shader_parameter/smoke_enable = 0.999999977648
-shader_parameter/smoke_band_px = 79.10000117868492
-shader_parameter/smoke_amp_px = 74.80000111460976
-shader_parameter/smoke_scale = 11.40000015497248
-shader_parameter/smoke_speed_x = 0.13600010146000008
-shader_parameter/smoke_speed_y = -0.07999990880000007
+shader_parameter/center_u = 0.482000022895
+shader_parameter/center_v = 0.50000002375
+shader_parameter/radius_u = 0.342000016245
+shader_parameter/radius_v = 0.426000020235
+shader_parameter/feather_px = 15.000000223518
+shader_parameter/smoke_enable = 0.47999998927104
+shader_parameter/smoke_band_px = 38.20000056922584
+shader_parameter/smoke_amp_px = 69.20000103116304
+shader_parameter/smoke_scale = 18.20000025630064
+shader_parameter/smoke_speed_x = 0.33800011105499994
+shader_parameter/smoke_speed_y = -0.49199992836999984
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1nqs0"]
 animations = [{
@@ -96,7 +96,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Midground/m:scale:y")
+tracks/0/path = NodePath("../Land/Main:scale:y")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -125,7 +125,7 @@ loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Midground/m:scale:y")
+tracks/0/path = NodePath("../Land/Main:scale:y")
 tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -399,31 +399,45 @@ unique_name_in_owner = true
 repeat_size = Vector2(1916, 0)
 autoscroll = Vector2(-10, 0)
 
-[node name="s" type="Sprite2D" parent="MaskGroup/WorldRoot/Sky" unique_id=1813847154]
+[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Sky" unique_id=1813847154]
 scale = Vector2(0.5, 0.5)
 
-[node name="Cloud" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=544529230]
+[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Sky" unique_id=1876343497]
+scale = Vector2(0.5, 0.5)
+
+[node name="Moon" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=544529230]
 unique_name_in_owner = true
 repeat_size = Vector2(1916, 0)
 autoscroll = Vector2(-20, 0)
 
-[node name="c" type="Sprite2D" parent="MaskGroup/WorldRoot/Cloud" unique_id=355737553]
+[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Moon" unique_id=355737553]
 scale = Vector2(0.5, 0.5)
 
-[node name="Background" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=384608179]
+[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Moon" unique_id=905714890]
+scale = Vector2(0.5, 0.5)
+
+[node name="Sea" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=384608179]
 unique_name_in_owner = true
 repeat_size = Vector2(1920, 0)
 autoscroll = Vector2(-75, 0)
 
-[node name="b" type="Sprite2D" parent="MaskGroup/WorldRoot/Background" unique_id=1308681423]
+[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Sea" unique_id=1308681423]
 scale = Vector2(0.5, 0.5)
 
-[node name="Midground" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=1013858590]
+[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Sea" unique_id=236318018]
+scale = Vector2(0.5, 0.5)
+
+[node name="Land" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=1013858590]
 unique_name_in_owner = true
 repeat_size = Vector2(1920, 0)
 autoscroll = Vector2(-30, 0)
 
-[node name="m" type="Sprite2D" parent="MaskGroup/WorldRoot/Midground" unique_id=1425775975]
+[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Land" unique_id=1425775975]
+position = Vector2(0, -72)
+scale = Vector2(0.5, 0.5)
+offset = Vector2(0, 144)
+
+[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Land" unique_id=569461966]
 position = Vector2(0, -72)
 scale = Vector2(0.5, 0.5)
 offset = Vector2(0, 144)
@@ -458,12 +472,12 @@ visible = false
 position = Vector2(860, -576.6666)
 texture = ExtResource("37_8cp6k")
 
-[node name="Foreground" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=605308785]
+[node name="Light" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=605308785]
 unique_name_in_owner = true
 repeat_size = Vector2(1920, 0)
 autoscroll = Vector2(-150, 0)
 
-[node name="f" type="Sprite2D" parent="MaskGroup/WorldRoot/Foreground" unique_id=1348136509]
+[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Light" unique_id=1348136509]
 position = Vector2(1, 113)
 scale = Vector2(0.5, 0.5)
 
@@ -474,7 +488,7 @@ texture = ExtResource("33_pnhog")
 
 [node name="WorldPlayer" type="AnimationPlayer" parent="MaskGroup/WorldRoot" unique_id=1986727739]
 unique_name_in_owner = true
-root_node = NodePath("../Background")
+root_node = NodePath("../Sea")
 libraries/ = SubResource("AnimationLibrary_xa025")
 
 [node name="TransitionPlayer" type="AnimationPlayer" parent="MaskGroup/WorldRoot" unique_id=787434035]
