@@ -1,42 +1,53 @@
+# 负责组装好的世界进行动画控制，提供暂停和继续动画的接口
+
 extends Node
 
 class_name SceneAnimator
 
-@export var sky : Parallax2D
-@export var cloud : Parallax2D
-@export var background : Parallax2D
-@export var midground : Parallax2D
-@export var foreground : Parallax2D
-@export var transition_player: AnimationPlayer
+@export var world_root: Node2D
+@export var world_defs: Array[WorldDef] = []
+@export var current_world_id: int = 0
+
+var _sky: Parallax2D
+var _moon: Parallax2D
+var _far_1: Node2D
+var _far_2: Node2D
+var _sea: Parallax2D
+var _mid_1: Node2D
+var _mid_2: Node2D
+var _land: Parallax2D
+var _front_1: Node2D
+var _front_2: Node2D
+var _light: Parallax2D
+
+var _world_player: AnimationPlayer
 
 
-var _background_speed: Vector2
-var _midground_speed: Vector2
-var _foreground_speed: Vector2
-var _sky_speed: Vector2
-var _cloud_speed: Vector2
+func initiate() -> void:
+	return
+	_sky = world_root.get_node("%Sky")
+	_moon = world_root.get_node("%Moon")
+	_far_1 = world_root.get_node("%Far_1")
+	_far_2 = world_root.get_node("%Far_2")
+	_sea = world_root.get_node("%Sea")
+	_mid_1 = world_root.get_node("%Mid_1")
+	_mid_2 = world_root.get_node("%Mid_2")
+	_land = world_root.get_node("%Land")
+	_front_1 = world_root.get_node("%Front_1")
+	_front_2 = world_root.get_node("%Front_2")
+	_light = world_root.get_node("%Light")
+	_world_player = world_root.get_node("%WorldPlayer")
 
 
 func setup_initial_speed():
-	_background_speed = background.autoscroll
-	_midground_speed = midground.autoscroll
-	_foreground_speed = foreground.autoscroll
-	_sky_speed = sky.autoscroll
-	_cloud_speed = cloud.autoscroll
+	pass
+	# _sky_speed = sky.autoscroll
 
 func stop_para_animation() -> void:
-	background.autoscroll = Vector2.ZERO
-	midground.autoscroll = Vector2.ZERO
-	foreground.autoscroll = Vector2.ZERO
-	sky.autoscroll = Vector2.ZERO
-	cloud.autoscroll = _cloud_speed * 0.5 # 云层减速到原来的一半，保持一定的动态感
+	pass
+	# sky.autoscroll = Vector2.ZERO
 
 func continue_para_animation() -> void:
-	background.autoscroll = _background_speed
-	midground.autoscroll = _midground_speed
-	foreground.autoscroll = _foreground_speed
-	sky.autoscroll = _sky_speed
-	cloud.autoscroll = _cloud_speed
+	pass
+	# sky.autoscroll = _sky_speed
 
-func play_world_transition() -> void:
-	transition_player.play("Transition")

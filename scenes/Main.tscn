@@ -13,34 +13,41 @@
 [ext_resource type="Resource" uid="uid://dbq0jd6o6qpcp" path="res://scripts/main/controllers/status/defs/WALKING.tres" id="8_ebg2g"]
 [ext_resource type="Resource" uid="uid://bunbgarelpvim" path="res://scripts/main/controllers/status/defs/RECORDING.tres" id="9_gsxep"]
 [ext_resource type="Resource" uid="uid://d1tqeypv6fcen" path="res://scripts/main/controllers/status/defs/PICKING.tres" id="10_v0vrg"]
-[ext_resource type="Script" uid="uid://c27nxw0ys71yi" path="res://scripts/main/controllers/SceneAnimator.gd" id="10_yxlcp"]
-[ext_resource type="Texture2D" uid="uid://b13mwgbw0jqny" path="res://assets/worldroot/pet/animation/jello_idle_11.png" id="11_3p2gp"]
 [ext_resource type="Resource" uid="uid://b881gwurv7p4o" path="res://scripts/main/controllers/status/defs/GAZING.tres" id="11_dg70y"]
-[ext_resource type="Texture2D" uid="uid://vq3enucy1fiu" path="res://assets/worldroot/pet/animation/jello_idle_12.png" id="12_cvmbd"]
 [ext_resource type="Resource" uid="uid://bxm3ppkd7o4h6" path="res://scripts/main/controllers/status/defs/GREETING.tres" id="12_pnhog"]
 [ext_resource type="Resource" uid="uid://iqqx3d6rqw3g" path="res://scripts/main/controllers/status/defs/CHANGING.tres" id="13_2c4at"]
-[ext_resource type="Texture2D" uid="uid://dxbja5dphnhc" path="res://assets/worldroot/pet/animation/jello_idle_13.png" id="13_ft6cd"]
-[ext_resource type="Texture2D" uid="uid://b7atgb2q1jm7a" path="res://assets/worldroot/pet/animation/jello_idle_14.png" id="14_bb450"]
 [ext_resource type="Resource" uid="uid://b02hwfcvjw2lj" path="res://scripts/main/controllers/status/defs/TRANSITING.tres" id="14_g6wdg"]
 [ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/ui/UIRoot.gd" id="15_3p2gp"]
-[ext_resource type="Texture2D" uid="uid://dvuwum7kdjpnk" path="res://assets/worldroot/pet/animation/jello_idle_15.png" id="15_nfivy"]
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
 [ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/ItemController.gd" id="18_pnhog"]
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
-[ext_resource type="Resource" uid="uid://p0e54pntafbv" path="res://scripts/main/controllers/world/defs/0.tres" id="21_kxyth"]
-[ext_resource type="Resource" uid="uid://cmlc3rdvf1drp" path="res://scripts/main/controllers/world/defs/1.tres" id="22_dg70y"]
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
 [ext_resource type="Script" uid="uid://cpqxu882jrdpq" path="res://scripts/main/ui/WorkBoard.gd" id="27_cobve"]
 [ext_resource type="Shader" uid="uid://xb3fgjt3mkth" path="res://shaders/MaskGroup.gdshader" id="29_8b871"]
+[ext_resource type="Texture2D" uid="uid://doukskhlhm4kw" path="res://assets/worldroot/world/2/2_sky_main.png" id="30_8cp6k"]
 [ext_resource type="Script" uid="uid://dadra0l3mlosi" path="res://scripts/main/world/Pet.gd" id="30_v0vrg"]
 [ext_resource type="Script" uid="uid://yorns460rfis" path="res://scripts/main/ui/Letter.gd" id="31_8b871"]
+[ext_resource type="Texture2D" uid="uid://vwa5nnnxiosi" path="res://assets/worldroot/world/2/2_moon_main.png" id="31_pdwbg"]
+[ext_resource type="Texture2D" uid="uid://4ww6mdrl7hfb" path="res://assets/worldroot/world/2/2_sea_main.png" id="32_5grtr"]
 [ext_resource type="Script" uid="uid://dmq4phw1im2m7" path="res://scripts/main/debug/DebugUI.gd" id="32_pdwbg"]
+[ext_resource type="Texture2D" uid="uid://bqfmtxxanoc5d" path="res://assets/worldroot/world/2/2_land_main.png" id="32_vua0o"]
 [ext_resource type="Script" uid="uid://dvy6ipmh42awj" path="res://scripts/main/debug/DebugPet.gd" id="33_2c4at"]
-[ext_resource type="Texture2D" uid="uid://d0wxe8nsemp83" path="res://assets/worldroot/transition.png" id="33_pnhog"]
 [ext_resource type="Script" uid="uid://ckk37gmmb4wxy" path="res://scripts/main/world/diamond.gd" id="36_cmqll"]
 [ext_resource type="Texture2D" uid="uid://dtnbqi1tuknic" path="res://assets/worldroot/pet/test_heart.png" id="37_8cp6k"]
 [ext_resource type="Script" uid="uid://dqilwmdefk6v" path="res://scripts/main/debug/DebugWorld.gd" id="40_8b871"]
+[ext_resource type="Texture2D" uid="uid://bqtx5cfteo7n8" path="res://assets/worldroot/pet/Pet.png" id="42_s3wmy"]
+
+[sub_resource type="Resource" id="Resource_o1tg2"]
+script = ExtResource("20_hq6as")
+name = "beach"
+metadata/_custom_type_script = "uid://em6c7og411w6"
+
+[sub_resource type="Resource" id="Resource_hyu0y"]
+script = ExtResource("20_hq6as")
+id = 1
+name = "mountain"
+metadata/_custom_type_script = "uid://em6c7og411w6"
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -68,19 +75,7 @@ shader_parameter/smoke_speed_y = -0.49199992836999984
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("11_3p2gp")
-}, {
-"duration": 1.0,
-"texture": ExtResource("12_cvmbd")
-}, {
-"duration": 1.0,
-"texture": ExtResource("13_ft6cd")
-}, {
-"duration": 1.0,
-"texture": ExtResource("14_bb450")
-}, {
-"duration": 1.0,
-"texture": ExtResource("15_nfivy")
+"texture": ExtResource("42_s3wmy")
 }],
 "loop": true,
 "name": &"default",
@@ -104,18 +99,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [0.5]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("../Transition:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1384, 920)]
 }
 
 [sub_resource type="Animation" id="Animation_2ofn6"]
@@ -141,27 +124,6 @@ _data = {
 &"World_0": SubResource("Animation_2ofn6")
 }
 
-[sub_resource type="Animation" id="Animation_pnhog"]
-resource_name = "Transition"
-length = 3.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Transition:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1, 3),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(1384, 920), Vector2(1384, 920), Vector2(-1252, -1328)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_2c4at"]
-_data = {
-&"Transition": SubResource("Animation_pnhog")
-}
-
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
 
@@ -179,11 +141,7 @@ script = ExtResource("3_c01mt")
 [node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
-world_defs = Array[ExtResource("20_hq6as")]([ExtResource("21_kxyth"), ExtResource("22_dg70y")])
-
-[node name="SceneAnimator" type="Node" parent="Controllers" unique_id=1164431083]
-unique_name_in_owner = true
-script = ExtResource("10_yxlcp")
+world_defs = Array[ExtResource("20_hq6as")]([SubResource("Resource_o1tg2"), SubResource("Resource_hyu0y")])
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 unique_name_in_owner = true
@@ -396,70 +354,80 @@ metadata/_edit_lock_ = true
 
 [node name="Sky" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=747805663]
 unique_name_in_owner = true
-repeat_size = Vector2(1916, 0)
-autoscroll = Vector2(-10, 0)
 
 [node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Sky" unique_id=1813847154]
 scale = Vector2(0.5, 0.5)
+texture = ExtResource("30_8cp6k")
 
 [node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Sky" unique_id=1876343497]
 scale = Vector2(0.5, 0.5)
 
 [node name="Moon" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=544529230]
 unique_name_in_owner = true
-repeat_size = Vector2(1916, 0)
-autoscroll = Vector2(-20, 0)
 
 [node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Moon" unique_id=355737553]
 scale = Vector2(0.5, 0.5)
+texture = ExtResource("31_pdwbg")
 
 [node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Moon" unique_id=905714890]
 scale = Vector2(0.5, 0.5)
 
+[node name="Far_1" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=236166638]
+unique_name_in_owner = true
+
+[node name="Far_2" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=1069212001]
+unique_name_in_owner = true
+
+[node name="Land" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=1013858590]
+unique_name_in_owner = true
+repeat_size = Vector2(909, 1)
+autoscroll = Vector2(-20, 0)
+
+[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Land" unique_id=1425775975]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("32_vua0o")
+offset = Vector2(0, 144)
+
+[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Land" unique_id=569461966]
+scale = Vector2(0.5, 0.5)
+offset = Vector2(0, 144)
+
 [node name="Sea" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=384608179]
 unique_name_in_owner = true
-repeat_size = Vector2(1920, 0)
-autoscroll = Vector2(-75, 0)
+repeat_size = Vector2(1080, 0)
+autoscroll = Vector2(-40, 0)
 
 [node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Sea" unique_id=1308681423]
 scale = Vector2(0.5, 0.5)
+texture = ExtResource("32_5grtr")
 
 [node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Sea" unique_id=236318018]
 scale = Vector2(0.5, 0.5)
 
-[node name="Land" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=1013858590]
+[node name="Mid_1" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=473401516]
 unique_name_in_owner = true
-repeat_size = Vector2(1920, 0)
-autoscroll = Vector2(-30, 0)
 
-[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Land" unique_id=1425775975]
-position = Vector2(0, -72)
-scale = Vector2(0.5, 0.5)
-offset = Vector2(0, 144)
-
-[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Land" unique_id=569461966]
-position = Vector2(0, -72)
-scale = Vector2(0.5, 0.5)
-offset = Vector2(0, 144)
+[node name="Mid_2" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=183900339]
+unique_name_in_owner = true
 
 [node name="Pet" type="AnimatedSprite2D" parent="MaskGroup/WorldRoot" unique_id=390694917]
 unique_name_in_owner = true
-position = Vector2(-284, 49)
-scale = Vector2(0.3, 0.3)
+scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
 frame_progress = 0.3128155
 script = ExtResource("30_v0vrg")
 
 [node name="body" type="Area2D" parent="MaskGroup/WorldRoot/Pet" unique_id=815688141]
+visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="MaskGroup/WorldRoot/Pet/body" unique_id=952050975]
 position = Vector2(0, -160)
 shape = SubResource("CapsuleShape2D_gsxep")
 
 [node name="diamond" type="Node2D" parent="MaskGroup/WorldRoot/Pet" unique_id=138392431]
-visible = false
 position = Vector2(0, -2500)
+scale = Vector2(0.5, 0.5)
 script = ExtResource("36_cmqll")
 
 [node name="Polygon2D" type="Polygon2D" parent="MaskGroup/WorldRoot/Pet/diamond" unique_id=922637094]
@@ -472,6 +440,12 @@ visible = false
 position = Vector2(860, -576.6666)
 texture = ExtResource("37_8cp6k")
 
+[node name="Front_1" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=2075061201]
+unique_name_in_owner = true
+
+[node name="Front_2" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=101058712]
+unique_name_in_owner = true
+
 [node name="Light" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=605308785]
 unique_name_in_owner = true
 repeat_size = Vector2(1920, 0)
@@ -481,19 +455,10 @@ autoscroll = Vector2(-150, 0)
 position = Vector2(1, 113)
 scale = Vector2(0.5, 0.5)
 
-[node name="Transition" type="Sprite2D" parent="MaskGroup/WorldRoot" unique_id=795918223]
-position = Vector2(1384, 920)
-scale = Vector2(1.3162842, 1.3162842)
-texture = ExtResource("33_pnhog")
-
 [node name="WorldPlayer" type="AnimationPlayer" parent="MaskGroup/WorldRoot" unique_id=1986727739]
 unique_name_in_owner = true
 root_node = NodePath("../Sea")
 libraries/ = SubResource("AnimationLibrary_xa025")
-
-[node name="TransitionPlayer" type="AnimationPlayer" parent="MaskGroup/WorldRoot" unique_id=787434035]
-unique_name_in_owner = true
-libraries/ = SubResource("AnimationLibrary_2c4at")
 
 [node name="Exit" type="Button" parent="MaskGroup/WorldRoot" unique_id=1753071860]
 offset_left = 811.0

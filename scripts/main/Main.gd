@@ -7,7 +7,6 @@ extends Node
 @onready var mouse_controller: MouseController = %MouseController
 @onready var character_status: CharacterStatus = %CharacterStatus
 @onready var character_animator: CharacterAnimator = %CharacterAnimator
-@onready var scene_animator: SceneAnimator = %SceneAnimator
 @onready var item_controller: ItemController = %ItemController
 @onready var world_assembler: WorldAssembler = %WorldAssembler
 
@@ -41,7 +40,7 @@ func _ready():
 	window_controller.update_crop_to_frame()
 
 	# 初始化世界组装器
-	world_assembler.initiate_assembler()
+	world_assembler.initiate()
 
 	# 启动角色状态机，从 WALKING 状态开始
 	character_status.start(1) 
@@ -65,16 +64,9 @@ func _cross_assign_targets():
 	# 设置pet base scale
 	character_animator.base_scale = pet.scale
 
-	# 将场景中的个 Parallax2D 赋值给 scene_animator 的对应属性
-	scene_animator.background = %Background
-	scene_animator.midground = %Midground
-	scene_animator.foreground = %Foreground
-	scene_animator.sky = %Sky
-	scene_animator.cloud = %Cloud
-	scene_animator.transition_player = transition_player
-
-	# 将 world_root 赋值给 world_assembler
+	# 将 world_root 赋值给 world_assembler 和 scene_animator
 	world_assembler.world_root = world_root
+
 
 
 func _draw_scale_setup():
@@ -138,30 +130,38 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
 	print("[STATE] Changed to %s" % CharacterStates.CharacterState.find_key(new_state))
 	match new_state:
 		CharacterStates.CharacterState.RESTING:
-			scene_animator.stop_para_animation()
+			pass
+			# scene_animator.stop_para_animation()
 		CharacterStates.CharacterState.WALKING:
-			scene_animator.continue_para_animation()
+			pass
+			# scene_animator.continue_para_animation()
 		CharacterStates.CharacterState.RECORDING:
-			scene_animator.stop_para_animation()
+			pass
+			# scene_animator.stop_para_animation()
 		CharacterStates.CharacterState.PICKING:
-			scene_animator.stop_para_animation()
+			pass
+			# scene_animator.stop_para_animation()
 		CharacterStates.CharacterState.GAZING:
-			scene_animator.stop_para_animation()
+			pass
+			# scene_animator.stop_para_animation()
 		CharacterStates.CharacterState.GREETING:
-			scene_animator.stop_para_animation()
+			pass
+			# scene_animator.stop_para_animation()
 		CharacterStates.CharacterState.CHANGING:
-			scene_animator.continue_para_animation()
+			pass
+			# scene_animator.continue_para_animation()
 		CharacterStates.CharacterState.TRANSITING:
+			pass
 			## 已知问题，目前在播放动画后没有禁用交互，可能会导致在过渡动画播放过程中触发其他状态改变，进而重复调用过渡动画
-			scene_animator.stop_para_animation()
-			scene_animator.play_world_transition()
-			await get_tree().create_timer(duration).timeout
-			world_assembler._assemble_world((world_assembler.current_world_id+1)%2) # 切换世界
+			# scene_animator.stop_para_animation()
+			# scene_animator.play_world_transition()
+			# await get_tree().create_timer(duration).timeout
+			# world_assembler._assemble_world((world_assembler.current_world_id+1)%2) # 切换世界
 
 
 func _on_world_assembler_world_changed(new_world_id: int) -> void:
 	print("[WORLD ASSEMBLER] World changed to ID: %d" % new_world_id)
-	scene_animator.setup_initial_speed()
+	# scene_animator.setup_initial_speed()
 
 
 
