@@ -79,7 +79,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"default",
-"speed": 6.0
+"speed": 1.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gsxep"]
@@ -415,7 +415,7 @@ unique_name_in_owner = true
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
-frame_progress = 0.3128155
+frame_progress = 0.8828364
 script = ExtResource("30_v0vrg")
 
 [node name="body" type="Area2D" parent="MaskGroup/WorldRoot/Pet" unique_id=815688141]
@@ -451,8 +451,10 @@ unique_name_in_owner = true
 repeat_size = Vector2(1920, 0)
 autoscroll = Vector2(-150, 0)
 
+[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Light" unique_id=173088965]
+scale = Vector2(0.5, 0.5)
+
 [node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Light" unique_id=1348136509]
-position = Vector2(1, 113)
 scale = Vector2(0.5, 0.5)
 
 [node name="WorldPlayer" type="AnimationPlayer" parent="MaskGroup/WorldRoot" unique_id=1986727739]
