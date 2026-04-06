@@ -30,7 +30,6 @@ signal world_changed(new_world_id: int)
 
 
 func initiate() -> void:
-	return
 	_sky = world_root.get_node("%Sky")
 	_moon = world_root.get_node("%Moon")
 	_far_1 = world_root.get_node("%Far_1")
@@ -44,40 +43,23 @@ func initiate() -> void:
 	_light = world_root.get_node("%Light")
 	_world_player = world_root.get_node("%WorldPlayer")
 
-	_assemble_world(0) # 默认组装第一个世界，后续可以根据需要切换
 
 
-
-func _assemble_world(world_id: int) -> void:
-	return
-		
+func assemble_world(world_id: int) -> void:
 	# _world_player.stop() # 切换世界时先停止动画
 	
-	# var target_world = world_defs[world_id]
+	var target_world = world_defs[world_id]
 	
-	# _sky_sprite.texture = target_world.sky_texture
-	# _sky.repeat_size = target_world.sky_repeat_size
-	# _sky.autoscroll = target_world.sky_scroll_speed
+	# 1. load所有texture和texture array到对应的节点上，设置好repeat_size、autoscroll等参数(Parallex2D 滚动)
+	#   1.1 func defs_to_scene
+	# 2. 非Parallex2D 手动滚动program开始运行（生成随机texture，移动，到尽头自动释放，间隔时长后重复）
+	#   2.1 func start_manual_scroll (非Parallex2D节点相同script调用各自参数)
+	# 3. 播放world player动画（如果有的话）
+	#   3.1 func play_world_animation (world player根据world def切换
 
-	# _cloud_sprite.texture = target_world.cloud_texture
-	# _cloud.repeat_size = target_world.cloud_repeat_size
-	# _cloud.autoscroll = target_world.cloud_scroll_speed
 
-	# _background_sprite.texture = target_world.background_texture
-	# _background.repeat_size = target_world.background_repeat_size
-	# _background.autoscroll = target_world.background_scroll_speed
-
-	# _midground_sprite.texture = target_world.midground_texture
-	# _midground.repeat_size = target_world.midground_repeat_size
-	# _midground.autoscroll = target_world.midground_scroll_speed
-
-	# _foreground_sprite.texture = target_world.foreground_texture
-	# _foreground.repeat_size = target_world.foreground_repeat_size
-	# _foreground.autoscroll = target_world.foreground_scroll_speed
-	
-	# match world_id:
-	# 	0:
-	# 		_world_player.play("World_0")
-
-	# current_world_id = world_id
-	# world_changed.emit(current_world_id)
+# func _transition_to_world(new_world_id: int) -> void:
+	# 1. target_world = world_defs[new_world_id]
+	# 2. 非Parallex2D节点texture开始渐变
+	# 3. Parallex2D节点颜色开始渐变
+	# 4. moon开始移出场景，新的moon移入（moon完成及transition完成）

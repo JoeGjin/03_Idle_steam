@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/controllers/CharacterAnimator.gd" id="3_vcsgt"]
 [ext_resource type="Script" uid="uid://dlf38k8n2fmdm" path="res://scripts/main/controllers/CharacterStatus.gd" id="5_bb450"]
 [ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="6_1iba3"]
+[ext_resource type="Resource" uid="uid://4n0pbkpec5kr" path="res://scripts/main/controllers/world/defs/WORLD_2.tres" id="6_cobve"]
 [ext_resource type="Script" uid="uid://cqs5yvp2atmdx" path="res://scripts/main/ui/UIWindow.gd" id="6_ft6cd"]
 [ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/world/WorldRoot.gd" id="6_lhr70"]
 [ext_resource type="Resource" uid="uid://cfpmr7eqfmvhs" path="res://scripts/main/controllers/status/defs/RESTING.tres" id="7_yxlcp"]
@@ -37,17 +38,6 @@
 [ext_resource type="Texture2D" uid="uid://dtnbqi1tuknic" path="res://assets/worldroot/pet/test_heart.png" id="37_8cp6k"]
 [ext_resource type="Script" uid="uid://dqilwmdefk6v" path="res://scripts/main/debug/DebugWorld.gd" id="40_8b871"]
 [ext_resource type="Texture2D" uid="uid://bqtx5cfteo7n8" path="res://assets/worldroot/pet/Pet.png" id="42_s3wmy"]
-
-[sub_resource type="Resource" id="Resource_o1tg2"]
-script = ExtResource("20_hq6as")
-name = "beach"
-metadata/_custom_type_script = "uid://em6c7og411w6"
-
-[sub_resource type="Resource" id="Resource_hyu0y"]
-script = ExtResource("20_hq6as")
-id = 1
-name = "mountain"
-metadata/_custom_type_script = "uid://em6c7og411w6"
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -141,7 +131,7 @@ script = ExtResource("3_c01mt")
 [node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
-world_defs = Array[ExtResource("20_hq6as")]([SubResource("Resource_o1tg2"), SubResource("Resource_hyu0y")])
+world_defs = Array[ExtResource("20_hq6as")]([ExtResource("6_cobve")])
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 unique_name_in_owner = true
@@ -381,7 +371,7 @@ unique_name_in_owner = true
 [node name="Land" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=1013858590]
 unique_name_in_owner = true
 repeat_size = Vector2(909, 1)
-autoscroll = Vector2(-20, 0)
+autoscroll = Vector2(-40, 0)
 
 [node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Land" unique_id=1425775975]
 scale = Vector2(0.5, 0.5)
@@ -395,7 +385,7 @@ offset = Vector2(0, 144)
 [node name="Sea" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=384608179]
 unique_name_in_owner = true
 repeat_size = Vector2(1080, 0)
-autoscroll = Vector2(-40, 0)
+autoscroll = Vector2(-20, 0)
 
 [node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Sea" unique_id=1308681423]
 scale = Vector2(0.5, 0.5)
@@ -449,7 +439,6 @@ unique_name_in_owner = true
 [node name="Light" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=605308785]
 unique_name_in_owner = true
 repeat_size = Vector2(1920, 0)
-autoscroll = Vector2(-150, 0)
 
 [node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Light" unique_id=173088965]
 scale = Vector2(0.5, 0.5)

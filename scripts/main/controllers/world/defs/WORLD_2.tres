@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="WorldDef" format=3 uid="uid://4n0pbkpec5kr"]
+
+[ext_resource type="Texture2D" uid="uid://jcfyblybnjce" path="res://assets/worldroot/world/2/2_far_0_1.png" id="1_7stoi"]
+[ext_resource type="Texture2D" uid="uid://vwa5nnnxiosi" path="res://assets/worldroot/world/2/2_moon_main.png" id="1_8w5er"]
+[ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="1_dkkoi"]
+[ext_resource type="Texture2D" uid="uid://7a87lfnotiue" path="res://assets/worldroot/world/2/2_far_0_2.png" id="2_3348d"]
+[ext_resource type="Texture2D" uid="uid://dp5abs4msv5et" path="res://assets/worldroot/world/2/2_far_0_3.png" id="3_e3uy8"]
+[ext_resource type="Texture2D" uid="uid://doukskhlhm4kw" path="res://assets/worldroot/world/2/2_sky_main.png" id="3_p0dpr"]
+[ext_resource type="Texture2D" uid="uid://bqfmtxxanoc5d" path="res://assets/worldroot/world/2/2_land_main.png" id="4_1cslc"]
+[ext_resource type="Texture2D" uid="uid://fktk7tcgjnj3" path="res://assets/worldroot/world/2/2_front_1_1.png" id="4_w7mj4"]
+[ext_resource type="Texture2D" uid="uid://j2slijevdc6d" path="res://assets/worldroot/world/2/2_mid_0_1.png" id="5_bxunm"]
+[ext_resource type="Texture2D" uid="uid://b8m8frbpbehtg" path="res://assets/worldroot/world/2/2_front_1_2.png" id="5_mqj1b"]
+[ext_resource type="Texture2D" uid="uid://6nwdkpupbulk" path="res://assets/worldroot/world/2/2_front_1_3.png" id="6_py0n7"]
+[ext_resource type="Texture2D" uid="uid://b3acvge56nlqq" path="res://assets/worldroot/world/2/2_front_2_1.png" id="7_fvtts"]
+[ext_resource type="Texture2D" uid="uid://b8ugwul5o5ffb" path="res://assets/worldroot/world/2/2_front_2_2.png" id="8_b40xi"]
+[ext_resource type="Texture2D" uid="uid://4ww6mdrl7hfb" path="res://assets/worldroot/world/2/2_sea_main.png" id="8_o6tp7"]
+[ext_resource type="Texture2D" uid="uid://c5mgv3ceuhgv8" path="res://assets/worldroot/world/2/2_front_2_3.png" id="9_iqoru"]
+[ext_resource type="Texture2D" uid="uid://wvm7c2uygom3" path="res://assets/worldroot/world/2/2_front_2_4.png" id="10_jijvn"]
+[ext_resource type="Texture2D" uid="uid://b4pp6g5dpp57d" path="res://assets/worldroot/world/2/2_front_2_5.png" id="11_fy3gg"]
+
+[resource]
+script = ExtResource("1_dkkoi")
+id = 2
+name = "night_sea"
+sky_main_texture = ExtResource("3_p0dpr")
+moon_main_texture = ExtResource("1_8w5er")
+far_0_textures = Array[Texture2D]([ExtResource("1_7stoi"), ExtResource("2_3348d"), ExtResource("3_e3uy8")])
+far_1_scroll_speed = Vector2(-10, 0)
+far_2_scroll_speed = Vector2(-15, 0)
+land_repeat_size = Vector2(909, 0)
+land_scroll_speed = Vector2(-40, 0)
+land_main_texture = ExtResource("4_1cslc")
+sea_repeat_size = Vector2(1080, 0)
+sea_scroll_speed = Vector2(-20, 0)
+sea_main_texture = ExtResource("8_o6tp7")
+mid_0_texture = Array[Texture2D]([ExtResource("5_bxunm")])
+mid_1_scroll_speed = Vector2(-30, 0)
+mid_2_scroll_speed = Vector2(-35, 0)
+front_1_scroll_speed = Vector2(-100, 0)
+front_1_textures = Array[Texture2D]([ExtResource("4_w7mj4"), ExtResource("5_mqj1b"), ExtResource("6_py0n7")])
+front_2_scroll_speed = Vector2(-130, 0)
+front_2_textures = Array[Texture2D]([ExtResource("7_fvtts"), ExtResource("8_b40xi"), ExtResource("9_iqoru"), ExtResource("10_jijvn"), ExtResource("11_fy3gg")])
+metadata/_custom_type_script = "uid://em6c7og411w6"

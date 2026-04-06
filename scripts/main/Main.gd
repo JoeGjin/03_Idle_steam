@@ -41,6 +41,7 @@ func _ready():
 
 	# 初始化世界组装器
 	world_assembler.initiate()
+	world_assembler._assemble_world(2) # 默认组装第一个世界，后续可以根据需要切换
 
 	# 启动角色状态机，从 WALKING 状态开始
 	character_status.start(1) 
