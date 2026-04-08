@@ -13,7 +13,6 @@ extends Node
 @onready var world_root: Node2D = %WorldRoot
 @onready var pet: AnimatedSprite2D = %Pet
 @onready var frame: Node2D = %Frame
-@onready var transition_player: AnimationPlayer = %TransitionPlayer
 
 @onready var ui_window: Window = %UIWindow
 @onready var ui_root: Control = %UIRoot
@@ -22,7 +21,7 @@ extends Node
 @onready var debug_world: Node2D = %DebugWorld
 
 
-const DRAW_SCALE: Vector2 = Vector2(0.5, 0.5) # 预设的窗口缩放级别，供调试使用
+const DRAW_SCALE: Vector2 = Vector2(0.7, 0.7) # 预设的窗口缩放级别，供调试使用
 
 
 func _ready():
@@ -41,7 +40,7 @@ func _ready():
 
 	# 初始化世界组装器
 	world_assembler.initiate()
-	world_assembler._assemble_world(2) # 默认组装第一个世界，后续可以根据需要切换
+	world_assembler.assemble_world(0) # 默认组装第一个世界，后续可以根据需要切换
 
 	# 启动角色状态机，从 WALKING 状态开始
 	character_status.start(1) 
@@ -127,7 +126,7 @@ func _on_global_key_hook_any_key_pressed() -> void:
 	character_animator._play_click_scale_anim()
 
 
-func _on_character_status_state_changed(new_state: CharacterStates.CharacterState, duration: float) -> void:
+func _on_character_status_state_changed(new_state: CharacterStates.CharacterState, _duration: float) -> void:
 	print("[STATE] Changed to %s" % CharacterStates.CharacterState.find_key(new_state))
 	match new_state:
 		CharacterStates.CharacterState.RESTING:
@@ -161,7 +160,7 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
 
 
 func _on_world_assembler_world_changed(new_world_id: int) -> void:
-	print("[WORLD ASSEMBLER] World changed to ID: %d" % new_world_id)
+	print("[WORLD ASSEMBLER] World assembled with ID: %d" % new_world_id)
 	# scene_animator.setup_initial_speed()
 
 

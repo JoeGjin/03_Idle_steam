@@ -3,6 +3,9 @@ render_mode unshaded;
 
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear;
 
+// 新增：遮罩总开关：0=不遮盖，1=正常遮盖（也可用 0~1 做渐变）
+uniform float mask_enable : hint_range(0.0, 1.0, 0.01) = 1.0;
+
 // --- center_uv 拆成两个 float（0..1） ---
 uniform float center_u : hint_range(0.0, 1.0, 0.001) = 0.5;
 uniform float center_v : hint_range(0.0, 1.0, 0.001) = 0.5;
@@ -87,6 +90,9 @@ void fragment() {
     }
 
     float mask = 1.0 - smoothstep(1.0 + jitter, 1.0 + feather_uv + jitter, d);
+
+    //：mask_enable=0 => mask=1（不遮盖）；mask_enable=1 => 原 mask
+    mask = mix(1.0, mask, clamp(mask_enable, 0.0, 1.0));
 
     COLOR = vec4(col.rgb, col.a * mask);
 }

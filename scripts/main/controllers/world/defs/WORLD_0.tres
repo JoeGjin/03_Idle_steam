@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="WorldDef" format=3 uid="uid://diuowklnylh2i"]
+
+[ext_resource type="Texture2D" uid="uid://jcfyblybnjce" path="res://assets/worldroot/world/2/2_far_0_1.png" id="1_jec3n"]
+[ext_resource type="Texture2D" uid="uid://7a87lfnotiue" path="res://assets/worldroot/world/2/2_far_0_2.png" id="2_ru2uy"]
+[ext_resource type="Texture2D" uid="uid://dp5abs4msv5et" path="res://assets/worldroot/world/2/2_far_0_3.png" id="3_etg68"]
+[ext_resource type="Texture2D" uid="uid://fktk7tcgjnj3" path="res://assets/worldroot/world/2/2_front_1_1.png" id="4_jbuqa"]
+[ext_resource type="Texture2D" uid="uid://ctl8vlsgmdsoo" path="res://assets/worldroot/world/2/2_others_1.png" id="4_ut4n6"]
+[ext_resource type="Texture2D" uid="uid://j2qs65fo7cm8" path="res://assets/worldroot/world/2/2_others_2.png" id="5_62fj4"]
+[ext_resource type="Texture2D" uid="uid://b8m8frbpbehtg" path="res://assets/worldroot/world/2/2_front_1_2.png" id="5_ut4n6"]
+[ext_resource type="Texture2D" uid="uid://n0cjh52dlqcm" path="res://assets/worldroot/world/2/2_others_3.png" id="6_8jx8n"]
+[ext_resource type="Texture2D" uid="uid://6nwdkpupbulk" path="res://assets/worldroot/world/2/2_front_1_3.png" id="6_62fj4"]
+[ext_resource type="Texture2D" uid="uid://b3acvge56nlqq" path="res://assets/worldroot/world/2/2_front_2_1.png" id="7_8jx8n"]
+[ext_resource type="Texture2D" uid="uid://b8ugwul5o5ffb" path="res://assets/worldroot/world/2/2_front_2_2.png" id="8_ecb6p"]
+[ext_resource type="Texture2D" uid="uid://c5mgv3ceuhgv8" path="res://assets/worldroot/world/2/2_front_2_3.png" id="9_vv0f4"]
+[ext_resource type="Texture2D" uid="uid://wvm7c2uygom3" path="res://assets/worldroot/world/2/2_front_2_4.png" id="10_lk8l7"]
+[ext_resource type="Texture2D" uid="uid://b4pp6g5dpp57d" path="res://assets/worldroot/world/2/2_front_2_5.png" id="11_5qrcr"]
+[ext_resource type="Texture2D" uid="uid://bqfmtxxanoc5d" path="res://assets/worldroot/world/2/2_land_main.png" id="12_2yne5"]
+[ext_resource type="Texture2D" uid="uid://j2slijevdc6d" path="res://assets/worldroot/world/2/2_mid_0_1.png" id="13_lq81b"]
+[ext_resource type="Texture2D" uid="uid://vwa5nnnxiosi" path="res://assets/worldroot/world/2/2_moon_main.png" id="14_c4vuh"]
+[ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="15_yfnfh"]
+[ext_resource type="Texture2D" uid="uid://4ww6mdrl7hfb" path="res://assets/worldroot/world/2/2_sea_main.png" id="16_7hcf1"]
+[ext_resource type="Texture2D" uid="uid://doukskhlhm4kw" path="res://assets/worldroot/world/2/2_sky_main.png" id="17_e270s"]
+
+[resource]
+script = ExtResource("15_yfnfh")
+name = "night_sea"
+sky_main_texture = ExtResource("17_e270s")
+moon_main_texture = ExtResource("14_c4vuh")
+far_0_textures = Array[Texture2D]([ExtResource("1_jec3n"), ExtResource("2_ru2uy"), ExtResource("3_etg68")])
+far_2_textures = Array[Texture2D]([ExtResource("4_ut4n6"), ExtResource("5_62fj4"), ExtResource("6_8jx8n")])
+far_1_scroll_speed = Vector2(-10, 0)
+far_1_spwan_scale = Vector2(0.5, 0.5)
+far_2_scroll_speed = Vector2(-15, 0)
+far_2_spwan_scale = Vector2(0.5, 0.5)
+land_repeat_size = Vector2(909, 0)
+land_scroll_speed = Vector2(-40, 0)
+land_main_texture = ExtResource("12_2yne5")
+sea_repeat_size = Vector2(1080, 0)
+sea_scroll_speed = Vector2(-20, 0)
+sea_main_texture = ExtResource("16_7hcf1")
+mid_0_textures = Array[Texture2D]([ExtResource("13_lq81b")])
+mid_1_scroll_speed = Vector2(-30, 0)
+mid_1_spwan_scale = Vector2(0.5, 0.5)
+mid_2_scroll_speed = Vector2(-35, 0)
+mid_2_spwan_scale = Vector2(0.5, 0.5)
+front_1_textures = Array[Texture2D]([ExtResource("4_jbuqa"), ExtResource("5_ut4n6"), ExtResource("6_62fj4")])
+front_2_textures = Array[Texture2D]([ExtResource("7_8jx8n"), ExtResource("8_ecb6p"), ExtResource("9_vv0f4"), ExtResource("10_lk8l7"), ExtResource("11_5qrcr")])
+front_1_scroll_speed = Vector2(-100, 0)
+front_1_spwan_scale = Vector2(0.5, 0.5)
+front_2_scroll_speed = Vector2(-130, 0)
+front_2_spwan_scale = Vector2(0.5, 0.5)
+metadata/_custom_type_script = "uid://em6c7og411w6"

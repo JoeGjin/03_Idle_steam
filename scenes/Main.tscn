@@ -7,10 +7,12 @@
 [ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/controllers/CharacterAnimator.gd" id="3_vcsgt"]
 [ext_resource type="Script" uid="uid://dlf38k8n2fmdm" path="res://scripts/main/controllers/CharacterStatus.gd" id="5_bb450"]
 [ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="6_1iba3"]
+[ext_resource type="Resource" uid="uid://v8li8wq2glkt" path="res://scripts/main/controllers/world/defs/WORLD_1.tres" id="6_8cp6k"]
 [ext_resource type="Resource" uid="uid://4n0pbkpec5kr" path="res://scripts/main/controllers/world/defs/WORLD_2.tres" id="6_cobve"]
 [ext_resource type="Script" uid="uid://cqs5yvp2atmdx" path="res://scripts/main/ui/UIWindow.gd" id="6_ft6cd"]
 [ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/world/WorldRoot.gd" id="6_lhr70"]
 [ext_resource type="Resource" uid="uid://cfpmr7eqfmvhs" path="res://scripts/main/controllers/status/defs/RESTING.tres" id="7_yxlcp"]
+[ext_resource type="Resource" uid="uid://diuowklnylh2i" path="res://scripts/main/controllers/world/defs/WORLD_0.tres" id="8_8b871"]
 [ext_resource type="Resource" uid="uid://dbq0jd6o6qpcp" path="res://scripts/main/controllers/status/defs/WALKING.tres" id="8_ebg2g"]
 [ext_resource type="Resource" uid="uid://bunbgarelpvim" path="res://scripts/main/controllers/status/defs/RECORDING.tres" id="9_gsxep"]
 [ext_resource type="Resource" uid="uid://d1tqeypv6fcen" path="res://scripts/main/controllers/status/defs/PICKING.tres" id="10_v0vrg"]
@@ -34,10 +36,28 @@
 [ext_resource type="Script" uid="uid://dmq4phw1im2m7" path="res://scripts/main/debug/DebugUI.gd" id="32_pdwbg"]
 [ext_resource type="Texture2D" uid="uid://bqfmtxxanoc5d" path="res://assets/worldroot/world/2/2_land_main.png" id="32_vua0o"]
 [ext_resource type="Script" uid="uid://dvy6ipmh42awj" path="res://scripts/main/debug/DebugPet.gd" id="33_2c4at"]
+[ext_resource type="Script" uid="uid://r3h7y0ivusgi" path="res://scripts/main/world/Manual_Parallax.gd" id="33_8b871"]
 [ext_resource type="Script" uid="uid://ckk37gmmb4wxy" path="res://scripts/main/world/diamond.gd" id="36_cmqll"]
+[ext_resource type="Texture2D" uid="uid://tw714yrnrq8f" path="res://assets/worldroot/pet/walk/frame_01.png" id="36_vshs7"]
+[ext_resource type="Texture2D" uid="uid://dbjfnojqk1vek" path="res://assets/worldroot/pet/walk/frame_02.png" id="37_2ki8c"]
 [ext_resource type="Texture2D" uid="uid://dtnbqi1tuknic" path="res://assets/worldroot/pet/test_heart.png" id="37_8cp6k"]
+[ext_resource type="Texture2D" uid="uid://d0j08xdnfer36" path="res://assets/worldroot/pet/walk/frame_03.png" id="38_0owt5"]
+[ext_resource type="Texture2D" uid="uid://ca022vsesuwke" path="res://assets/worldroot/pet/walk/frame_04.png" id="39_o1tg2"]
 [ext_resource type="Script" uid="uid://dqilwmdefk6v" path="res://scripts/main/debug/DebugWorld.gd" id="40_8b871"]
-[ext_resource type="Texture2D" uid="uid://bqtx5cfteo7n8" path="res://assets/worldroot/pet/Pet.png" id="42_s3wmy"]
+[ext_resource type="Texture2D" uid="uid://caldjd64rysxo" path="res://assets/worldroot/pet/walk/frame_05.png" id="40_hyu0y"]
+[ext_resource type="Texture2D" uid="uid://n4jqj40sd7hn" path="res://assets/worldroot/pet/walk/frame_06.png" id="41_lfilp"]
+[ext_resource type="Texture2D" uid="uid://3phx4jo368dt" path="res://assets/worldroot/pet/walk/frame_07.png" id="42_nu61c"]
+[ext_resource type="Texture2D" uid="uid://cppatn62r4age" path="res://assets/worldroot/pet/walk/frame_08.png" id="43_e2bht"]
+[ext_resource type="Texture2D" uid="uid://cycgxqgowkynn" path="res://assets/worldroot/pet/walk/frame_09.png" id="44_a3hxr"]
+[ext_resource type="Texture2D" uid="uid://cdsn2nxidun20" path="res://assets/worldroot/pet/walk/frame_10.png" id="45_gcaob"]
+[ext_resource type="Texture2D" uid="uid://bxc8jlkc4nqek" path="res://assets/worldroot/pet/walk/frame_11.png" id="46_aqa1v"]
+[ext_resource type="Texture2D" uid="uid://bcgq74htkcq1t" path="res://assets/worldroot/pet/walk/frame_12.png" id="47_8t8ul"]
+[ext_resource type="Texture2D" uid="uid://6505cjl3jjpv" path="res://assets/worldroot/pet/walk/frame_13.png" id="48_1x1rp"]
+[ext_resource type="Texture2D" uid="uid://2223ma4k10fu" path="res://assets/worldroot/pet/walk/frame_14.png" id="49_ylqph"]
+[ext_resource type="Texture2D" uid="uid://ifyhe0ie372h" path="res://assets/worldroot/pet/walk/frame_15.png" id="50_fcv70"]
+[ext_resource type="Texture2D" uid="uid://bu22ebydy0gb3" path="res://assets/worldroot/pet/walk/frame_16.png" id="51_mou0d"]
+[ext_resource type="Texture2D" uid="uid://wk6bylej7dhi" path="res://assets/worldroot/pet/walk/frame_17.png" id="52_ugmlg"]
+[ext_resource type="Texture2D" uid="uid://c8jfbv6mfvb35" path="res://assets/worldroot/pet/walk/frame_18.png" id="53_qd1pt"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -49,12 +69,13 @@ Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
-shader_parameter/center_u = 0.482000022895
-shader_parameter/center_v = 0.50000002375
-shader_parameter/radius_u = 0.342000016245
-shader_parameter/radius_v = 0.426000020235
-shader_parameter/feather_px = 15.000000223518
-shader_parameter/smoke_enable = 0.47999998927104
+shader_parameter/mask_enable = 0.91999997943616
+shader_parameter/center_u = 0.5090000241775
+shader_parameter/center_v = 0.4790000227525
+shader_parameter/radius_u = 0.2870000136325
+shader_parameter/radius_v = 0.3710000176225
+shader_parameter/feather_px = 15.30000022798836
+shader_parameter/smoke_enable = 0.70999998413008
 shader_parameter/smoke_band_px = 38.20000056922584
 shader_parameter/smoke_amp_px = 69.20000103116304
 shader_parameter/smoke_scale = 18.20000025630064
@@ -65,11 +86,62 @@ shader_parameter/smoke_speed_y = -0.49199992836999984
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("42_s3wmy")
+"texture": ExtResource("36_vshs7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37_2ki8c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_0owt5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_o1tg2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40_hyu0y")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_lfilp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_nu61c")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_e2bht")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_a3hxr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45_gcaob")
+}, {
+"duration": 1.0,
+"texture": ExtResource("46_aqa1v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("47_8t8ul")
+}, {
+"duration": 1.0,
+"texture": ExtResource("48_1x1rp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_ylqph")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_fcv70")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_mou0d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_ugmlg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_qd1pt")
 }],
 "loop": true,
 "name": &"default",
-"speed": 1.0
+"speed": 12.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gsxep"]
@@ -131,7 +203,7 @@ script = ExtResource("3_c01mt")
 [node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
-world_defs = Array[ExtResource("20_hq6as")]([ExtResource("6_cobve")])
+world_defs = Array[ExtResource("20_hq6as")]([ExtResource("8_8b871"), ExtResource("6_8cp6k"), ExtResource("6_cobve")])
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 unique_name_in_owner = true
@@ -330,6 +402,7 @@ text = "Add random item"
 
 [node name="MaskGroup" type="CanvasGroup" parent="." unique_id=1047352823]
 material = SubResource("ShaderMaterial_pdwbg")
+position = Vector2(6, 0)
 
 [node name="WorldRoot" type="Node2D" parent="MaskGroup" unique_id=384608177]
 unique_name_in_owner = true
@@ -364,9 +437,11 @@ scale = Vector2(0.5, 0.5)
 
 [node name="Far_1" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=236166638]
 unique_name_in_owner = true
+script = ExtResource("33_8b871")
 
 [node name="Far_2" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=1069212001]
 unique_name_in_owner = true
+script = ExtResource("33_8b871")
 
 [node name="Land" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=1013858590]
 unique_name_in_owner = true
@@ -396,13 +471,16 @@ scale = Vector2(0.5, 0.5)
 
 [node name="Mid_1" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=473401516]
 unique_name_in_owner = true
+script = ExtResource("33_8b871")
 
 [node name="Mid_2" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=183900339]
 unique_name_in_owner = true
+script = ExtResource("33_8b871")
 
 [node name="Pet" type="AnimatedSprite2D" parent="MaskGroup/WorldRoot" unique_id=390694917]
 unique_name_in_owner = true
-scale = Vector2(0.5, 0.5)
+position = Vector2(-199, 0)
+scale = Vector2(0.25, 0.25)
 sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
 frame_progress = 0.8828364
@@ -432,9 +510,11 @@ texture = ExtResource("37_8cp6k")
 
 [node name="Front_1" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=2075061201]
 unique_name_in_owner = true
+script = ExtResource("33_8b871")
 
 [node name="Front_2" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=101058712]
 unique_name_in_owner = true
+script = ExtResource("33_8b871")
 
 [node name="Light" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=605308785]
 unique_name_in_owner = true
@@ -470,20 +550,20 @@ script = ExtResource("33_2c4at")
 debug_mode = true
 
 [node name="DebugStatus" type="Label" parent="MaskGroup/DebugWorld/DebugPet" unique_id=2119181311]
-offset_left = -663.3334
-offset_top = -1213.3336
-offset_right = -534.3334
-offset_bottom = -1190.3336
+offset_left = -370.00012
+offset_top = -973.3336
+offset_right = -241.00012
+offset_bottom = -950.3336
 scale = Vector2(10, 10)
 text = "character_status"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="DebugCooldown" type="Label" parent="MaskGroup/DebugWorld/DebugPet" unique_id=337955523]
-offset_left = -663.3334
-offset_top = -1373.3328
-offset_right = -533.3334
-offset_bottom = -1350.3328
+offset_left = -370.00012
+offset_top = -1133.333
+offset_right = -240.00012
+offset_bottom = -1110.333
 scale = Vector2(10, 10)
 text = "status_cooldown"
 horizontal_alignment = 1

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bqtx5cfteo7n8"
-path="res://.godot/imported/Pet.png-1b20007ae585611db274f22dbb26af48.ctex"
+uid="uid://bxc8jlkc4nqek"
+path="res://.godot/imported/frame_11.png-7c7b715d903ce2795ee583fa1d1e9e6d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/worldroot/pet/Pet.png"
-dest_files=["res://.godot/imported/Pet.png-1b20007ae585611db274f22dbb26af48.ctex"]
+source_file="res://assets/worldroot/pet/walk/frame_11.png"
+dest_files=["res://.godot/imported/frame_11.png-7c7b715d903ce2795ee583fa1d1e9e6d.ctex"]
 
 [params]
 
