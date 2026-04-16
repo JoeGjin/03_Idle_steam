@@ -26,14 +26,16 @@ var _spawn_timer: Timer
 #  1.2 停止滚动
 #  1.3 继续滚动
 # 2.内部调用func
-#  2.0 初始化计时器
-#  2.1 生成随机texture
-#  2.2 移动
-#  2.3 到尽头自动释放
-#  2.4 间隔时长后重复
+#  2.0 queue_free所有子节点
+#  2.1 初始化计时器
+#  2.2 生成随机texture
+#  2.3 移动
+#  2.4 到尽头自动释放
+#  2.5 间隔时长后重复
 
 
 func start_manual_scroll() -> void:
+    _free_all_children()
     _initialize_timer()
     _spawn_texture(_textures_0)
     _spawn_texture(_textures)
@@ -50,6 +52,12 @@ func resume_manual_scroll() -> void:
         _is_scrolling = true
 
 
+
+func _free_all_children() -> void:
+    for child in get_children():
+        if child is Sprite2D:
+            child.queue_free()
+    _objects.clear()
 
 func _initialize_timer() -> void:
     # 初始化计时器

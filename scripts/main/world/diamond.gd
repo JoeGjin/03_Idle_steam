@@ -1,7 +1,7 @@
 extends Node2D
 
 
-@export var start_pos: Vector2 = Vector2(0, -2300.0)
+@export var start_pos: Vector2 = Vector2(0, -5000.0)
 @export var end_pos: Vector2 = Vector2(0, 0)
 
 @export var fall_time := 5.0
