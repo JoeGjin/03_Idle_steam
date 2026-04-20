@@ -47,10 +47,12 @@ func _unhandled_input(event: InputEvent) -> void:
         if _state == DragState.PENDING: 
             # 检测是否超过拖拽阈值
             if event.position.distance_to(_press_pos) >= DRAG_THRESHOLD:
-                _state = DragState.DRAGGING
-                drag_started.emit()
-                DisplayServer.window_start_drag() # 交给系统原生拖窗
-                get_viewport().set_input_as_handled()
+                # 检测是否在 world output 区域内开始拖拽
+                if %WorldOutput.get_global_rect().has_point(%WorldOutput.get_global_mouse_position()):
+                    _state = DragState.DRAGGING
+                    drag_started.emit()
+                    DisplayServer.window_start_drag() # 交给系统原生拖窗
+                    get_viewport().set_input_as_handled()
         
         if _state == DragState.DRAGGING: # 原生拖窗进行中，这里不用做任何事
             get_viewport().set_input_as_handled()

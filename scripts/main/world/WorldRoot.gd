@@ -2,6 +2,7 @@ extends Node2D
 
 @onready var _exit_button: Button = $Exit
 
+@export_range(0.0, 10.0, 0.1) var lod: float = 0.5 # 模糊程度
 
 
 func _ready():

@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://7egkv0utp30f" path="res://scripts/main/Main.gd" id="1_rvslj"]
 [ext_resource type="Script" uid="uid://bsplvrwpxwm0" path="res://scripts/main/controllers/GlobalKeyHook.gd" id="2_c01mt"]
 [ext_resource type="Script" uid="uid://44gxe6vfnykv" path="res://scripts/main/controllers/MouseController.gd" id="2_rarhs"]
-[ext_resource type="Script" uid="uid://dap840y6qau73" path="res://scripts/main/controllers/WindowController.gd" id="3_c01mt"]
 [ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/controllers/CharacterAnimator.gd" id="3_vcsgt"]
 [ext_resource type="Script" uid="uid://dlf38k8n2fmdm" path="res://scripts/main/controllers/CharacterStatus.gd" id="5_bb450"]
 [ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="6_1iba3"]
@@ -25,6 +24,8 @@
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
 [ext_resource type="Script" uid="uid://cpqxu882jrdpq" path="res://scripts/main/ui/WorkBoard.gd" id="27_cobve"]
+[ext_resource type="Shader" uid="uid://br4le3qmgw1l4" path="res://shaders/Blur.gdshader" id="28_8t8ul"]
+[ext_resource type="Script" uid="uid://climyhfv585s8" path="res://scripts/main/world/Blur.gd" id="29_1x1rp"]
 [ext_resource type="Shader" uid="uid://xb3fgjt3mkth" path="res://shaders/MaskGroup.gdshader" id="29_8b871"]
 [ext_resource type="Script" uid="uid://dadra0l3mlosi" path="res://scripts/main/world/Pet.gd" id="30_v0vrg"]
 [ext_resource type="Script" uid="uid://yorns460rfis" path="res://scripts/main/ui/Letter.gd" id="31_8b871"]
@@ -78,20 +79,9 @@
 Window/styles/embedded_border = SubResource("StyleBoxEmpty_cvmbd")
 Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
-shader = ExtResource("29_8b871")
-shader_parameter/mask_enable = 0.999999977648
-shader_parameter/center_u = 0.46000002185
-shader_parameter/center_v = 0.4530000215175
-shader_parameter/radius_u = 0.38000001805
-shader_parameter/radius_v = 0.4390000208525
-shader_parameter/feather_px = 15.30000022798836
-shader_parameter/smoke_enable = 0.70999998413008
-shader_parameter/smoke_band_px = 38.20000056922584
-shader_parameter/smoke_amp_px = 69.20000103116304
-shader_parameter/smoke_scale = 18.20000025630064
-shader_parameter/smoke_speed_x = 0.33800011105499994
-shader_parameter/smoke_speed_y = -0.49199992836999984
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1x1rp"]
+shader = ExtResource("28_8t8ul")
+shader_parameter/lod = 0.0
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1nqs0"]
 animations = [{
@@ -159,46 +149,29 @@ animations = [{
 radius = 822.44
 height = 2000.0
 
-[sub_resource type="Animation" id="Animation_ebg2g"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Land/Main:scale:y")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0.5]
-}
-
-[sub_resource type="Animation" id="Animation_2ofn6"]
-resource_name = "wave"
-length = 10.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Land/Main:scale:y")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 3, 5, 7, 10),
-"transitions": PackedFloat32Array(0.5, 0.5, 0.5, 0.5, 0.5),
-"update": 0,
-"values": [0.5, 0.55, 0.45, 0.6, 0.5]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xa025"]
-_data = {
-&"RESET": SubResource("Animation_ebg2g"),
-&"World_0": SubResource("Animation_2ofn6")
-}
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
+shader = ExtResource("29_8b871")
+shader_parameter/mask_enable = 0.999999977648
+shader_parameter/center_u = 0.4210000199975
+shader_parameter/center_v = 0.470000022325
+shader_parameter/radius_u = 0.290000013775
+shader_parameter/radius_v = 0.4400000209
+shader_parameter/feather_px = 15.30000022798836
+shader_parameter/smoke_enable = 0.70999998413008
+shader_parameter/smoke_band_px = 38.20000056922584
+shader_parameter/smoke_amp_px = 69.20000103116304
+shader_parameter/smoke_scale = 18.20000025630064
+shader_parameter/smoke_speed_x = 0.33800011105499994
+shader_parameter/smoke_speed_y = -0.49199992836999984
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_8t8ul"]
+viewport_path = NodePath("WorldView")
 
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
+draw_scale = 0.5
 
 [node name="Controllers" type="Node" parent="." unique_id=650551310]
 
@@ -206,10 +179,6 @@ script = ExtResource("1_rvslj")
 unique_name_in_owner = true
 script = ExtResource("2_c01mt")
 hook_switch = true
-
-[node name="WindowController" type="Node" parent="Controllers" unique_id=577058379]
-unique_name_in_owner = true
-script = ExtResource("3_c01mt")
 
 [node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
 unique_name_in_owner = true
@@ -411,222 +380,343 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "Add random item"
 
-[node name="MaskGroup" type="CanvasGroup" parent="." unique_id=1047352823]
-material = SubResource("ShaderMaterial_pdwbg")
-position = Vector2(6, 0)
+[node name="WorldView" type="SubViewport" parent="." unique_id=742230146]
+transparent_bg = true
+size = Vector2i(1920, 1080)
 
-[node name="WorldRoot" type="Node2D" parent="MaskGroup" unique_id=384608177]
+[node name="WorldRoot" type="Node2D" parent="WorldView" unique_id=384608177]
 unique_name_in_owner = true
-position = Vector2(960, 540)
+position = Vector2(966, 540)
 script = ExtResource("6_lhr70")
+lod = 1.0
 
-[node name="Frame" type="Polygon2D" parent="MaskGroup/WorldRoot" unique_id=1114735131]
-unique_name_in_owner = true
-color = Color(0, 0, 0, 0.39215687)
-polygon = PackedVector2Array(-960, 540, 960, 540, 960, -540, -960, -540)
-metadata/_edit_lock_ = true
+[node name="1" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=100414531]
 
-[node name="Sky" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=747805663]
+[node name="Sky" type="Parallax2D" parent="WorldView/WorldRoot/1" unique_id=747805663]
 unique_name_in_owner = true
+scroll_offset = Vector2(0, 550)
 repeat_size = Vector2(4542, 0)
 autoscroll = Vector2(-5, 0)
 
-[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Sky" unique_id=1813847154]
+[node name="Main" type="Sprite2D" parent="WorldView/WorldRoot/1/Sky" unique_id=1813847154]
 modulate = Color(0.31764707, 0.3529412, 0.6117647, 1)
 position = Vector2(0, 16)
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("31_vshs7")
 
-[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Sky" unique_id=905714890]
+[node name="Effect" type="Sprite2D" parent="WorldView/WorldRoot/1/Sky" unique_id=905714890]
 scale = Vector2(0.5, 0.5)
 
-[node name="Moon" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=544529230]
-unique_name_in_owner = true
+[node name="blur1" type="ColorRect" parent="WorldView/WorldRoot/1" unique_id=2013975109]
+visible = false
+material = SubResource("ShaderMaterial_1x1rp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("29_1x1rp")
 
-[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Moon" unique_id=355737553]
+[node name="2" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=499590116]
+layer = 2
+
+[node name="Moon" type="Parallax2D" parent="WorldView/WorldRoot/2" unique_id=544529230]
+unique_name_in_owner = true
+scroll_offset = Vector2(900, 550)
+
+[node name="Main" type="Sprite2D" parent="WorldView/WorldRoot/2/Moon" unique_id=355737553]
 position = Vector2(-16, -200)
 texture = ExtResource("32_vshs7")
 
-[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Moon" unique_id=1876343497]
+[node name="Effect" type="Sprite2D" parent="WorldView/WorldRoot/2/Moon" unique_id=1876343497]
 position = Vector2(73, 77)
 texture = ExtResource("33_1x1rp")
 
-[node name="Far_1" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=236166638]
+[node name="blur2" type="ColorRect" parent="WorldView/WorldRoot/2" unique_id=1561816293]
+material = SubResource("ShaderMaterial_1x1rp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("29_1x1rp")
+
+[node name="3" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1262239274]
+layer = 3
+
+[node name="Far_1" type="Node2D" parent="WorldView/WorldRoot/3" unique_id=236166638]
 unique_name_in_owner = true
+position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample1" type="Sprite2D" parent="MaskGroup/WorldRoot/Far_1" unique_id=48273742]
+[node name="sample1" type="Sprite2D" parent="WorldView/WorldRoot/3/Far_1" unique_id=48273742]
 modulate = Color(1, 1, 1, 0.5)
 position = Vector2(457, -503)
 texture = ExtResource("35_ylqph")
 
-[node name="sample2" type="Sprite2D" parent="MaskGroup/WorldRoot/Far_1" unique_id=1719514148]
+[node name="sample2" type="Sprite2D" parent="WorldView/WorldRoot/3/Far_1" unique_id=1719514148]
 modulate = Color(1, 1, 1, 0.5)
 position = Vector2(-840, -160)
 scale = Vector2(2, 2)
 texture = ExtResource("36_o1tg2")
 
-[node name="Far_2" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=1069212001]
+[node name="blur3" type="ColorRect" parent="WorldView/WorldRoot/3" unique_id=548125029]
+visible = false
+material = SubResource("ShaderMaterial_1x1rp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("29_1x1rp")
+
+[node name="4" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=2118232127]
+layer = 4
+
+[node name="Far_2" type="Node2D" parent="WorldView/WorldRoot/4" unique_id=1069212001]
 unique_name_in_owner = true
+position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample3" type="Sprite2D" parent="MaskGroup/WorldRoot/Far_2" unique_id=1539132014]
+[node name="sample3" type="Sprite2D" parent="WorldView/WorldRoot/4/Far_2" unique_id=1539132014]
 position = Vector2(-883, -83)
 texture = ExtResource("37_lfilp")
 
-[node name="sample4" type="Sprite2D" parent="MaskGroup/WorldRoot/Far_2" unique_id=1052274733]
+[node name="sample4" type="Sprite2D" parent="WorldView/WorldRoot/4/Far_2" unique_id=1052274733]
 position = Vector2(883, -104)
 texture = ExtResource("38_nu61c")
 
-[node name="Land" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=1013858590]
+[node name="blur4" type="ColorRect" parent="WorldView/WorldRoot/4" unique_id=1097898981]
+material = SubResource("ShaderMaterial_1x1rp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("29_1x1rp")
+
+[node name="5" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=947855395]
+layer = 5
+
+[node name="Land" type="Parallax2D" parent="WorldView/WorldRoot/5" unique_id=1013858590]
 unique_name_in_owner = true
+scroll_offset = Vector2(0, 550)
 repeat_size = Vector2(4542, 0)
 autoscroll = Vector2(-40, 0)
 
-[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Land" unique_id=1425775975]
+[node name="Main" type="Sprite2D" parent="WorldView/WorldRoot/5/Land" unique_id=1425775975]
 modulate = Color(1.1638972, 0.8987436, 0.5746672, 1)
 scale = Vector2(0.75, 0.5)
 texture = ExtResource("34_2ki8c")
 offset = Vector2(0, 144)
 
-[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Land" unique_id=569461966]
+[node name="Effect" type="Sprite2D" parent="WorldView/WorldRoot/5/Land" unique_id=569461966]
 scale = Vector2(0.5, 0.5)
 offset = Vector2(0, 144)
 
-[node name="Sea" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=384608179]
+[node name="blur5" type="ColorRect" parent="WorldView/WorldRoot/5" unique_id=59395855]
+visible = false
+material = SubResource("ShaderMaterial_1x1rp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("29_1x1rp")
+
+[node name="6" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=87896012]
+layer = 6
+
+[node name="Sea" type="Parallax2D" parent="WorldView/WorldRoot/6" unique_id=384608179]
 unique_name_in_owner = true
+scroll_offset = Vector2(0, 550)
 repeat_size = Vector2(3028, 0)
 autoscroll = Vector2(-20, 0)
 
-[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Sea" unique_id=1308681423]
+[node name="Main" type="Sprite2D" parent="WorldView/WorldRoot/6/Sea" unique_id=1308681423]
 position = Vector2(0, 68)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("35_vshs7")
 
-[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Sea" unique_id=236318018]
+[node name="Effect" type="Sprite2D" parent="WorldView/WorldRoot/6/Sea" unique_id=236318018]
 scale = Vector2(0.5, 0.5)
 
-[node name="Mid_1" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=473401516]
+[node name="blur6" type="ColorRect" parent="WorldView/WorldRoot/6" unique_id=467464977]
+visible = false
+material = SubResource("ShaderMaterial_1x1rp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("29_1x1rp")
+
+[node name="7" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1986757641]
+layer = 7
+
+[node name="Mid_1" type="Node2D" parent="WorldView/WorldRoot/7" unique_id=473401516]
 unique_name_in_owner = true
+position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample5" type="Sprite2D" parent="MaskGroup/WorldRoot/Mid_1" unique_id=1722126394]
+[node name="sample5" type="Sprite2D" parent="WorldView/WorldRoot/7/Mid_1" unique_id=1722126394]
 position = Vector2(1131, -19)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("41_ylqph")
 
-[node name="sample6" type="Sprite2D" parent="MaskGroup/WorldRoot/Mid_1" unique_id=412007097]
+[node name="sample6" type="Sprite2D" parent="WorldView/WorldRoot/7/Mid_1" unique_id=412007097]
 position = Vector2(-626, 6)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("43_ylqph")
 
-[node name="Mid_2" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=183900339]
+[node name="blur7" type="ColorRect" parent="WorldView/WorldRoot/7" unique_id=2120235342]
+visible = false
+material = SubResource("ShaderMaterial_1x1rp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("29_1x1rp")
+
+[node name="8" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1569384005]
+layer = 8
+
+[node name="Mid_2" type="Node2D" parent="WorldView/WorldRoot/8" unique_id=183900339]
 unique_name_in_owner = true
+position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample7" type="Sprite2D" parent="MaskGroup/WorldRoot/Mid_2" unique_id=873776214]
+[node name="sample7" type="Sprite2D" parent="WorldView/WorldRoot/8/Mid_2" unique_id=873776214]
 modulate = Color(1, 1, 1, 0.5)
 position = Vector2(-481, 107)
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("43_fcv70")
 
-[node name="sample8" type="Sprite2D" parent="MaskGroup/WorldRoot/Mid_2" unique_id=304575486]
+[node name="sample8" type="Sprite2D" parent="WorldView/WorldRoot/8/Mid_2" unique_id=304575486]
 position = Vector2(1694, 70)
 texture = ExtResource("41_1x1rp")
 
-[node name="Pet" type="AnimatedSprite2D" parent="MaskGroup/WorldRoot" unique_id=390694917]
+[node name="blur8" type="ColorRect" parent="WorldView/WorldRoot/8" unique_id=948367482]
+material = SubResource("ShaderMaterial_1x1rp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("29_1x1rp")
+
+[node name="9" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=367772465]
+layer = 9
+
+[node name="Pet" type="AnimatedSprite2D" parent="WorldView/WorldRoot/9" unique_id=390694917]
 unique_name_in_owner = true
-position = Vector2(-279, 205)
+position = Vector2(687, 745)
 scale = Vector2(0.25, 0.25)
 sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
 frame_progress = 0.8828364
 script = ExtResource("30_v0vrg")
 
-[node name="body" type="Area2D" parent="MaskGroup/WorldRoot/Pet" unique_id=815688141]
+[node name="body" type="Area2D" parent="WorldView/WorldRoot/9/Pet" unique_id=815688141]
 visible = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MaskGroup/WorldRoot/Pet/body" unique_id=952050975]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldView/WorldRoot/9/Pet/body" unique_id=952050975]
 position = Vector2(0, -160)
 shape = SubResource("CapsuleShape2D_gsxep")
 
-[node name="diamond" type="Node2D" parent="MaskGroup/WorldRoot/Pet" unique_id=138392431]
+[node name="diamond" type="Node2D" parent="WorldView/WorldRoot/9/Pet" unique_id=138392431]
 position = Vector2(0, -5000)
 scale = Vector2(0.5, 0.5)
 script = ExtResource("36_cmqll")
 
-[node name="Polygon2D" type="Polygon2D" parent="MaskGroup/WorldRoot/Pet/diamond" unique_id=922637094]
+[node name="Polygon2D" type="Polygon2D" parent="WorldView/WorldRoot/9/Pet/diamond" unique_id=922637094]
 position = Vector2(-9.999918, 3.333496)
 offset = Vector2(163.33325, 2406.6665)
 polygon = PackedVector2Array(-153.33325, -2676.6665, -350, -2396.6665, -153.33325, -2123.3333, 30, -2396.6665)
 
-[node name="heart" type="Sprite2D" parent="MaskGroup/WorldRoot/Pet" unique_id=2016059863]
+[node name="heart" type="Sprite2D" parent="WorldView/WorldRoot/9/Pet" unique_id=2016059863]
 visible = false
 position = Vector2(860, -576.6666)
 texture = ExtResource("37_8cp6k")
 
-[node name="Front_1" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=2075061201]
+[node name="10" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=247601466]
+layer = 10
+
+[node name="Front_1" type="Node2D" parent="WorldView/WorldRoot/10" unique_id=2075061201]
 unique_name_in_owner = true
+position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample9" type="Sprite2D" parent="MaskGroup/WorldRoot/Front_1" unique_id=1585505042]
+[node name="sample9" type="Sprite2D" parent="WorldView/WorldRoot/10/Front_1" unique_id=1585505042]
 modulate = Color(1, 1, 1, 0.75000006)
 position = Vector2(632, -372)
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("66_1x1rp")
 
-[node name="sample10" type="Sprite2D" parent="MaskGroup/WorldRoot/Front_1" unique_id=1583813693]
+[node name="sample10" type="Sprite2D" parent="WorldView/WorldRoot/10/Front_1" unique_id=1583813693]
 modulate = Color(1, 1, 1, 0.75000006)
 position = Vector2(-350, -267)
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("67_ylqph")
 
-[node name="Front_2" type="Node2D" parent="MaskGroup/WorldRoot" unique_id=101058712]
+[node name="11" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=2048764701]
+layer = 11
+
+[node name="Front_2" type="Node2D" parent="WorldView/WorldRoot/11" unique_id=101058712]
 unique_name_in_owner = true
+position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample11" type="Sprite2D" parent="MaskGroup/WorldRoot/Front_2" unique_id=1600239603]
+[node name="sample11" type="Sprite2D" parent="WorldView/WorldRoot/11/Front_2" unique_id=1600239603]
 position = Vector2(-669, 381)
 texture = ExtResource("68_fcv70")
 
-[node name="sample12" type="Sprite2D" parent="MaskGroup/WorldRoot/Front_2" unique_id=1485512628]
+[node name="sample12" type="Sprite2D" parent="WorldView/WorldRoot/11/Front_2" unique_id=1485512628]
 position = Vector2(1371, 296)
 texture = ExtResource("68_ylqph")
 
-[node name="Light" type="Parallax2D" parent="MaskGroup/WorldRoot" unique_id=605308785]
+[node name="12" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=177813838]
+layer = 12
+
+[node name="Light" type="Parallax2D" parent="WorldView/WorldRoot/12" unique_id=605308785]
 unique_name_in_owner = true
 repeat_size = Vector2(1920, 0)
 
-[node name="Main" type="Sprite2D" parent="MaskGroup/WorldRoot/Light" unique_id=173088965]
+[node name="Main" type="Sprite2D" parent="WorldView/WorldRoot/12/Light" unique_id=173088965]
 scale = Vector2(0.5, 0.5)
 
-[node name="Effect" type="Sprite2D" parent="MaskGroup/WorldRoot/Light" unique_id=1348136509]
+[node name="Effect" type="Sprite2D" parent="WorldView/WorldRoot/12/Light" unique_id=1348136509]
 scale = Vector2(0.5, 0.5)
 
-[node name="WorldPlayer" type="AnimationPlayer" parent="MaskGroup/WorldRoot" unique_id=1986727739]
+[node name="13" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=878792571]
+layer = 13
+
+[node name="WorldPlayer" type="AnimationPlayer" parent="WorldView/WorldRoot" unique_id=1986727739]
 unique_name_in_owner = true
-root_node = NodePath("../Sea")
+root_node = NodePath("../6/Sea")
 libraries/ = SubResource("AnimationLibrary_xa025")
 
-[node name="Exit" type="Button" parent="MaskGroup/WorldRoot" unique_id=1753071860]
+[node name="Exit" type="Button" parent="WorldView/WorldRoot" unique_id=1753071860]
 offset_left = 811.0
 offset_top = -494.0
 offset_right = 912.0
 offset_bottom = -406.0
 text = "X"
 
-[node name="DebugWorld" type="Node2D" parent="MaskGroup" unique_id=121059888]
+[node name="DebugWorld" type="Node2D" parent="WorldView" unique_id=121059888]
 unique_name_in_owner = true
+position = Vector2(6, 0)
 script = ExtResource("40_8b871")
 
-[node name="DebugPet" type="Node2D" parent="MaskGroup/DebugWorld" unique_id=1912209357]
+[node name="DebugPet" type="Node2D" parent="WorldView/DebugWorld" unique_id=1912209357]
 unique_name_in_owner = true
 position = Vector2(588, 747)
 scale = Vector2(0.3, 0.3)
 script = ExtResource("33_2c4at")
 debug_mode = true
 
-[node name="DebugStatus" type="Label" parent="MaskGroup/DebugWorld/DebugPet" unique_id=2119181311]
+[node name="DebugStatus" type="Label" parent="WorldView/DebugWorld/DebugPet" unique_id=2119181311]
 offset_left = -370.00012
 offset_top = -973.3336
 offset_right = -241.00012
@@ -636,7 +726,7 @@ text = "character_status"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DebugCooldown" type="Label" parent="MaskGroup/DebugWorld/DebugPet" unique_id=337955523]
+[node name="DebugCooldown" type="Label" parent="WorldView/DebugWorld/DebugPet" unique_id=337955523]
 offset_left = -370.00012
 offset_top = -1133.333
 offset_right = -240.00012
@@ -646,7 +736,19 @@ text = "status_cooldown"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="WorldOutput" type="TextureRect" parent="." unique_id=119086223]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_pdwbg")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 516)
+texture = SubResource("ViewportTexture_8t8ul")
+expand_mode = 1
+
 [connection signal="pressed" from="UIWindow/UIRoot/CollectionBook/Buttons/CropAndSend" to="UIWindow/UIRoot/CollectionBook/Letter" method="_on_crop_and_send_pressed"]
 [connection signal="pressed" from="UIWindow/DebugUI/VBoxContainer/AddRandomItem" to="UIWindow/DebugUI" method="_on_add_random_item_pressed"]
-[connection signal="mouse_entered" from="MaskGroup/WorldRoot/Pet/body" to="MaskGroup/WorldRoot/Pet" method="_on_body_mouse_entered"]
-[connection signal="mouse_exited" from="MaskGroup/WorldRoot/Pet/body" to="MaskGroup/WorldRoot/Pet" method="_on_body_mouse_exited"]
+[connection signal="mouse_entered" from="WorldView/WorldRoot/9/Pet/body" to="WorldView/WorldRoot/9/Pet" method="_on_body_mouse_entered"]
+[connection signal="mouse_exited" from="WorldView/WorldRoot/9/Pet/body" to="WorldView/WorldRoot/9/Pet" method="_on_body_mouse_exited"]

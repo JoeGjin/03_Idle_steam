@@ -3,7 +3,7 @@
 extends Node
 
 @onready var global_key_hook: Node = %GlobalKeyHook
-@onready var window_controller: WindowController = %WindowController
+# @onready var window_controller: WindowController = %WindowController
 @onready var mouse_controller: MouseController = %MouseController
 @onready var character_status: CharacterStatus = %CharacterStatus
 @onready var character_animator: CharacterAnimator = %CharacterAnimator
@@ -12,7 +12,7 @@ extends Node
 
 @onready var world_root: Node2D = %WorldRoot
 @onready var pet: AnimatedSprite2D = %Pet
-@onready var frame: Node2D = %Frame
+# @onready var frame: Node2D = %Frame
 
 @onready var ui_window: Window = %UIWindow
 @onready var ui_root: Control = %UIRoot
@@ -20,8 +20,10 @@ extends Node
 
 @onready var debug_world: Node2D = %DebugWorld
 
+@onready var world_output: TextureRect = %WorldOutput
 
-const DRAW_SCALE: Vector2 = Vector2(0.7, 0.7) # 预设的窗口缩放级别，供调试使用
+
+@export var draw_scale: float = 1.0 # 预设的窗口缩放级别，供调试使用
 
 
 func _ready():
@@ -36,7 +38,7 @@ func _ready():
 	_connect_signals()
 
 	# 初始更新window裁剪区域
-	window_controller.update_crop_to_frame()
+	# window_controller.update_crop_to_frame()
 
 	# 初始化世界组装器
 	world_assembler.initiate()
@@ -52,14 +54,14 @@ func _ready():
 
 func _cross_assign_targets():
 	# 将 pet 赋值给各 controller 的 target
-	window_controller.pet = pet
+	# window_controller.pet = pet
 	mouse_controller.pet = pet
 	# character_status.pet = pet
 	character_animator.pet = pet
 
 	# 将 frame 和 world_root 赋值给 window_controller
-	window_controller.world_root = world_root
-	window_controller.frame = frame
+	# window_controller.world_root = world_root
+	# window_controller.frame = frame
 
 	# 设置pet base scale
 	character_animator.base_scale = pet.scale
@@ -71,8 +73,10 @@ func _cross_assign_targets():
 
 func _draw_scale_setup():
 	# 可选：根据需要调整 world_root 的缩放级别
-	world_root.scale = DRAW_SCALE
-	debug_world.scale = DRAW_SCALE
+	# world_root.scale = DRAW_SCALE
+	# debug_world.scale = DRAW_SCALE
+	# world_output.scale = draw_scale
+	get_window().size *= draw_scale
 
 
 func _connect_signals() -> void:
