@@ -80,11 +80,11 @@ Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
-shader_parameter/mask_enable = 0.48999998904752
-shader_parameter/center_u = 0.5090000241775
-shader_parameter/center_v = 0.4790000227525
-shader_parameter/radius_u = 0.2870000136325
-shader_parameter/radius_v = 0.3710000176225
+shader_parameter/mask_enable = 0.999999977648
+shader_parameter/center_u = 0.46000002185
+shader_parameter/center_v = 0.4530000215175
+shader_parameter/radius_u = 0.38000001805
+shader_parameter/radius_v = 0.4390000208525
 shader_parameter/feather_px = 15.30000022798836
 shader_parameter/smoke_enable = 0.70999998413008
 shader_parameter/smoke_band_px = 38.20000056922584
@@ -456,12 +456,12 @@ unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
 [node name="sample1" type="Sprite2D" parent="MaskGroup/WorldRoot/Far_1" unique_id=48273742]
-modulate = Color(1, 1, 1, 0.75000006)
+modulate = Color(1, 1, 1, 0.5)
 position = Vector2(457, -503)
 texture = ExtResource("35_ylqph")
 
 [node name="sample2" type="Sprite2D" parent="MaskGroup/WorldRoot/Far_1" unique_id=1719514148]
-modulate = Color(1, 1, 1, 0.75000006)
+modulate = Color(1, 1, 1, 0.5)
 position = Vector2(-840, -160)
 scale = Vector2(2, 2)
 texture = ExtResource("36_o1tg2")

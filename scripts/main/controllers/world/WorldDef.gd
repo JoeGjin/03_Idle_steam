@@ -33,7 +33,7 @@ class_name WorldDef
 
 @export var far_0_spwan_scale: Vector2 = Vector2.ONE # 新增，update WorldAssembler 和 Manual_Parallax
 @export var far_0_spawn_position: Vector2 = Vector2(1000,0) # 新增，update WorldAssembler 和 Manual_Parallax
-@export var far_0_spwan_cooldown: float = 100.0 # 新增，update WorldAssembler 和 Manual_Parallax
+# @export var far_0_spwan_cooldown: float = 100.0 # 新增，update WorldAssembler 和 Manual_Parallax
 @export_range(0.0, 1.0, 0.01) var far_0_spwan_randomness: float = 0.1 # 新增，update WorldAssembler 和 Manual_Parallax
 
 @export var far_1_scroll_speed: Vector2 = Vector2(-10, 0)
@@ -71,10 +71,10 @@ class_name WorldDef
 @export var mid_2_textures: Array[Texture2D] = []
 @export var mid_2_colors: Color = Color(1, 1, 1, 1)
 
-@export var mid_0_spwan_scale: Vector2 = Vector2.ONE # 新增，update WorldAssembler 和 Manual_Parallax
-@export var mid_0_spawn_position: Vector2 = Vector2(1000,0) # 新增，update WorldAssembler 和 Manual_Parallax
-@export var mid_0_spwan_cooldown: float = 100.0 # 新增，update WorldAssembler 和 Manual_Parallax
-@export_range(0.0, 1.0, 0.01) var mid_0_spwan_randomness: float = 0.1 # 新增，update WorldAssembler 和 Manual_Parallax
+@export var mid_0_spwan_scale: Vector2 = Vector2.ONE 
+@export var mid_0_spawn_position: Vector2 = Vector2(1000,0) 
+# @export var mid_0_spwan_cooldown: float = 100.0
+@export_range(0.0, 1.0, 0.01) var mid_0_spwan_randomness: float = 0.1 
 
 @export var mid_1_scroll_speed: Vector2 = Vector2(-25, 0)
 @export var mid_1_spwan_scale: Vector2 = Vector2.ONE
@@ -96,10 +96,10 @@ class_name WorldDef
 @export var front_2_textures: Array[Texture2D] = []
 @export var front_2_colors: Color = Color(1, 1, 1, 1)
 
-@export var front_0_spwan_scale: Vector2 = Vector2.ONE # 新增，update WorldAssembler 和 Manual_Parallax
-@export var front_0_spawn_position: Vector2 = Vector2(1000,0) # 新增，update WorldAssembler 和 Manual_Parallax
-@export var front_0_spwan_cooldown: float = 100.0 # 新增，update WorldAssembler 和 Manual_Parallax
-@export_range(0.0, 1.0, 0.01) var front_0_spwan_randomness: float = 0.1 # 新增，update WorldAssembler 和 Manual_Parallax
+@export var front_0_spwan_scale: Vector2 = Vector2.ONE
+@export var front_0_spawn_position: Vector2 = Vector2(1000,0) 
+# @export var front_0_spwan_cooldown: float = 100.0
+@export_range(0.0, 1.0, 0.01) var front_0_spwan_randomness: float = 0.1
 
 @export var front_1_scroll_speed: Vector2 = Vector2(-100.0, 0)
 @export var front_1_spwan_scale: Vector2 = Vector2.ONE

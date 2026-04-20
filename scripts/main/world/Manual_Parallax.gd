@@ -4,15 +4,23 @@ class_name ManualParallax
 
 
 @export var scroll_speed: Vector2 = Vector2.ZERO
-@export var spawn_scale: Vector2 = Vector2.ONE
-@export var spawn_position: Vector2 = Vector2.ZERO
+
+
+@export var spawn_cooldown_0: float = 1.0
+@export var spawn_position_0: Vector2 = Vector2.ZERO
+@export var spawn_scale_0: Vector2 = Vector2.ONE
+@export var textures_0: Array[Texture2D] = []
+@export var color_0: Color = Color(1, 1, 1, 1)
+@export_range(0.0, 1.0, 0.01) var spawn_randomness_0: float = 0.1
+
+
 @export var spawn_cooldown: float = 1.0
+@export var spawn_position: Vector2 = Vector2.ZERO
+@export var spawn_scale: Vector2 = Vector2.ONE
+@export var textures: Array[Texture2D] = []
+@export var color: Color = Color(1, 1, 1, 1)
 @export_range(0.0, 1.0, 0.01) var spawn_randomness: float = 0.1
 
-@export var _textures_0: Array[Texture2D] = []
-@export var _color_0: Color = Color(1, 1, 1, 1)
-@export var _textures: Array[Texture2D] = []
-@export var _color: Color = Color(1, 1, 1, 1)
 
 var _objects: Array[Sprite2D] = []
 var _is_scrolling: bool = true
@@ -37,8 +45,8 @@ var _spawn_timer: Timer
 func start_manual_scroll() -> void:
     _free_all_children()
     _initialize_timer()
-    _spawn_texture(_textures_0)
-    _spawn_texture(_textures)
+    _spawn_texture(textures_0)
+    _spawn_texture(textures)
     _spawn_timer.start()
     _is_scrolling = true
 
@@ -87,13 +95,15 @@ func _spawn_texture(texture_pool: Array[Texture2D]) -> void:
     var sprite = Sprite2D.new()
     sprite.texture = texture
     match texture_pool:
-        _textures_0:
-            sprite.modulate = _color_0
-        _textures:
-            sprite.modulate = _color
-    sprite.scale = spawn_scale 
+        textures_0:
+            sprite.modulate = color_0
+            sprite.scale = spawn_scale_0
+            sprite.position = spawn_position_0
+        textures:
+            sprite.modulate = color
+            sprite.scale = spawn_scale
+            sprite.position = spawn_position  
     add_child(sprite)
-    sprite.position = spawn_position 
     _objects.append(sprite)
 
 func _process(delta: float) -> void:
@@ -114,5 +124,5 @@ func _move_textures(delta: float) -> void:
 
 func _on_spawn_timer_timeout() -> void:
     # 间隔时长后重复spawn
-    _spawn_texture(_textures_0)
-    _spawn_texture(_textures)
+    _spawn_texture(textures_0)
+    _spawn_texture(textures)
