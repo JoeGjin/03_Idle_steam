@@ -27,6 +27,9 @@ extends Node
 
 
 func _ready():
+
+	# 将场景放入子视口以便后续处理
+	_scene_into_subviewport()
 	
 	# 初始设置缩放
 	_draw_scale_setup()
@@ -49,6 +52,12 @@ func _ready():
 
 
 	
+
+
+func _scene_into_subviewport():
+	var subviewport = %WorldView
+	world_root.reparent(subviewport)
+	debug_world.reparent(subviewport)
 
 
 

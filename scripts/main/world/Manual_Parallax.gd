@@ -117,7 +117,7 @@ func _move_textures(delta: float) -> void:
             if object is Sprite2D:
                 object.position += scroll_speed * delta
                 # 如果从场景左侧出去，自动释放
-                if object.position.x < -1500:
+                if object.position.x < -3000:
                     _objects.erase(object)
                     object.queue_free()
 
