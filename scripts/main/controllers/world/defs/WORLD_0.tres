@@ -28,7 +28,6 @@
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="15_yfnfh"]
 [ext_resource type="Texture2D" uid="uid://dmxapden7cmd5" path="res://assets/worldroot/world/0/0_mid_1_2.png" id="16_8jx8n"]
 [ext_resource type="Texture2D" uid="uid://qexg1655why2" path="res://assets/worldroot/world/0/0_front_2_4.png" id="16_p7tqh"]
-[ext_resource type="Texture2D" uid="uid://dttwoc4ayr405" path="res://assets/worldroot/world/0/0_mid_2_1.png" id="17_ecb6p"]
 [ext_resource type="Texture2D" uid="uid://dy7xugmdkc6vy" path="res://assets/worldroot/world/0/0_front_2_5.png" id="17_hy5dy"]
 [ext_resource type="Texture2D" uid="uid://olfyye32clqe" path="res://assets/worldroot/world/0/0_mid_2_2.png" id="18_vv0f4"]
 [ext_resource type="Texture2D" uid="uid://8ik0bm6bshmn" path="res://assets/worldroot/world/0/0_front_2_6.png" id="18_xkypj"]
@@ -41,6 +40,7 @@
 [resource]
 script = ExtResource("15_yfnfh")
 name = "night_sea"
+sky_effect_color = Color(1, 1, 1, 0)
 moon_main_texture = ExtResource("2_6q1at")
 moon_effect_texture = ExtResource("1_mlqse")
 far_0_textures = Array[Texture2D]([ExtResource("1_hvw7l"), ExtResource("2_ixpdr")])
@@ -50,26 +50,32 @@ far_1_colors = Color(1, 1, 1, 0.5)
 far_2_textures = Array[Texture2D]([ExtResource("6_ru2uy"), ExtResource("7_etg68"), ExtResource("8_jbuqa"), ExtResource("9_ut4n6")])
 far_0_spawn_position = Vector2(1000, -500)
 far_1_spwan_scale = Vector2(2, 2)
-far_1_spawn_position = Vector2(3000, -150)
-far_1_spwan_cooldown = 200.0
-far_2_spawn_position = Vector2(1000, -90)
+far_1_spawn_position = Vector2(3000, -50)
+far_1_spwan_cooldown = 400.0
+far_2_spwan_scale = Vector2(0.75, 0.75)
+far_2_spawn_position = Vector2(2000, 20)
 land_main_color = Color(1.164, 0.899, 0.575, 1)
+land_effect_color = Color(1, 1, 1, 0)
+sea_effect_color = Color(1, 1, 1, 0)
 mid_0_textures = Array[Texture2D]([ExtResource("11_etg68"), ExtResource("12_jbuqa"), ExtResource("13_ut4n6"), ExtResource("14_62fj4")])
 mid_0_color = Color(1, 1, 1, 0.5)
 mid_1_textures = Array[Texture2D]([ExtResource("15_62fj4"), ExtResource("16_8jx8n")])
-mid_2_textures = Array[Texture2D]([ExtResource("17_ecb6p"), ExtResource("18_vv0f4"), ExtResource("19_lk8l7")])
+mid_2_textures = Array[Texture2D]([ExtResource("18_vv0f4"), ExtResource("19_lk8l7")])
+mid_2_colors = Color(1, 1, 1, 0.5)
 mid_0_spwan_scale = Vector2(0.75, 0.75)
-mid_0_spawn_position = Vector2(2000, 100)
+mid_0_spawn_position = Vector2(2000, 140)
 mid_1_spwan_scale = Vector2(0.5, 0.5)
+mid_1_spawn_position = Vector2(1200, 85)
 mid_1_spwan_randomness = 0.2
-mid_2_spawn_position = Vector2(2000, 65)
+mid_2_spawn_position = Vector2(2000, 115)
 mid_2_spwan_randomness = 0.0
+front_0_color = Color(1, 1, 1, 0)
 front_1_textures = Array[Texture2D]([ExtResource("10_vv0f4"), ExtResource("11_5qrcr"), ExtResource("12_2yne5")])
 front_1_colors = Color(1, 1, 1, 0.75000006)
 front_2_textures = Array[Texture2D]([ExtResource("13_2bofr"), ExtResource("14_yh62r"), ExtResource("15_nsjug"), ExtResource("16_p7tqh"), ExtResource("17_hy5dy"), ExtResource("18_xkypj"), ExtResource("19_wdsib"), ExtResource("20_ps222"), ExtResource("21_rag56"), ExtResource("22_2oi71")])
 front_1_spwan_scale = Vector2(0.75, 0.75)
 front_1_spawn_position = Vector2(1500, -300)
 front_1_spwan_randomness = 0.33
-front_2_spawn_position = Vector2(1500, 350)
+front_2_spawn_position = Vector2(1500, 420)
 front_2_spwan_randomness = 0.15
 metadata/_custom_type_script = "uid://em6c7og411w6"

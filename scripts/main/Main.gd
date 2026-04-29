@@ -24,6 +24,7 @@ extends Node
 
 
 @export var draw_scale: float = 1.0 # 预设的窗口缩放级别，供调试使用
+@export var starting_world_id: int = 0 # 启动时默认组装的世界ID
 
 
 func _ready():
@@ -45,7 +46,7 @@ func _ready():
 
 	# 初始化世界组装器
 	world_assembler.initiate()
-	world_assembler.assemble_world(0) # 默认组装第一个世界，后续可以根据需要切换
+	world_assembler.assemble_world(starting_world_id) # 默认组装指定世界，后续可以根据需要切换
 
 	# 启动角色状态机，从 WALKING 状态开始
 	character_status.start(1) 
@@ -140,7 +141,7 @@ func _on_global_key_hook_any_key_pressed() -> void:
 
 
 func _on_character_status_state_changed(new_state: CharacterStates.CharacterState, _duration: float) -> void:
-	print("[STATE] Changed to %s" % CharacterStates.CharacterState.find_key(new_state))
+	# print("[STATE] Changed to %s" % CharacterStates.CharacterState.find_key(new_state))
 	match new_state:
 		CharacterStates.CharacterState.RESTING:
 			pass

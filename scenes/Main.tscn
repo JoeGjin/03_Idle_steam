@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/controllers/CharacterAnimator.gd" id="3_vcsgt"]
 [ext_resource type="Script" uid="uid://dlf38k8n2fmdm" path="res://scripts/main/controllers/CharacterStatus.gd" id="5_bb450"]
 [ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="6_1iba3"]
+[ext_resource type="Resource" uid="uid://v8li8wq2glkt" path="res://scripts/main/controllers/world/defs/WORLD_1.tres" id="6_1x1rp"]
 [ext_resource type="Script" uid="uid://cqs5yvp2atmdx" path="res://scripts/main/ui/UIWindow.gd" id="6_ft6cd"]
 [ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/world/WorldRoot.gd" id="6_lhr70"]
 [ext_resource type="Resource" uid="uid://cfpmr7eqfmvhs" path="res://scripts/main/controllers/status/defs/RESTING.tres" id="7_yxlcp"]
@@ -33,29 +34,29 @@
 [ext_resource type="Script" uid="uid://yorns460rfis" path="res://scripts/main/ui/Letter.gd" id="31_8b871"]
 [ext_resource type="Texture2D" uid="uid://cw2rqg1gy3heb" path="res://assets/worldroot/world/stage/x_sky_main.png" id="31_vshs7"]
 [ext_resource type="Script" uid="uid://dmq4phw1im2m7" path="res://scripts/main/debug/DebugUI.gd" id="32_pdwbg"]
+[ext_resource type="Texture2D" uid="uid://h01ky1j7cg3m" path="res://assets/worldroot/world/1/1_far_0_1.png" id="33_1x1rp"]
 [ext_resource type="Script" uid="uid://dvy6ipmh42awj" path="res://scripts/main/debug/DebugPet.gd" id="33_2c4at"]
 [ext_resource type="Script" uid="uid://r3h7y0ivusgi" path="res://scripts/main/world/Manual_Parallax.gd" id="33_8b871"]
 [ext_resource type="Texture2D" uid="uid://b737uyfec4n2d" path="res://assets/worldroot/world/stage/x_land_main.png" id="34_2ki8c"]
+[ext_resource type="Texture2D" uid="uid://bonk4be6dkjbk" path="res://assets/worldroot/world/1/1_mid_0_1.png" id="34_8t8ul"]
+[ext_resource type="Texture2D" uid="uid://bir86avjb1noe" path="res://assets/worldroot/world/1/1_far_2_1.png" id="35_1x1rp"]
 [ext_resource type="Texture2D" uid="uid://dyn466b5leeh" path="res://assets/worldroot/world/stage/x_sea_main.png" id="35_vshs7"]
-[ext_resource type="Texture2D" uid="uid://ctvgsr2gdpfht" path="res://assets/worldroot/world/0/0_far_0_1.png" id="35_ylqph"]
 [ext_resource type="Script" uid="uid://ckk37gmmb4wxy" path="res://scripts/main/world/diamond.gd" id="36_cmqll"]
-[ext_resource type="Texture2D" uid="uid://bb3pkpru8u8p5" path="res://assets/worldroot/world/0/0_far_1_2.png" id="36_o1tg2"]
 [ext_resource type="Texture2D" uid="uid://tw714yrnrq8f" path="res://assets/worldroot/pet/walk/frame_01.png" id="36_vshs7"]
+[ext_resource type="Texture2D" uid="uid://cnsb7h6ai4t12" path="res://assets/worldroot/world/1/1_far_2_2.png" id="36_ylqph"]
 [ext_resource type="Texture2D" uid="uid://dbjfnojqk1vek" path="res://assets/worldroot/pet/walk/frame_02.png" id="37_2ki8c"]
 [ext_resource type="Texture2D" uid="uid://dtnbqi1tuknic" path="res://assets/worldroot/pet/test_heart.png" id="37_8cp6k"]
-[ext_resource type="Texture2D" uid="uid://31c1hrw8ooc0" path="res://assets/worldroot/world/0/0_far_2_1.png" id="37_lfilp"]
 [ext_resource type="Texture2D" uid="uid://d0j08xdnfer36" path="res://assets/worldroot/pet/walk/frame_03.png" id="38_0owt5"]
-[ext_resource type="Texture2D" uid="uid://1fagsg3mg8bh" path="res://assets/worldroot/world/0/0_far_2_2.png" id="38_nu61c"]
+[ext_resource type="Texture2D" uid="uid://dbu0u7nnhapfy" path="res://assets/worldroot/world/1/1_mid_1_1.png" id="39_1x1rp"]
 [ext_resource type="Texture2D" uid="uid://ca022vsesuwke" path="res://assets/worldroot/pet/walk/frame_04.png" id="39_o1tg2"]
 [ext_resource type="Script" uid="uid://dqilwmdefk6v" path="res://scripts/main/debug/DebugWorld.gd" id="40_8b871"]
 [ext_resource type="Texture2D" uid="uid://caldjd64rysxo" path="res://assets/worldroot/pet/walk/frame_05.png" id="40_hyu0y"]
-[ext_resource type="Texture2D" uid="uid://bmdyg1n11vkcy" path="res://assets/worldroot/world/0/0_mid_2_3.png" id="41_1x1rp"]
+[ext_resource type="Texture2D" uid="uid://c7vqrnw1oo3n3" path="res://assets/worldroot/world/1/1_mid_1_2.png" id="40_ylqph"]
+[ext_resource type="Texture2D" uid="uid://ccmmmt1dbqgaq" path="res://assets/worldroot/world/1/1_mid_0_3.png" id="41_1x1rp"]
 [ext_resource type="Texture2D" uid="uid://n4jqj40sd7hn" path="res://assets/worldroot/pet/walk/frame_06.png" id="41_lfilp"]
-[ext_resource type="Texture2D" uid="uid://n4j6v6kuq4tr" path="res://assets/worldroot/world/0/0_mid_1_1.png" id="41_ylqph"]
 [ext_resource type="Texture2D" uid="uid://3phx4jo368dt" path="res://assets/worldroot/pet/walk/frame_07.png" id="42_nu61c"]
+[ext_resource type="Texture2D" uid="uid://cp5osvyvlfv4g" path="res://assets/worldroot/world/1/1_mid_2_2.png" id="42_ylqph"]
 [ext_resource type="Texture2D" uid="uid://cppatn62r4age" path="res://assets/worldroot/pet/walk/frame_08.png" id="43_e2bht"]
-[ext_resource type="Texture2D" uid="uid://bwugtcimj2jts" path="res://assets/worldroot/world/0/0_mid_0_3.png" id="43_fcv70"]
-[ext_resource type="Texture2D" uid="uid://dmxapden7cmd5" path="res://assets/worldroot/world/0/0_mid_1_2.png" id="43_ylqph"]
 [ext_resource type="Texture2D" uid="uid://cycgxqgowkynn" path="res://assets/worldroot/pet/walk/frame_09.png" id="44_a3hxr"]
 [ext_resource type="Texture2D" uid="uid://cdsn2nxidun20" path="res://assets/worldroot/pet/walk/frame_10.png" id="45_gcaob"]
 [ext_resource type="Texture2D" uid="uid://bxc8jlkc4nqek" path="res://assets/worldroot/pet/walk/frame_11.png" id="46_aqa1v"]
@@ -66,10 +67,10 @@
 [ext_resource type="Texture2D" uid="uid://bu22ebydy0gb3" path="res://assets/worldroot/pet/walk/frame_16.png" id="51_mou0d"]
 [ext_resource type="Texture2D" uid="uid://wk6bylej7dhi" path="res://assets/worldroot/pet/walk/frame_17.png" id="52_ugmlg"]
 [ext_resource type="Texture2D" uid="uid://c8jfbv6mfvb35" path="res://assets/worldroot/pet/walk/frame_18.png" id="53_qd1pt"]
-[ext_resource type="Texture2D" uid="uid://bd4b4suvbqjsg" path="res://assets/worldroot/world/0/0_front_1_2.png" id="66_1x1rp"]
-[ext_resource type="Texture2D" uid="uid://b26ua251slu7m" path="res://assets/worldroot/world/0/0_front_1_3.png" id="67_ylqph"]
-[ext_resource type="Texture2D" uid="uid://0fxjuex713q2" path="res://assets/worldroot/world/0/0_front_2_9.png" id="68_fcv70"]
-[ext_resource type="Texture2D" uid="uid://qexg1655why2" path="res://assets/worldroot/world/0/0_front_2_4.png" id="68_ylqph"]
+[ext_resource type="Texture2D" uid="uid://nmqvt8w6q76" path="res://assets/worldroot/world/1/1_front_1_1.png" id="63_8t8ul"]
+[ext_resource type="Texture2D" uid="uid://becgncfsx0vn" path="res://assets/worldroot/world/1/1_front_1_3.png" id="64_1x1rp"]
+[ext_resource type="Texture2D" uid="uid://diuqwm3k2ojfp" path="res://assets/worldroot/world/1/1_front_2_6.png" id="65_8t8ul"]
+[ext_resource type="Texture2D" uid="uid://cwi08pjfajcbn" path="res://assets/worldroot/world/1/1_front_0_2.png" id="66_1x1rp"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -153,11 +154,11 @@ height = 2000.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
-shader_parameter/mask_enable = 0.999999977648
-shader_parameter/center_u = 0.4210000199975
-shader_parameter/center_v = 0.470000022325
-shader_parameter/radius_u = 0.290000013775
-shader_parameter/radius_v = 0.4400000209
+shader_parameter/mask_enable = 0.96999997831856
+shader_parameter/center_u = 0.466000022135
+shader_parameter/center_v = 0.486000023085
+shader_parameter/radius_u = 0.3200000152
+shader_parameter/radius_v = 0.4610000218975
 shader_parameter/feather_px = 15.30000022798836
 shader_parameter/smoke_enable = 0.70999998413008
 shader_parameter/smoke_band_px = 38.20000056922584
@@ -171,7 +172,7 @@ viewport_path = NodePath("WorldView")
 
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
-draw_scale = 0.5
+draw_scale = 0.75
 
 [node name="Controllers" type="Node" parent="." unique_id=650551310]
 
@@ -183,7 +184,8 @@ hook_switch = true
 [node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
-world_defs = Array[ExtResource("20_hq6as")]([ExtResource("8_8b871")])
+world_defs = Array[ExtResource("20_hq6as")]([ExtResource("8_8b871"), ExtResource("6_1x1rp")])
+transition_duration = 60.0
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 unique_name_in_owner = true
@@ -384,7 +386,7 @@ text = "Add random item"
 unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("6_lhr70")
-lod = 1.0
+lod = 1.5
 
 [node name="1" type="CanvasLayer" parent="WorldRoot" unique_id=100414531]
 
@@ -396,7 +398,8 @@ autoscroll = Vector2(-5, 0)
 
 [node name="Main" type="Sprite2D" parent="WorldRoot/1/Sky" unique_id=1813847154]
 modulate = Color(0.44493333, 0.213, 0.71, 1)
-position = Vector2(0, 16)
+position = Vector2(0, 97.25)
+scale = Vector2(1, 1.3709815)
 texture = ExtResource("31_vshs7")
 
 [node name="Effect" type="Sprite2D" parent="WorldRoot/1/Sky" unique_id=905714890]
@@ -448,14 +451,14 @@ script = ExtResource("33_8b871")
 
 [node name="sample1" type="Sprite2D" parent="WorldRoot/3/Far_1" unique_id=48273742]
 modulate = Color(1, 1, 1, 0.5)
-position = Vector2(457, -503)
-texture = ExtResource("35_ylqph")
+position = Vector2(746, -105)
+scale = Vector2(0.75, 0.75)
+texture = ExtResource("33_1x1rp")
 
 [node name="sample2" type="Sprite2D" parent="WorldRoot/3/Far_1" unique_id=1719514148]
 modulate = Color(1, 1, 1, 0.5)
-position = Vector2(-840, -160)
-scale = Vector2(2, 2)
-texture = ExtResource("36_o1tg2")
+position = Vector2(-1197, -149)
+texture = ExtResource("34_8t8ul")
 
 [node name="blur3" type="ColorRect" parent="WorldRoot/3" unique_id=548125029]
 visible = false
@@ -477,12 +480,12 @@ position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
 [node name="sample3" type="Sprite2D" parent="WorldRoot/4/Far_2" unique_id=1539132014]
-position = Vector2(-883, -83)
-texture = ExtResource("37_lfilp")
+position = Vector2(-950, 298)
+texture = ExtResource("35_1x1rp")
 
 [node name="sample4" type="Sprite2D" parent="WorldRoot/4/Far_2" unique_id=1052274733]
-position = Vector2(883, -104)
-texture = ExtResource("38_nu61c")
+position = Vector2(884, 299)
+texture = ExtResource("36_ylqph")
 
 [node name="blur4" type="ColorRect" parent="WorldRoot/4" unique_id=1097898981]
 material = SubResource("ShaderMaterial_1x1rp")
@@ -505,6 +508,7 @@ autoscroll = Vector2(-40, 0)
 
 [node name="Main" type="Sprite2D" parent="WorldRoot/5/Land" unique_id=1425775975]
 modulate = Color(1.1638972, 0.8987436, 0.5746672, 1)
+position = Vector2(0, 72)
 scale = Vector2(0.75, 0.5)
 texture = ExtResource("34_2ki8c")
 offset = Vector2(0, 144)
@@ -534,7 +538,7 @@ repeat_size = Vector2(3028, 0)
 autoscroll = Vector2(-20, 0)
 
 [node name="Main" type="Sprite2D" parent="WorldRoot/6/Sea" unique_id=1308681423]
-position = Vector2(0, 68)
+position = Vector2(0, 142)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("35_vshs7")
 
@@ -561,14 +565,12 @@ position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
 [node name="sample5" type="Sprite2D" parent="WorldRoot/7/Mid_1" unique_id=1722126394]
-position = Vector2(1131, -19)
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("41_ylqph")
+position = Vector2(-995, 276)
+texture = ExtResource("39_1x1rp")
 
 [node name="sample6" type="Sprite2D" parent="WorldRoot/7/Mid_1" unique_id=412007097]
-position = Vector2(-626, 6)
-scale = Vector2(0.5, 0.5)
-texture = ExtResource("43_ylqph")
+position = Vector2(2719, 224)
+texture = ExtResource("40_ylqph")
 
 [node name="blur7" type="ColorRect" parent="WorldRoot/7" unique_id=2120235342]
 visible = false
@@ -590,13 +592,11 @@ position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
 [node name="sample7" type="Sprite2D" parent="WorldRoot/8/Mid_2" unique_id=873776214]
-modulate = Color(1, 1, 1, 0.5)
-position = Vector2(-481, 107)
-scale = Vector2(0.75, 0.75)
-texture = ExtResource("43_fcv70")
+position = Vector2(-754, 16)
+texture = ExtResource("42_ylqph")
 
 [node name="sample8" type="Sprite2D" parent="WorldRoot/8/Mid_2" unique_id=304575486]
-position = Vector2(1694, 70)
+position = Vector2(1676, 202)
 texture = ExtResource("41_1x1rp")
 
 [node name="blur8" type="ColorRect" parent="WorldRoot/8" unique_id=948367482]
@@ -652,16 +652,12 @@ position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
 [node name="sample9" type="Sprite2D" parent="WorldRoot/10/Front_1" unique_id=1585505042]
-modulate = Color(1, 1, 1, 0.75000006)
-position = Vector2(632, -372)
-scale = Vector2(0.75, 0.75)
-texture = ExtResource("66_1x1rp")
+position = Vector2(-329, 506)
+texture = ExtResource("63_8t8ul")
 
 [node name="sample10" type="Sprite2D" parent="WorldRoot/10/Front_1" unique_id=1583813693]
-modulate = Color(1, 1, 1, 0.75000006)
-position = Vector2(-350, -267)
-scale = Vector2(0.75, 0.75)
-texture = ExtResource("67_ylqph")
+position = Vector2(1826, 512)
+texture = ExtResource("64_1x1rp")
 
 [node name="11" type="CanvasLayer" parent="WorldRoot" unique_id=2048764701]
 layer = 11
@@ -672,12 +668,12 @@ position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
 [node name="sample11" type="Sprite2D" parent="WorldRoot/11/Front_2" unique_id=1600239603]
-position = Vector2(-669, 381)
-texture = ExtResource("68_fcv70")
+position = Vector2(993, 394)
+texture = ExtResource("65_8t8ul")
 
 [node name="sample12" type="Sprite2D" parent="WorldRoot/11/Front_2" unique_id=1485512628]
-position = Vector2(1371, 296)
-texture = ExtResource("68_ylqph")
+position = Vector2(-704, -314)
+texture = ExtResource("66_1x1rp")
 
 [node name="12" type="CanvasLayer" parent="WorldRoot" unique_id=177813838]
 layer = 12

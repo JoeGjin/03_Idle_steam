@@ -5,9 +5,14 @@ extends Node
 class_name WorldAssembler
 
 
-@export var world_root: Node2D
+
 @export var world_defs: Array[WorldDef] = []
-@export var current_world_id: int = 0
+@export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
+
+@onready var world_root: Node2D = %WorldRoot
+
+var target_world: WorldDef = null
+var current_world_id: int = 0 # 当前世界ID，初始为-1表示未设置
 
 var _sky: Parallax2D
 var _moon: Parallax2D
@@ -45,42 +50,102 @@ func initiate() -> void:
 
 
 
+# 小键盘控制世界切换
+func _input(event): 
+	for i in range(10):
+		if event.is_action_pressed("%d" % i):
+			# assemble_world(i)
+			_transition_to_world(i)
+			break
+
+
+
 func assemble_world(world_id: int) -> void:
-	# _world_player.stop() # 切换世界时先停止动画
-	
-	var target_world = world_defs[world_id]
+	if world_id < 0 or world_id >= world_defs.size():
+		print("[WORLD ASSEMBLER] Invalid world_id: %d" % world_id)
+		return
+	target_world = world_defs[world_id]
 	_defs_to_scene(target_world) # 将world def的参数应用到场景节点上
-
 	_start_manual_scroll() # 启动手动滚动的层
-
-	
-	# 3. 播放world player动画（如果有的话）
-	#   3.1 func play_world_animation (world player根据world def切换
-
 	world_changed.emit(world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
+	current_world_id = world_id
 
 
-# func _transition_to_world(new_world_id: int) -> void:
-	# 1. target_world = world_defs[new_world_id]
-	# 2. 非Parallex2D节点texture开始渐变
-	# 3. Parallex2D节点颜色开始渐变
-	# 4. moon开始移出场景，新的moon移入（moon完成及transition完成）
+
+func _transition_to_world(world_id: int) -> void:
+	if world_id < 0 or world_id >= world_defs.size():
+		print("[WORLD ASSEMBLER] Invalid world_id: %d" % world_id)
+		return
+	if world_id == current_world_id:
+		print("[WORLD ASSEMBLER] Already in world_id: %d" % world_id)
+		return
+	target_world = world_defs[world_id]
+	# Parallex2D节点透明度开始渐变
+	var tween := create_tween()
+	tween.parallel().tween_property(_sky.get_child(1), "modulate:a", 0.0, transition_duration/2)
+	tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 0.0, transition_duration/2)
+	tween.parallel().tween_property(_land.get_child(1), "modulate:a", 0.0, transition_duration/2)
+	tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 0.0, transition_duration/2)
+	# 同时moon开始移出场景，新的moon移入场景
+	var moon_main = _moon.get_child(0)
+	var center: Vector2 = _moon.scroll_offset # 公转中心（Moon 本地）
+	var r: Vector2 = moon_main.position - center # 半径向量（Moon 本地）
+	var start_angle := r.angle()
+	var end_angle := start_angle - PI
+	var return_angle := start_angle
+	tween.parallel().tween_method(
+		func(a: float) -> void:
+			# 保持半径长度不变，绕 center 旋转
+			moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
+		start_angle,
+		end_angle,
+		transition_duration/2
+	).set_ease(Tween.EASE_IN)
+	# moon移出的同时，effect也刚好透明度变为0，moon和effect的texture切换 _defs_to_scene(target_world, 1)
+	tween.tween_callback(func() -> void: 
+		_defs_to_scene(target_world, 1)
+		_start_manual_scroll(1)
+		)
+	# moon转回来，texture的颜色变化，effect透明度逐渐变为1
+	tween.parallel().tween_property(_sky.get_child(0), "modulate", target_world.sky_main_color, transition_duration/2)
+	tween.parallel().tween_property(_moon.get_child(0), "modulate", target_world.moon_main_color, transition_duration/2)
+	tween.parallel().tween_property(_land.get_child(0), "modulate", target_world.land_main_color, transition_duration/2)
+	tween.parallel().tween_property(_sea.get_child(0), "modulate", target_world.sea_main_color, transition_duration/2)
+	tween.parallel().tween_property(_sky.get_child(1), "modulate:a", 1.0, transition_duration/2)
+	tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 1.0, transition_duration/2)
+	tween.parallel().tween_property(_land.get_child(1), "modulate:a", 1.0, transition_duration/2)
+	tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 1.0, transition_duration/2)
+	tween.parallel().tween_method(
+		func(a: float) -> void:
+			# 保持半径长度不变，绕 center 旋转
+			moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
+		end_angle,
+		return_angle,
+		transition_duration/2
+	).set_ease(Tween.EASE_OUT)
+	# 同时非Parallex2D节点开始改变（新进素材，间隔，位置）
+	# tween.tween_callback(func() -> void:_start_manual_scroll(1)) # 渐变切换
+	current_world_id = world_id
 
 
-func _defs_to_scene(current_world: WorldDef) -> void:
-	_sky.repeat_size = current_world.sky_repeat_size
-	_sky.autoscroll = current_world.sky_scroll_speed
-	_sky.get_child(0).texture = current_world.sky_main_texture
-	_sky.get_child(0).modulate = current_world.sky_main_color
+
+func _defs_to_scene(current_world: WorldDef, mode: int = 0) -> void: # mode: 0直接切换，1渐变切换
+	if mode == 0:
+		_sky.repeat_size = current_world.sky_repeat_size
+		_sky.autoscroll = current_world.sky_scroll_speed
+		_sky.get_child(0).texture = current_world.sky_main_texture
+		_sky.get_child(0).modulate = current_world.sky_main_color
+		_sky.get_child(1).modulate = current_world.sky_effect_color
 	_sky.get_child(1).texture = current_world.sky_effect_texture
-	_sky.get_child(1).modulate = current_world.sky_effect_color
-
-	_moon.repeat_size = current_world.moon_repeat_size
-	_moon.autoscroll = current_world.moon_scroll_speed
+	
+	if mode == 0:
+		_moon.repeat_size = current_world.moon_repeat_size
+		_moon.autoscroll = current_world.moon_scroll_speed
+		_moon.get_child(0).modulate = current_world.moon_main_color
+		_moon.get_child(1).modulate = current_world.moon_effect_color
 	_moon.get_child(0).texture = current_world.moon_main_texture
-	_moon.get_child(0).modulate = current_world.moon_main_color
 	_moon.get_child(1).texture = current_world.moon_effect_texture
-	_moon.get_child(1).modulate = current_world.moon_effect_color
+	
 
 	_far_1.scroll_speed = current_world.far_1_scroll_speed
 	_far_1.spawn_scale = current_world.far_1_spwan_scale
@@ -110,20 +175,22 @@ func _defs_to_scene(current_world: WorldDef) -> void:
 	# _far_2.spawn_cooldown_0 = current_world.far_0_spwan_cooldown
 	_far_2.spawn_randomness_0 = current_world.far_0_spwan_randomness
 
-	_land.repeat_size = current_world.land_repeat_size
-	_land.autoscroll = current_world.land_scroll_speed
-	_land.get_child(0).texture = current_world.land_main_texture
-	_land.get_child(0).modulate = current_world.land_main_color
+	if mode == 0:
+		_land.repeat_size = current_world.land_repeat_size
+		_land.autoscroll = current_world.land_scroll_speed
+		_land.get_child(0).texture = current_world.land_main_texture
+		_land.get_child(0).modulate = current_world.land_main_color
+		_land.get_child(1).modulate = current_world.land_effect_color
 	_land.get_child(1).texture = current_world.land_effect_texture
-	_land.get_child(1).modulate = current_world.land_effect_color
-
-	_sea.repeat_size = current_world.sea_repeat_size
-	_sea.autoscroll = current_world.sea_scroll_speed
-	_sea.get_child(0).texture = current_world.sea_main_texture
-	_sea.get_child(0).modulate = current_world.sea_main_color
+	
+	if mode == 0:
+		_sea.repeat_size = current_world.sea_repeat_size
+		_sea.autoscroll = current_world.sea_scroll_speed
+		_sea.get_child(0).texture = current_world.sea_main_texture
+		_sea.get_child(0).modulate = current_world.sea_main_color
+		_sea.get_child(1).modulate = current_world.sea_effect_color
 	_sea.get_child(1).texture = current_world.sea_effect_texture
-	_sea.get_child(1).modulate = current_world.sea_effect_color
-
+	
 	_mid_1.scroll_speed = current_world.mid_1_scroll_speed
 	_mid_1.spawn_scale = current_world.mid_1_spwan_scale
 	_mid_1.spawn_position = current_world.mid_1_spawn_position
@@ -179,7 +246,7 @@ func _defs_to_scene(current_world: WorldDef) -> void:
 	_front_2.spawn_position_0 = current_world.front_0_spawn_position
 	# _front_2.spawn_cooldown_0 = current_world.front_0_spwan_cooldown
 	_front_2.spawn_randomness_0 = current_world.front_0_spwan_randomness
-
+	
 	_light.repeat_size = current_world.light_repeat_size
 	_light.autoscroll = current_world.light_scroll_speed
 	_light.get_child(0).texture = current_world.light_main_texture
@@ -190,10 +257,10 @@ func _defs_to_scene(current_world: WorldDef) -> void:
 	#print("[WORLD ASSEMBLER] World assembled with ID: %d" % current_world_id)
 
 
-func _start_manual_scroll() -> void:
-	_far_1.start_manual_scroll()
-	_far_2.start_manual_scroll()
-	_mid_1.start_manual_scroll()
-	_mid_2.start_manual_scroll()
-	_front_1.start_manual_scroll()
-	_front_2.start_manual_scroll()
+func _start_manual_scroll(mode: int = 0) -> void: # mode: 0直接切换，1渐变切换
+	_far_1.start_manual_scroll(mode)
+	_far_2.start_manual_scroll(mode)
+	_mid_1.start_manual_scroll(mode)
+	_mid_2.start_manual_scroll(mode)
+	_front_1.start_manual_scroll(mode)
+	_front_2.start_manual_scroll(mode)

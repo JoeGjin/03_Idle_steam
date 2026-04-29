@@ -102,8 +102,8 @@ func _choose_next_state_index() -> int:
 
 
 # 通过按键改变状态，按键 0-7 分别对应枚举中的状态，调试用
-func _input(event): 
-	for i in range(10):
-		if event.is_action_pressed("%d" % i):
-			start(i)
-			break
+# func _input(event): 
+# 	for i in range(10):
+# 		if event.is_action_pressed("%d" % i):
+# 			start(i)
+# 			break

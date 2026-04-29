@@ -9,7 +9,7 @@ class_name WorldDef
 
 
 @export var sky_repeat_size: Vector2 = Vector2(4542.0, 0)
-@export var sky_scroll_speed: Vector2 = Vector2(-5, 0)
+@export var sky_scroll_speed: Vector2 = Vector2(-10.0, 0)
 @export var sky_main_texture: Texture2D = preload("res://assets/worldroot/world/stage/x_sky_main.png")
 @export var sky_main_color: Color = Color(0.318, 0.353, 0.612, 1) 
 @export var sky_effect_texture: Texture2D
@@ -36,13 +36,13 @@ class_name WorldDef
 # @export var far_0_spwan_cooldown: float = 100.0 # 
 @export_range(0.0, 1.0, 0.01) var far_0_spwan_randomness: float = 0.1 
 
-@export var far_1_scroll_speed: Vector2 = Vector2(-10, 0)
+@export var far_1_scroll_speed: Vector2 = Vector2(-20.0, 0)
 @export var far_1_spwan_scale: Vector2 = Vector2.ONE
 @export var far_1_spawn_position: Vector2 = Vector2(1000,0)
 @export var far_1_spwan_cooldown: float = 100.0
 @export_range(0.0, 1.0, 0.01) var far_1_spwan_randomness: float = 0.1
 
-@export var far_2_scroll_speed: Vector2 = Vector2(-15, 0)
+@export var far_2_scroll_speed: Vector2 = Vector2(-30.0, 0)
 @export var far_2_spwan_scale: Vector2 = Vector2.ONE
 @export var far_2_spawn_position: Vector2 = Vector2(1000,0)
 @export var far_2_spwan_cooldown: float = 100.0
@@ -76,13 +76,13 @@ class_name WorldDef
 # @export var mid_0_spwan_cooldown: float = 100.0
 @export_range(0.0, 1.0, 0.01) var mid_0_spwan_randomness: float = 0.1 
 
-@export var mid_1_scroll_speed: Vector2 = Vector2(-25, 0)
+@export var mid_1_scroll_speed: Vector2 = Vector2(-50.0, 0)
 @export var mid_1_spwan_scale: Vector2 = Vector2.ONE
 @export var mid_1_spawn_position: Vector2 = Vector2(1200,0)
 @export var mid_1_spwan_cooldown: float = 40.0
 @export_range(0.0, 1.0, 0.01) var mid_1_spwan_randomness: float = 0.1
 
-@export var mid_2_scroll_speed: Vector2 = Vector2(-30, 0)
+@export var mid_2_scroll_speed: Vector2 = Vector2(-60.0, 0)
 @export var mid_2_spwan_scale: Vector2 = Vector2.ONE
 @export var mid_2_spawn_position: Vector2 = Vector2(1200,0)
 @export var mid_2_spwan_cooldown: float = 40.0
