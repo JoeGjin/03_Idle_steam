@@ -1,0 +1,50 @@
+【运行后交互】
+（激活游戏窗口的情况下）
+按小键盘 0 和 1 转换世界
+
+
+
+【可调试参数】
+Main - Draw Scale(运行时会设定游戏窗口大小), Starting World ID（运行时会设定构建哪个世界）
+World Assembler - Transition Duration（决定世界变化动画总时长）
+WorldRoot - LOD(景深强度)
+WorldOutput - Shader Parameters(在Material下点开ShaderMaterial可以调试Crop的大小，位置，强度等)
+
+
+
+【世界数据位置】
+scripts/main/controllers/world/defs
+目前有WORLD_0.tres和WORLD_1.tres
+在godot中双击打开
+在右侧的Inspector下可以调整世界数据的参数
+
+
+
+【世界数据结构】
+世界数据对应WorldRoot 下的 sky/moon/far_1/far_2/land/sea/mid_1/mid_2/front_1/front_2/light（目前没用）
+世界生成的时候程序会读取世界数据，按照数据的定义来使用对应的texture，颜色，生成位置，生成间隔时间等等
+
+目前图层类型有两大类：
+Godot原生的parallax2D（sky/moon/land/sea/light）和；
+手动定义的生成素材+滚动图层（far_1/far_2/mid_1/mid_2/front_1/front_2）
+
+原生的parallax2D目前可调参数包括 - repeat size, scroll speed, main texture, main color, effect texture, effect color
+如果texture为空，请把对应的color也调成透明，这样转场就不会出现问题。
+
+手动定义的生成素材+滚动图层可调参数包括 - texture（组，生成的时候随机选一个）, color, spawn scale, spawn position, spawn randomness（目前没用）
+后缀 1和2分别对应他们的图层。后缀0是特殊组，可以在1或2的图层随机刷出，有自己的scale, position, randomness, 但scroll speed 取决于它出现的图层
+例子：far_1的texture只会刷在far_1。far_0的texture有时候会出现在far_1，有时候会出现在far_2。
+
+
+
+【世界构建suggested work flow】
+在editor中，可以看到WorldRoot下所有的图层 sky/moon/far_1/far_2/land/sea/mid_1/mid_2/front_1/front_2/light，他们组成了最后的世界
+修改editor中的图层内容只出于预览效果的目的。程序运行后会清空editor里设置的texture，读取世界数据，覆写并生成设定好的素材。
+在editor中排出满意的场景后，可以把对应的texture, scale, color（editor中叫做modulate）, position等手动的编辑到世界数据里，程序会从中读取。
+
+对于Godot原生的parallax2D，可以调试main 和 effect 的 texture, modulate, 也可以拖动他们的位置，缩放大小。
+parallax2D的scoll scale和offset避免移动,可以调整repeat size和 acutoscoll（对于世界数据里的scroll speed）
+
+对于手动定义的生成素材+滚动图层，避免调整图层本身的任何数据（designed to be edited by code）。
+可以通过test下面的sample节点来确定素材出现的 texture, scale, color 等参数。
+sample本身在运行的时候会被清空，这些素材会按照世界数据的定义由程序生成。
