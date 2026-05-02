@@ -85,4 +85,5 @@ func _finish_drag() -> void:
 
 
 func _to_local_of(target: CanvasItem, global_point: Vector2) -> Vector2:
+    # 将 global_point 转换到 target 的局部坐标系
     return target.get_global_transform_with_canvas().affine_inverse() * global_point

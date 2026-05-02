@@ -24,6 +24,8 @@
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
+[ext_resource type="Script" uid="uid://5cjw761v4fij" path="res://scripts/main/ui/Content.gd" id="24_mou0d"]
+[ext_resource type="Script" uid="uid://chieg6qqybv75" path="res://scripts/main/ui/Resize.gd" id="26_fcv70"]
 [ext_resource type="Script" uid="uid://cpqxu882jrdpq" path="res://scripts/main/ui/WorkBoard.gd" id="27_cobve"]
 [ext_resource type="Texture2D" uid="uid://c0bwe5qaepthm" path="res://assets/worldroot/world/1/1_sky_effect.png" id="28_1x1rp"]
 [ext_resource type="Shader" uid="uid://br4le3qmgw1l4" path="res://shaders/Blur.gdshader" id="28_8t8ul"]
@@ -211,7 +213,6 @@ oversampling_override = 1.0
 mode = 2
 initial_position = 2
 size = Vector2i(1920, 1080)
-visible = false
 transient = true
 exclusive = true
 borderless = true
@@ -242,26 +243,6 @@ metadata/_edit_lock_ = true
 [node name="CollectionBook" type="Control" parent="UIWindow/UIRoot" unique_id=1940227150]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Book" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1842239225]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("24_8cp6k")
-
-[node name="TextureRect" type="TextureRect" parent="UIWindow/UIRoot/CollectionBook/Book" unique_id=568253955]
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -269,27 +250,41 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -960.0
 offset_top = -540.0
-offset_right = 2880.0
-offset_bottom = 1620.0
+offset_right = 960.0
+offset_bottom = 540.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.5, 0.5)
+pivot_offset = Vector2(951, 515)
+
+[node name="Book" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1842239225]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("24_8cp6k")
+
+[node name="TextureRect" type="TextureRect" parent="UIWindow/UIRoot/CollectionBook/Book" unique_id=568253955]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("16_cvmbd")
+expand_mode = 1
 
 [node name="Content" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=806666248]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 69.0
-offset_top = -320.0
-offset_right = 535.0
-offset_bottom = 322.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_left = 1030.0
+offset_top = 207.0
+offset_right = 1496.0
+offset_bottom = 849.0
+script = ExtResource("24_mou0d")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="UIWindow/UIRoot/CollectionBook/Content" unique_id=1751766512]
 layout_mode = 1
@@ -306,17 +301,11 @@ columns = 3
 [node name="Letter" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=884496018]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -492.0
-offset_top = -337.0
-offset_right = -47.0
-offset_bottom = 153.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_left = 450.0
+offset_top = 201.0
+offset_right = 895.0
+offset_bottom = 691.0
 pivot_offset = Vector2(224, 252)
 script = ExtResource("31_8b871")
 
@@ -329,31 +318,39 @@ script = ExtResource("27_cobve")
 
 [node name="Buttons" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1499936294]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="CloseUI" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=1242206048]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = -532.0
-offset_top = -406.0
-offset_right = -482.0
-offset_bottom = -352.0
+offset_left = 418.0
+offset_top = 135.0
+offset_right = 468.0
+offset_bottom = 189.0
 text = "X"
 
 [node name="CropAndSend" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=1448343863]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = -154.0
-offset_top = 168.0
-offset_right = -62.0
-offset_bottom = 222.0
+offset_left = 796.0
+offset_top = 709.0
+offset_right = 894.0
+offset_bottom = 763.0
 text = "Send Letter"
+
+[node name="Resize" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=2029683133]
+layout_mode = 0
+offset_left = 1485.0
+offset_top = 865.0
+offset_right = 1528.0
+offset_bottom = 908.0
+text = "__|"
+script = ExtResource("26_fcv70")
 
 [node name="DebugUI" type="Control" parent="UIWindow" unique_id=193758564]
 unique_name_in_owner = true
@@ -743,15 +740,25 @@ text = "status_cooldown"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="WorldOutput" type="TextureRect" parent="." unique_id=119086223]
-unique_name_in_owner = true
-material = SubResource("ShaderMaterial_pdwbg")
+[node name="AllOutput" type="Control" parent="." unique_id=1999081273]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(960, 516)
+mouse_filter = 2
+
+[node name="WorldOutput" type="TextureRect" parent="AllOutput" unique_id=119086223]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_pdwbg")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 texture = SubResource("ViewportTexture_8t8ul")
 expand_mode = 1
 metadata/_edit_lock_ = true

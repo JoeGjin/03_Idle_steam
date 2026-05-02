@@ -1,0 +1,62 @@
+extends Control
+
+@onready var work_board: Control = %WorkBoard
+@onready var grid_container : GridContainer = $ScrollContainer/GridContainer
+@onready var collected_items_scene: PackedScene = preload("res://scenes/CollectedItem.tscn")
+
+
+var _world_items: Dictionary[int, Array] = {} # world_id -> Control
+var _texture_cache: Array[Texture2D] = [] # 预加载的世界贴图缓存
+
+func _ready() -> void:
+	_add_world_item(0)
+
+
+func _add_world_item(world_id: int) -> void:
+	
+
+	if not _world_items.has(world_id):
+		_texture_cache = _load_world_textures(world_id) # 预加载世界资源，确保随机贴图时有资源可用
+		_world_items[world_id] = []
+		for texture in _texture_cache:
+			var new_item = collected_items_scene.instantiate()
+			new_item.work_board = work_board
+			new_item.get_node("TextureRect").texture = texture
+			_world_items[world_id].append(new_item)
+	
+	for child in grid_container.get_children():
+		child.queue_free()
+	# 已经存在该世界的物品，直接添加到界面
+	for item in _world_items[world_id]:
+		grid_container.add_child(item)
+
+
+
+func _load_world_textures(world_id: int) -> Array[Texture2D]:
+	var textures: Array[Texture2D] = []
+	var path := "res://assets/worldroot/world/%d" % world_id
+	var dir := DirAccess.open(path)
+	if dir == null:
+		push_error("无法打开世界资源目录: %s" % path)
+		return textures
+	dir.list_dir_begin()
+	while true:
+		var file_name := dir.get_next()
+		if file_name == "":
+			break
+
+		if dir.current_is_dir():
+			continue
+
+		if file_name.get_extension().to_lower() != "png":
+			continue
+
+		var file_path := path.path_join(file_name)
+		var texture := load(file_path)
+		
+		if texture != null:
+			textures.append(texture)
+		else:
+			push_warning("Failed to load texture: " + file_path)
+	dir.list_dir_end()
+	return textures
