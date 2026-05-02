@@ -5,7 +5,7 @@ extends Node
 # 	PET
 # }
 
-var enabled: bool = false
+var enabled: bool = true
 
 
 func _ready():

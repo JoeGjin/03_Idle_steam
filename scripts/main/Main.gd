@@ -57,8 +57,10 @@ func _ready():
 
 func _scene_into_subviewport():
 	var subviewport = %WorldView
-	world_root.reparent(subviewport)
-	debug_world.reparent(subviewport)
+	if world_root.get_parent() != subviewport:
+		world_root.reparent(subviewport)
+	if debug_world.get_parent() != subviewport:
+		debug_world.reparent(subviewport)
 
 
 
