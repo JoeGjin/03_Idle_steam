@@ -15,7 +15,7 @@ func _ready() -> void:
 
 
 func _on_mouse_entered() -> void:
-    print("[FloatButtons] Mouse entered")
+    # print("[FloatButtons] Mouse entered")
     _kill_fade_tween()
 
     visible = true
@@ -23,7 +23,7 @@ func _on_mouse_entered() -> void:
 
 
 func _on_mouse_exited() -> void:
-    print("[FloatButtons] Mouse exited")
+    # print("[FloatButtons] Mouse exited")
     _kill_fade_tween()
 
     _fade_tween = create_tween()

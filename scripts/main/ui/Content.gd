@@ -52,6 +52,7 @@ func _add_world_item(world_id: int) -> void:
 			new_item.work_board = work_board
 			new_item.get_node("TextureRect").texture = texture
 			_world_items[world_id].append(new_item)
+		_texture_cache.clear() # 资源已实例化，清空缓存
 	
 	for child in grid_container.get_children():
 		grid_container.remove_child(child) # 清空当前显示的物品
