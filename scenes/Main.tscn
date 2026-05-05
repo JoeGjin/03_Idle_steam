@@ -190,6 +190,7 @@ hook_switch = true
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
 world_defs = Array[ExtResource("20_hq6as")]([ExtResource("8_8b871"), ExtResource("6_1x1rp")])
+transition_duration = 60.0
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 unique_name_in_owner = true
@@ -231,6 +232,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("15_3p2gp")
+metadata/_edit_lock_ = true
 
 [node name="Back" type="ColorRect" parent="UIWindow/UIRoot" unique_id=203376277]
 layout_mode = 1
@@ -257,6 +259,7 @@ offset_bottom = 540.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(951, 515)
+metadata/_edit_lock_ = true
 
 [node name="Book" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1842239225]
 unique_name_in_owner = true
@@ -267,6 +270,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("24_8cp6k")
+metadata/_edit_lock_ = true
 
 [node name="TextureRect" type="TextureRect" parent="UIWindow/UIRoot/CollectionBook/Book" unique_id=568253955]
 layout_mode = 1
@@ -277,6 +281,7 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("16_cvmbd")
 expand_mode = 1
+metadata/_edit_lock_ = true
 
 [node name="Content" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=806666248]
 unique_name_in_owner = true
@@ -300,16 +305,75 @@ grow_vertical = 2
 layout_mode = 2
 columns = 3
 
+[node name="Tabs" type="VBoxContainer" parent="UIWindow/UIRoot/CollectionBook/Content" unique_id=1056465085]
+layout_mode = 0
+offset_left = 466.0
+offset_top = 7.0
+offset_right = 566.0
+offset_bottom = 127.0
+theme_override_constants/separation = 20
+
+[node name="World_0" type="Button" parent="UIWindow/UIRoot/CollectionBook/Content/Tabs" unique_id=1945850707]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+text = "World 0"
+
+[node name="World_1" type="Button" parent="UIWindow/UIRoot/CollectionBook/Content/Tabs" unique_id=701066798]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+text = "World 1"
+
 [node name="Letter" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=884496018]
 unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(450, 450)
 layout_mode = 1
 anchors_preset = 0
-offset_left = 450.0
-offset_top = 201.0
-offset_right = 895.0
-offset_bottom = 691.0
+offset_left = 440.0
+offset_top = 226.0
+offset_right = 890.0
+offset_bottom = 676.0
 pivot_offset = Vector2(224, 252)
 script = ExtResource("31_8b871")
+
+[node name="Sky" type="TextureRect" parent="UIWindow/UIRoot/CollectionBook/Letter" unique_id=2019379379]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -718.9467
+offset_top = -32.0
+offset_right = 718.9468
+offset_bottom = -32.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("31_vshs7")
+expand_mode = 3
+metadata/_edit_lock_ = true
+
+[node name="Land" type="TextureRect" parent="UIWindow/UIRoot/CollectionBook/Letter" unique_id=2031852094]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -718.9467
+offset_right = 718.9468
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("34_2ki8c")
+expand_mode = 3
+metadata/_edit_lock_ = true
+
+[node name="Sea" type="TextureRect" parent="UIWindow/UIRoot/CollectionBook/Letter" unique_id=770930206]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("35_vshs7")
+expand_mode = 3
+metadata/_edit_lock_ = true
 
 [node name="WorkBoard" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=212884276]
 unique_name_in_owner = true
@@ -797,6 +861,8 @@ text = "__|"
 script = ExtResource("75_qd1pt")
 all_output = NodePath("../..")
 
+[connection signal="pressed" from="UIWindow/UIRoot/CollectionBook/Content/Tabs/World_0" to="UIWindow/UIRoot/CollectionBook/Content" method="_on_world_0_pressed"]
+[connection signal="pressed" from="UIWindow/UIRoot/CollectionBook/Content/Tabs/World_1" to="UIWindow/UIRoot/CollectionBook/Content" method="_on_world_1_pressed"]
 [connection signal="pressed" from="UIWindow/UIRoot/CollectionBook/Buttons/CropAndSend" to="UIWindow/UIRoot/CollectionBook/Letter" method="_on_crop_and_send_pressed"]
 [connection signal="pressed" from="UIWindow/DebugUI/VBoxContainer/AddRandomItem" to="UIWindow/DebugUI" method="_on_add_random_item_pressed"]
 [connection signal="mouse_entered" from="WorldView/WorldRoot/9/Pet/body" to="WorldView/WorldRoot/9/Pet" method="_on_body_mouse_entered"]

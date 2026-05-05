@@ -184,7 +184,7 @@ func _on_world_assembler_world_changed(new_world_id: int) -> void:
 
 
 
-func _on_letter_sent() -> void: # 临时动画
+func _on_letter_sent(target_world_id: int) -> void: # 临时动画
     print("[LETTER] SENT")
     character_status.start(CharacterStates.CharacterState.GAZING)
      # 临时动画 演示：钻石从天而降，心形出现
@@ -193,12 +193,10 @@ func _on_letter_sent() -> void: # 临时动画
     pet.get_node("heart").show()
     await get_tree().create_timer(2.0).timeout
     pet.get_node("heart").hide()
-    match world_assembler.current_world_id:
-        0:
-            world_assembler.transition_to_world(1)
-        1:
-            world_assembler.transition_to_world(0)
+    world_assembler.transition_to_world(target_world_id)
+
 
 
 func _on_exit_pressed() -> void:
     get_tree().quit()
+

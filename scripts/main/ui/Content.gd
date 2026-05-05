@@ -1,6 +1,8 @@
 extends Control
 
 @onready var work_board: Control = %WorkBoard
+@onready var world_assembler: WorldAssembler = %WorldAssembler
+@onready var letter: Control = %Letter
 @onready var grid_container : GridContainer = $ScrollContainer/GridContainer
 @onready var collected_items_scene: PackedScene = preload("res://scenes/CollectedItem.tscn")
 
@@ -8,12 +10,39 @@ extends Control
 var _world_items: Dictionary[int, Array] = {} # world_id -> Control
 var _texture_cache: Array[Texture2D] = [] # 预加载的世界贴图缓存
 
+
+
 func _ready() -> void:
-	_add_world_item(0)
+	_load_world_background_and_items(0)
+
+
+
+
+func _on_world_1_pressed() -> void:
+	letter.target_world_id = 1
+	work_board.free_all_children()
+	_load_world_background_and_items(1)
+
+func _on_world_0_pressed() -> void:
+	letter.target_world_id = 0
+	work_board.free_all_children()
+	_load_world_background_and_items(0)
+
+
+
+
+func _load_world_background_and_items(world_id: int) -> void:
+	_update_letter_background(world_id)
+	_add_world_item(world_id)
+
+
+func _update_letter_background(world_id: int) -> void:
+	letter.get_node("Sky").modulate = world_assembler.world_defs[world_id].sky_main_color
+	letter.get_node("Land").modulate = world_assembler.world_defs[world_id].land_main_color
+	letter.get_node("Sea").modulate = world_assembler.world_defs[world_id].sea_main_color
 
 
 func _add_world_item(world_id: int) -> void:
-	
 
 	if not _world_items.has(world_id):
 		_texture_cache = _load_world_textures(world_id) # 预加载世界资源，确保随机贴图时有资源可用
@@ -25,7 +54,8 @@ func _add_world_item(world_id: int) -> void:
 			_world_items[world_id].append(new_item)
 	
 	for child in grid_container.get_children():
-		child.queue_free()
+		grid_container.remove_child(child) # 清空当前显示的物品
+	
 	# 已经存在该世界的物品，直接添加到界面
 	for item in _world_items[world_id]:
 		grid_container.add_child(item)
