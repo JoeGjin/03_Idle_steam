@@ -73,6 +73,10 @@
 [ext_resource type="Texture2D" uid="uid://becgncfsx0vn" path="res://assets/worldroot/world/1/1_front_1_3.png" id="64_1x1rp"]
 [ext_resource type="Texture2D" uid="uid://diuqwm3k2ojfp" path="res://assets/worldroot/world/1/1_front_2_6.png" id="65_8t8ul"]
 [ext_resource type="Texture2D" uid="uid://cwi08pjfajcbn" path="res://assets/worldroot/world/1/1_front_0_2.png" id="66_1x1rp"]
+[ext_resource type="Script" uid="uid://dcyb4abjdhqk2" path="res://scripts/main/output/AllOutput.gd" id="73_ugmlg"]
+[ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/WindowResize.gd" id="75_qd1pt"]
+[ext_resource type="Theme" uid="uid://duf3n0aup2mkp" path="res://themes/FloatButtons.tres" id="75_vwcyu"]
+[ext_resource type="Script" uid="uid://1hk5kvupggqx" path="res://scripts/main/output/FloatButtons.gd" id="76_rsknx"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -156,7 +160,7 @@ height = 2000.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
-shader_parameter/mask_enable = 0.96999997831856
+shader_parameter/mask_enable = 0.999999977648
 shader_parameter/center_u = 0.466000022135
 shader_parameter/center_v = 0.486000023085
 shader_parameter/radius_u = 0.3200000152
@@ -174,7 +178,6 @@ viewport_path = NodePath("WorldView")
 
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
-draw_scale = 0.5
 
 [node name="Controllers" type="Node" parent="." unique_id=650551310]
 
@@ -213,6 +216,7 @@ oversampling_override = 1.0
 mode = 2
 initial_position = 2
 size = Vector2i(1920, 1080)
+visible = false
 transient = true
 exclusive = true
 borderless = true
@@ -343,7 +347,7 @@ offset_right = 894.0
 offset_bottom = 763.0
 text = "Send Letter"
 
-[node name="Resize" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=2029683133]
+[node name="Resize" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=2029683133 node_paths=PackedStringArray("_target")]
 layout_mode = 0
 offset_left = 1485.0
 offset_top = 865.0
@@ -351,6 +355,7 @@ offset_right = 1528.0
 offset_bottom = 908.0
 text = "__|"
 script = ExtResource("26_fcv70")
+_target = NodePath("../..")
 
 [node name="DebugUI" type="Control" parent="UIWindow" unique_id=193758564]
 unique_name_in_owner = true
@@ -698,13 +703,6 @@ unique_name_in_owner = true
 root_node = NodePath("../6/Sea")
 libraries/ = SubResource("AnimationLibrary_xa025")
 
-[node name="Exit" type="Button" parent="WorldView/WorldRoot" unique_id=1753071860]
-offset_left = 811.0
-offset_top = -494.0
-offset_right = 912.0
-offset_bottom = -406.0
-text = "X"
-
 [node name="DebugWorld" type="Node2D" parent="WorldView" unique_id=121059888]
 unique_name_in_owner = true
 position = Vector2(6, 0)
@@ -748,6 +746,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("73_ugmlg")
 
 [node name="WorldOutput" type="TextureRect" parent="AllOutput" unique_id=119086223]
 unique_name_in_owner = true
@@ -763,7 +762,42 @@ texture = SubResource("ViewportTexture_8t8ul")
 expand_mode = 1
 metadata/_edit_lock_ = true
 
+[node name="FloatButtons" type="Control" parent="AllOutput" unique_id=834382649]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+theme = ExtResource("75_vwcyu")
+script = ExtResource("76_rsknx")
+
+[node name="Exit" type="Button" parent="AllOutput/FloatButtons" unique_id=1753071860]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+offset_right = 50.0
+offset_bottom = 50.0
+text = "X"
+
+[node name="WindowResize" type="Button" parent="AllOutput/FloatButtons" unique_id=12894625 node_paths=PackedStringArray("all_output")]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = -50.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "__|"
+script = ExtResource("75_qd1pt")
+all_output = NodePath("../..")
+
 [connection signal="pressed" from="UIWindow/UIRoot/CollectionBook/Buttons/CropAndSend" to="UIWindow/UIRoot/CollectionBook/Letter" method="_on_crop_and_send_pressed"]
 [connection signal="pressed" from="UIWindow/DebugUI/VBoxContainer/AddRandomItem" to="UIWindow/DebugUI" method="_on_add_random_item_pressed"]
 [connection signal="mouse_entered" from="WorldView/WorldRoot/9/Pet/body" to="WorldView/WorldRoot/9/Pet" method="_on_body_mouse_entered"]
 [connection signal="mouse_exited" from="WorldView/WorldRoot/9/Pet/body" to="WorldView/WorldRoot/9/Pet" method="_on_body_mouse_exited"]
+[connection signal="pressed" from="AllOutput/FloatButtons/Exit" to="." method="_on_exit_pressed"]

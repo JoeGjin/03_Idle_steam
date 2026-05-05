@@ -3,7 +3,7 @@ extends Button
 @export var min_scale := 0.5
 @export var max_scale := 2.0
 
-var _target: Control
+@export var _target: Control
 var _dragging := false
 
 var _start_mouse: Vector2
@@ -12,7 +12,7 @@ var _pivot_global: Vector2
 
 
 func _ready() -> void:
-	_target = %CollectionBook
+	# _target = %CollectionBook
 	
 	# 不要覆盖 Editor 里设置的 pivot_offset
 	# _target.pivot_offset = Vector2.ZERO
