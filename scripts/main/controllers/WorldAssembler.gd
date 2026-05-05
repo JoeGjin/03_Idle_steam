@@ -55,7 +55,7 @@ func _input(event):
 	for i in range(10):
 		if event.is_action_pressed("%d" % i):
 			# assemble_world(i)
-			_transition_to_world(i)
+			transition_to_world(i)
 			break
 
 
@@ -72,7 +72,7 @@ func assemble_world(world_id: int) -> void:
 
 
 
-func _transition_to_world(world_id: int) -> void:
+func transition_to_world(world_id: int) -> void:
 	if world_id < 0 or world_id >= world_defs.size():
 		print("[WORLD ASSEMBLER] Invalid world_id: %d" % world_id)
 		return

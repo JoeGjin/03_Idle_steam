@@ -190,7 +190,6 @@ hook_switch = true
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
 world_defs = Array[ExtResource("20_hq6as")]([ExtResource("8_8b871"), ExtResource("6_1x1rp")])
-transition_duration = 60.0
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 unique_name_in_owner = true
@@ -216,7 +215,6 @@ oversampling_override = 1.0
 mode = 2
 initial_position = 2
 size = Vector2i(1920, 1080)
-visible = false
 transient = true
 exclusive = true
 borderless = true
@@ -328,6 +326,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+metadata/_edit_lock_ = true
 
 [node name="CloseUI" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=1242206048]
 unique_name_in_owner = true
@@ -739,6 +738,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="AllOutput" type="Control" parent="." unique_id=1999081273]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -772,6 +772,7 @@ grow_vertical = 2
 mouse_filter = 1
 theme = ExtResource("75_vwcyu")
 script = ExtResource("76_rsknx")
+metadata/_edit_lock_ = true
 
 [node name="Exit" type="Button" parent="AllOutput/FloatButtons" unique_id=1753071860]
 custom_minimum_size = Vector2(50, 50)
