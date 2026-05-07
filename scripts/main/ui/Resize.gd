@@ -3,7 +3,7 @@ extends Button
 @export var min_scale := 0.5
 @export var max_scale := 2.0
 
-@export var _target: Control
+@export var target: Control
 var _dragging := false
 
 var _start_mouse: Vector2
@@ -21,14 +21,18 @@ func _ready() -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
+	
+	if target == null:
+		return
+
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			_dragging = true
 			_start_mouse = get_global_mouse_position()
-			_start_scale = _target.scale
+			_start_scale = target.scale
 
 			# 使用 Editor 里设置好的 pivot_offset
-			_pivot_global = _target.global_position + _target.pivot_offset * _target.scale
+			_pivot_global = target.global_position + target.pivot_offset * target.scale
 
 			print(_pivot_global)
 
@@ -49,6 +53,6 @@ func _gui_input(event: InputEvent) -> void:
 		var ratio : float= current_len / start_len
 		var new_scale_value : float= clamp(_start_scale.x * ratio, min_scale, max_scale)
 
-		_target.scale = Vector2.ONE * new_scale_value
+		target.scale = Vector2.ONE * new_scale_value
 
 		accept_event()

@@ -216,6 +216,7 @@ oversampling_override = 1.0
 mode = 2
 initial_position = 2
 size = Vector2i(1920, 1080)
+visible = false
 transient = true
 exclusive = true
 borderless = true
@@ -375,12 +376,25 @@ texture = ExtResource("35_vshs7")
 expand_mode = 3
 metadata/_edit_lock_ = true
 
-[node name="WorkBoard" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=212884276]
+[node name="WorkBoard" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=212884276 node_paths=PackedStringArray("resize_button")]
 unique_name_in_owner = true
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("27_cobve")
+resize_button = NodePath("../Resize")
+
+[node name="Resize" type="Button" parent="UIWindow/UIRoot/CollectionBook" unique_id=1709673861]
+visible = false
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 0
+offset_left = 29.0
+offset_top = 32.0
+offset_right = 79.0
+offset_bottom = 82.0
+text = "__|"
+script = ExtResource("26_fcv70")
+max_scale = 3.0
 
 [node name="Buttons" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1499936294]
 layout_mode = 1
@@ -410,15 +424,18 @@ offset_right = 894.0
 offset_bottom = 763.0
 text = "Send Letter"
 
-[node name="Resize" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=2029683133 node_paths=PackedStringArray("_target")]
+[node name="Resize" type="Button" parent="UIWindow/UIRoot/CollectionBook/Buttons" unique_id=2029683133 node_paths=PackedStringArray("target")]
+custom_minimum_size = Vector2(50, 50)
 layout_mode = 0
-offset_left = 1485.0
-offset_top = 865.0
-offset_right = 1528.0
-offset_bottom = 908.0
+offset_left = 1470.0
+offset_top = 845.0
+offset_right = 1520.0
+offset_bottom = 895.0
 text = "__|"
 script = ExtResource("26_fcv70")
-_target = NodePath("../..")
+min_scale = 0.2
+max_scale = 3.0
+target = NodePath("../..")
 
 [node name="DebugUI" type="Control" parent="UIWindow" unique_id=193758564]
 unique_name_in_owner = true
@@ -802,7 +819,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="AllOutput" type="Control" parent="." unique_id=1999081273]
-visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

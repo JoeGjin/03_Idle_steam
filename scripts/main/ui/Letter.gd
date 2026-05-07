@@ -50,6 +50,7 @@ func _draw_dashed_line(from:Vector2, to:Vector2):
 
 func _on_crop_and_send_pressed() -> void:
     crop_and_send_button.disabled = true # 防止重复点击
+    work_board.reset_resize_button() 
     _move_overlapped_items_into_letter(true)
     work_board.free_all_children() # 清空工作区，留下被裁剪的物品
     _play_send_animation()
@@ -95,8 +96,12 @@ func _play_send_animation(duration: float = 1.5) -> void:
     var tween := create_tween()
     tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 
+    # 放大并停留一会儿
+    tween.tween_property(self, "scale", start_scale * 1.1, duration)
+    tween.tween_interval(1.0) # 放大后停留的时间
+
     # 同时缩小 + 淡出
-    tween.parallel().tween_property(self, "scale", start_scale * 0.1, duration)
+    tween.tween_property(self, "scale", start_scale * 0.1, duration)
     tween.parallel().tween_property(self, "modulate:a", 0.0, duration)
 
     # 动画完成后：重置状态

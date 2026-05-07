@@ -37,6 +37,7 @@ func _input(event: InputEvent) -> void:
     elif event is InputEventMouseButton:
         if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
             _finish_drag()
+            work_board.update_resize_button()
             get_viewport().set_input_as_handled()
 
 
