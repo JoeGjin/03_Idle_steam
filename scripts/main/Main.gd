@@ -146,6 +146,7 @@ func _on_pet_mouse_exited_body():
 func _on_global_key_hook_any_key_pressed() -> void:
     # print("[KEY] Outside window pressed any key")
     character_animator._play_click_scale_anim()
+    audio_controller.tap_play() # 播放 tap 音效
 
 
 func _on_character_status_state_changed(new_state: CharacterStates.CharacterState, _duration: float) -> void:

@@ -24,6 +24,7 @@
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://dth0o1ceru2kl" path="res://scripts/main/controllers/AudioController.gd" id="20_gia1l"]
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
+[ext_resource type="AudioStream" uid="uid://cqfgpucy1r6t1" path="res://assets/worldroot/pet/tap.mp3" id="21_aw8hi"]
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
 [ext_resource type="Script" uid="uid://5cjw761v4fij" path="res://scripts/main/ui/Content.gd" id="24_mou0d"]
 [ext_resource type="Script" uid="uid://chieg6qqybv75" path="res://scripts/main/ui/Resize.gd" id="26_fcv70"]
@@ -224,6 +225,10 @@ bus = &"Ambient"
 [node name="Ambient_2" type="AudioStreamPlayer" parent="Controllers/AudioController" unique_id=1883148440]
 bus = &"Ambient"
 
+[node name="Tap" type="AudioStreamPlayer" parent="Controllers/AudioController" unique_id=809333615]
+stream = ExtResource("21_aw8hi")
+bus = &"SFX"
+
 [node name="UIWindow" type="Window" parent="." unique_id=1159274380]
 unique_name_in_owner = true
 transparent_bg = true
@@ -231,6 +236,7 @@ oversampling_override = 1.0
 mode = 2
 initial_position = 2
 size = Vector2i(1920, 1080)
+visible = false
 transient = true
 exclusive = true
 borderless = true

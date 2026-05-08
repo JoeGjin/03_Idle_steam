@@ -2,12 +2,14 @@ extends Node
 class_name AudioController
 
 
-@export var target_volume_db: float = -2.0
+@export var target_volume_db: float = -10.0
 @export var silent_volume_db: float = -80.0
 
 @onready var world_assembler: WorldAssembler = %WorldAssembler
 @onready var ambient_1: AudioStreamPlayer = $Ambient_1
 @onready var ambient_2: AudioStreamPlayer = $Ambient_2
+@onready var tap: AudioStreamPlayer = $Tap
+
 
 var current_ambient_player: AudioStreamPlayer = null
 var _tween: Tween = null
@@ -19,6 +21,12 @@ func _ready() -> void:
 
 	ambient_1.stop()
 	ambient_2.stop()
+
+
+func tap_play() -> void:
+	tap.pitch_scale = randf_range(0.8, 1.2) # 你想要的范围
+	tap.play(0.08)
+
 
 
 func ambient_transition(new_world_id: int, transition_duration: float) -> void:
