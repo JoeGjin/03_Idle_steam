@@ -7,6 +7,7 @@ class_name WorldDef
 @export var id: int = 0
 @export var name: String = "xxxxx"
 
+@export var ambient_audio: AudioStream = null
 
 @export var sky_repeat_size: Vector2 = Vector2(4542.0, 0)
 @export var sky_scroll_speed: Vector2 = Vector2(-10.0, 0)

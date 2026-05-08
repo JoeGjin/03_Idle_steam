@@ -1,4 +1,5 @@
 # 世界组装器，负责将世界环境定义资源转换为实际的场景节点
+# 直接控制图像资源切换，音频资源通过signal通知main，main再调用AudioController进行切换
 
 extends Node
 
@@ -13,6 +14,7 @@ class_name WorldAssembler
 
 var target_world: WorldDef = null
 var current_world_id: int = 0 # 当前世界ID，初始为-1表示未设置
+var is_transitioning: bool = false # 是否正在进行世界切换过渡
 
 var _sky: Parallax2D
 var _moon: Parallax2D
@@ -29,6 +31,7 @@ var _light: Parallax2D
 var _world_player: AnimationPlayer
 
 
+signal world_changing(new_world_id: int, transition_duration: float) # 定义世界切换信号，参数为新的世界ID和过渡时长
 signal world_changed(new_world_id: int)
 
 
@@ -64,25 +67,39 @@ func assemble_world(world_id: int) -> void:
 	if world_id < 0 or world_id >= world_defs.size():
 		print("[WORLD ASSEMBLER] Invalid world_id: %d" % world_id)
 		return
+	
+	world_changing.emit(world_id, transition_duration) # 发出世界切换信号
+	is_transitioning = true
+
 	target_world = world_defs[world_id]
 	_defs_to_scene(target_world) # 将world def的参数应用到场景节点上
 	_start_manual_scroll() # 启动手动滚动的层
-	world_changed.emit(world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
 	current_world_id = world_id
+
+	world_changed.emit(current_world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
+	is_transitioning = false
 
 
 
 func transition_to_world(world_id: int) -> void:
+	if is_transitioning:
+		print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
+		return
+	
 	if world_id < 0 or world_id >= world_defs.size():
 		print("[WORLD ASSEMBLER] Invalid world_id: %d" % world_id)
 		return
 	# if world_id == current_world_id:
 	# 	print("[WORLD ASSEMBLER] Already in world_id: %d" % world_id)
 	# 	return
+	
+	world_changing.emit(world_id, transition_duration) # 发出世界切换信号
+	is_transitioning = true
+
 	target_world = world_defs[world_id]
 	# Parallex2D节点透明度开始渐变
 	var tween := create_tween()
-	tween.parallel().tween_property(_sky.get_child(1), "modulate:a", 0.0, transition_duration/2)
+	tween.tween_property(_sky.get_child(1), "modulate:a", 0.0, transition_duration/2)
 	tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 0.0, transition_duration/2)
 	tween.parallel().tween_property(_land.get_child(1), "modulate:a", 0.0, transition_duration/2)
 	tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 0.0, transition_duration/2)
@@ -107,7 +124,7 @@ func transition_to_world(world_id: int) -> void:
 		_start_manual_scroll(1)
 		)
 	# moon转回来，texture的颜色变化，effect透明度逐渐变为1
-	tween.parallel().tween_property(_sky.get_child(0), "modulate", target_world.sky_main_color, transition_duration/2)
+	tween.tween_property(_sky.get_child(0), "modulate", target_world.sky_main_color, transition_duration/2)
 	tween.parallel().tween_property(_moon.get_child(0), "modulate", target_world.moon_main_color, transition_duration/2)
 	tween.parallel().tween_property(_land.get_child(0), "modulate", target_world.land_main_color, transition_duration/2)
 	tween.parallel().tween_property(_sea.get_child(0), "modulate", target_world.sea_main_color, transition_duration/2)
@@ -126,6 +143,12 @@ func transition_to_world(world_id: int) -> void:
 	# 同时非Parallex2D节点开始改变（新进素材，间隔，位置）
 	# tween.tween_callback(func() -> void:_start_manual_scroll(1)) # 渐变切换
 	current_world_id = world_id
+
+	tween.tween_callback(func() -> void: 
+		world_changed.emit(current_world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
+		is_transitioning = false
+		)
+	
 
 
 

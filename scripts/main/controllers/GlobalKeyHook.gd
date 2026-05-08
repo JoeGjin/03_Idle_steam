@@ -17,7 +17,7 @@ func _ready() -> void:
 	
 		_hook.any_key_pressed.connect(_on_any_key_pressed)
 
-		print("GlobalKeyHook ready.")
+		# print("GlobalKeyHook ready.")
 	else :
 		print("GlobalKeyHook is disabled by hook_switch.")
 

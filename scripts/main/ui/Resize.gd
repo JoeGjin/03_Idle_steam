@@ -34,8 +34,6 @@ func _gui_input(event: InputEvent) -> void:
 			# 使用 Editor 里设置好的 pivot_offset
 			_pivot_global = target.global_position + target.pivot_offset * target.scale
 
-			print(_pivot_global)
-
 			accept_event()
 		else:
 			_dragging = false

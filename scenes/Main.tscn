@@ -22,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
 [ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/ItemController.gd" id="18_pnhog"]
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
+[ext_resource type="Script" uid="uid://dth0o1ceru2kl" path="res://scripts/main/controllers/AudioController.gd" id="20_gia1l"]
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
 [ext_resource type="Script" uid="uid://5cjw761v4fij" path="res://scripts/main/ui/Content.gd" id="24_mou0d"]
@@ -85,6 +86,9 @@
 [sub_resource type="Theme" id="Theme_ft6cd"]
 Window/styles/embedded_border = SubResource("StyleBoxEmpty_cvmbd")
 Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rsknx"]
+bg_color = Color(0.6, 0, 0, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1x1rp"]
 shader = ExtResource("28_8t8ul")
@@ -178,6 +182,7 @@ viewport_path = NodePath("WorldView")
 
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
+draw_scale = 0.75
 
 [node name="Controllers" type="Node" parent="." unique_id=650551310]
 
@@ -209,6 +214,16 @@ script = ExtResource("3_vcsgt")
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
 
+[node name="AudioController" type="Node" parent="Controllers" unique_id=1022251595]
+unique_name_in_owner = true
+script = ExtResource("20_gia1l")
+
+[node name="Ambient_1" type="AudioStreamPlayer" parent="Controllers/AudioController" unique_id=184690956]
+bus = &"Ambient"
+
+[node name="Ambient_2" type="AudioStreamPlayer" parent="Controllers/AudioController" unique_id=1883148440]
+bus = &"Ambient"
+
 [node name="UIWindow" type="Window" parent="." unique_id=1159274380]
 unique_name_in_owner = true
 transparent_bg = true
@@ -216,7 +231,6 @@ oversampling_override = 1.0
 mode = 2
 initial_position = 2
 size = Vector2i(1920, 1080)
-visible = false
 transient = true
 exclusive = true
 borderless = true
@@ -392,9 +406,12 @@ offset_left = 29.0
 offset_top = 32.0
 offset_right = 79.0
 offset_bottom = 82.0
+scale = Vector2(0.5, 0.5)
+theme_override_styles/normal = SubResource("StyleBoxFlat_rsknx")
 text = "__|"
 script = ExtResource("26_fcv70")
-max_scale = 3.0
+min_scale = 0.2
+max_scale = 4.0
 
 [node name="Buttons" type="Control" parent="UIWindow/UIRoot/CollectionBook" unique_id=1499936294]
 layout_mode = 1

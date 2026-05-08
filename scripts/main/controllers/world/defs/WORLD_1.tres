@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="WorldDef" format=3 uid="uid://v8li8wq2glkt"]
 
 [ext_resource type="Texture2D" uid="uid://h01ky1j7cg3m" path="res://assets/worldroot/world/1/1_far_0_1.png" id="1_55xhi"]
+[ext_resource type="AudioStream" uid="uid://c014lfv7y68ve" path="res://assets/worldroot/world/1/ambient_desert.wav" id="1_uy8h5"]
 [ext_resource type="Texture2D" uid="uid://dqcf71nlo37d8" path="res://assets/worldroot/world/1/1_far_0_2.png" id="2_uy8h5"]
 [ext_resource type="Texture2D" uid="uid://csefn3fc0o5lb" path="res://assets/worldroot/world/1/1_far_0_3.png" id="3_q0bqh"]
 [ext_resource type="Texture2D" uid="uid://bonk4be6dkjbk" path="res://assets/worldroot/world/1/1_mid_0_1.png" id="4_55xhi"]
@@ -42,6 +43,7 @@
 script = ExtResource("35_7kyr5")
 id = 1
 name = "night_dune"
+ambient_audio = ExtResource("1_uy8h5")
 sky_main_color = Color(0.44313726, 0.21176471, 0.70980394, 1)
 sky_effect_texture = ExtResource("37_55xhi")
 moon_main_texture = ExtResource("34_6kps5")

@@ -9,6 +9,7 @@ extends Node
 @onready var character_animator: CharacterAnimator = %CharacterAnimator
 @onready var item_controller: ItemController = %ItemController
 @onready var world_assembler: WorldAssembler = %WorldAssembler
+@onready var audio_controller: AudioController = %AudioController
 
 @onready var world_root: Node2D = %WorldRoot
 @onready var pet: AnimatedSprite2D = %Pet
@@ -103,7 +104,9 @@ func _connect_signals() -> void:
     pet.mouse_exited_body.connect(_on_pet_mouse_exited_body)
     
     # 连接世界组装器的世界切换信号到处理函数
+    world_assembler.world_changing.connect(_on_world_assembler_world_changing)
     world_assembler.world_changed.connect(_on_world_assembler_world_changed)
+    
 
     # 连接 letter 的 sent 信号到处理函数
     letter.sent.connect(_on_letter_sent)
@@ -141,7 +144,7 @@ func _on_pet_mouse_exited_body():
 
 
 func _on_global_key_hook_any_key_pressed() -> void:
-    print("[KEY] Outside window pressed any key")
+    # print("[KEY] Outside window pressed any key")
     character_animator._play_click_scale_anim()
 
 
@@ -178,8 +181,18 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
             # world_assembler._assemble_world((world_assembler.current_world_id+1)%2) # 切换世界
 
 
+func _on_world_assembler_world_changing(new_world_id: int, transition_duration: float) -> void:
+    print("[WORLD ASSEMBLER] World changing to ID: %d, transition duration: %.2f seconds" % [new_world_id, transition_duration])
+    if world_assembler.is_transitioning:
+        print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
+        return
+    else:
+        audio_controller.ambient_transition(new_world_id, transition_duration)
+    # scene_animator.play_world_transition(transition_duration)
+    
+
 func _on_world_assembler_world_changed(new_world_id: int) -> void:
-    print("[WORLD ASSEMBLER] World assembled with ID: %d" % new_world_id)
+    print("[WORLD ASSEMBLER] World assembled/transitioned to ID: %d" % new_world_id)
     # scene_animator.setup_initial_speed()
 
 
@@ -193,7 +206,12 @@ func _on_letter_sent(target_world_id: int) -> void: # 临时动画
     pet.get_node("heart").show()
     await get_tree().create_timer(2.0).timeout
     pet.get_node("heart").hide()
-    world_assembler.transition_to_world(target_world_id)
+    if world_assembler.is_transitioning:
+        print("[LETTER] World is currently transitioning, skipping world switch")
+        return
+    else :
+        print("[LETTER] Initiating world switch to ID: %d" % target_world_id)
+        world_assembler.transition_to_world(target_world_id)
 
 
 
