@@ -3,19 +3,25 @@
 [ext_resource type="Script" uid="uid://bknfrhchiu35q" path="res://scripts/main/ui/CollectedItem.gd" id="1_iw8ne"]
 [ext_resource type="Texture2D" uid="uid://bir86avjb1noe" path="res://assets/worldroot/world/1/1_far_2_1.png" id="2_iw8ne"]
 
-[node name="CollectedItem" type="Control" unique_id=1376733076]
+[node name="CollectedItem" type="Control" unique_id=1376733076 node_paths=PackedStringArray("texture_rect")]
 custom_minimum_size = Vector2(150, 150)
 layout_mode = 3
 anchors_preset = 0
+offset_right = 150.0
+offset_bottom = 150.0
 script = ExtResource("1_iw8ne")
+texture_rect = NodePath("TextureRect")
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=841571565]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 14
+anchor_top = 0.5
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.5
+offset_top = -12.323874
+offset_bottom = 12.323874
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_iw8ne")
-expand_mode = 1
+expand_mode = 5
 stretch_mode = 5

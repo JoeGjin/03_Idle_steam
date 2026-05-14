@@ -197,6 +197,7 @@ func _on_world_assembler_world_changing(new_world_id: int, transition_duration: 
 
 func _on_world_assembler_world_changed(new_world_id: int) -> void:
     print("[WORLD ASSEMBLER] World assembled/transitioned to ID: %d" % new_world_id)
+    character_status.get_node("ChangeScene").start()
     # scene_animator.setup_initial_speed()
 
 
@@ -224,9 +225,14 @@ func _on_send_postcard_timeout() -> void:
     pet.get_node("letter").show()
 
 
+func _on_change_scene_timeout() -> void:
+    world_assembler.transition_to_world((world_assembler.current_world_id+1)%3) # 切换世界
+
+
 
 func _on_exit_pressed() -> void:
     get_tree().quit()
+
 
 
 

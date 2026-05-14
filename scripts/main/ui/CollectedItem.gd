@@ -2,6 +2,7 @@ extends Control
 
 
 @export var work_board: Control
+@export var texture_rect: TextureRect
 # @export var letter: Control
 
 var drag_target: Control = null # 可能是 self，也可能是 copy
@@ -12,6 +13,13 @@ var drag_offset := Vector2.ZERO # 鼠标位置与拖动目标位置的偏移（�
 
 func randomize_texture() -> void:
     $TextureRect.texture = load("res://assets/uiroot/stickers/%d.png" % randi_range(1, 5))
+
+
+func update_actual_size() -> void:
+    custom_minimum_size = texture_rect.size
+    size = texture_rect.size
+    
+
 
 
 
@@ -25,6 +33,7 @@ func _gui_input(event: InputEvent) -> void:
         if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
             _begin_drag()
             accept_event()
+
 
 func _input(event: InputEvent) -> void:
     if not dragging:
@@ -61,6 +70,10 @@ func _begin_drag() -> void:
 
         # 先把 copy 放到“跟原物体看起来一样”的世界位置
         drag_copy.global_position = self.global_position
+
+        # 更新 copy 的尺寸（如果原物体有缩放的话，copy 也要保持一样的实际尺寸）
+        drag_copy.update_actual_size()
+        
         drag_target = drag_copy
 
     # 2) 计算 offset（统一用 work_board 坐标系）
