@@ -129,8 +129,11 @@ func _on_mouse_controller_left_clicked():
 
 func _on_mouse_controller_right_clicked():
     # print("[MOUSE] Right clicked")
-    character_animator._play_click_scale_anim()
+    # character_animator._play_click_scale_anim()
     ui_window.open_uiwindow()
+    if pet.get_node("letter").visible:
+        ui_root.play_receive_postcard()
+        pet.get_node("letter").hide()
 
 
 func _on_pet_mouse_entered_body():
@@ -170,7 +173,7 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
         CharacterStates.CharacterState.GREETING:
             pass
             # scene_animator.stop_para_animation()
-        CharacterStates.CharacterState.CHANGING:
+        CharacterStates.CharacterState.SENDING:
             pass
             # scene_animator.continue_para_animation()
         CharacterStates.CharacterState.TRANSITING:
@@ -215,7 +218,15 @@ func _on_letter_sent(target_world_id: int) -> void: # 临时动画
         world_assembler.transition_to_world(target_world_id)
 
 
+func _on_send_postcard_timeout() -> void:
+    print("[POSTCARD] SENT")
+    character_status.start(CharacterStates.CharacterState.SENDING)
+    pet.get_node("letter").show()
+
+
 
 func _on_exit_pressed() -> void:
     get_tree().quit()
+
+
 

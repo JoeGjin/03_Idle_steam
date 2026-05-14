@@ -17,6 +17,7 @@ func close_uiwindow():
 	hide() 
 
 
+
 func _ready():
 	
 	#开关来取消初始化黑屏
@@ -36,3 +37,5 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_close_button_pressed(): 
 	close_uiwindow()
+
+
