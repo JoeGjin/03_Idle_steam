@@ -21,7 +21,7 @@
 [ext_resource type="Resource" uid="uid://b02hwfcvjw2lj" path="res://scripts/main/controllers/status/defs/TRANSITING.tres" id="14_g6wdg"]
 [ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/ui/UIRoot.gd" id="15_3p2gp"]
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
-[ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/ItemController.gd" id="18_pnhog"]
+[ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/StickerController.gd" id="18_pnhog"]
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://dth0o1ceru2kl" path="res://scripts/main/controllers/AudioController.gd" id="20_gia1l"]
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
@@ -223,7 +223,7 @@ autostart = true
 unique_name_in_owner = true
 script = ExtResource("3_vcsgt")
 
-[node name="ItemController" type="Node" parent="Controllers" unique_id=769164480]
+[node name="StickerController" type="Node" parent="Controllers" unique_id=769164480]
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
 
@@ -481,7 +481,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("33_csfbn")
-postcards = [ExtResource("34_1xgkc"), ExtResource("35_x1gp3"), ExtResource("36_x1gp3")]
+postcards = Array[Texture2D]([ExtResource("34_1xgkc"), ExtResource("35_x1gp3"), ExtResource("36_x1gp3")])
 metadata/_edit_lock_ = true
 
 [node name="DebugUI" type="Control" parent="UIWindow" unique_id=193758564]
