@@ -202,7 +202,7 @@ func _on_world_assembler_world_changed(new_world_id: int) -> void:
 
 
 
-func _on_letter_sent(target_world_id: int) -> void: # 临时动画
+func _on_letter_sent(target_world_id: int, sub_world_id: int, sub_world_weight: float) -> void: # 临时动画
 	print("[LETTER] SENT")
 	character_status.start(CharacterStates.CharacterState.GAZING)
 	 # 临时动画 演示：钻石从天而降，心形出现
@@ -215,8 +215,8 @@ func _on_letter_sent(target_world_id: int) -> void: # 临时动画
 		print("[LETTER] World is currently transitioning, skipping world switch")
 		return
 	else :
-		print("[LETTER] Initiating world switch to ID: %d" % target_world_id)
-		world_assembler.transition_to_world(target_world_id)
+		print("[LETTER] Initiating world switch to ID: %d" % target_world_id, " with sub-world ID: %d and weight: %.2f" % [sub_world_id, sub_world_weight])
+		world_assembler.transition_to_world(target_world_id, sub_world_id, sub_world_weight) # 切换世界
 
 
 func _on_send_postcard_timeout() -> void:

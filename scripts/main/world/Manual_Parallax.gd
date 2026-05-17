@@ -21,6 +21,14 @@ class_name ManualParallax
 @export var color: Color = Color(1, 1, 1, 1)
 @export_range(0.0, 1.0, 0.01) var spawn_randomness: float = 0.1
 
+@export var texture_0_sub: Array[Texture2D] = []
+@export var spawn_position_0_sub: Vector2 = Vector2.ZERO
+@export var spawn_scale_0_sub: Vector2 = Vector2.ONE
+@export var texture_sub: Array[Texture2D] = []
+@export var spawn_position_sub: Vector2 = Vector2.ZERO
+@export var spawn_scale_sub: Vector2 = Vector2.ONE
+@export var weight_sub: float = 0.0 # 0-1之间，表示子贴图在随机选择时的权重，0表示不使用子贴图，1表示只使用子贴图
+
 
 var _objects_0: Array[Sprite2D] = []
 var _objects: Array[Sprite2D] = []
@@ -51,8 +59,11 @@ func start_manual_scroll(mode: int = 0) -> void: # mode: 0直接切换，1渐变
 		_free_distant_children(0.85)
 
 	_initialize_timer()
+
+
 	_spawn_texture(textures_0)
 	_spawn_texture(textures)
+	
 	_spawn_timer.start()
 	_is_scrolling = true
 
@@ -110,8 +121,8 @@ func _generate_random_texture(texture_pool: Array[Texture2D]) -> Texture2D:
 
 func _spawn_texture(texture_pool: Array[Texture2D]) -> void:
 	
-	if texture_pool == textures_0:
-			if randi() % 5 == 0:
+	if texture_pool == textures_0 or texture_pool == texture_0_sub:
+			if randi() % 4 == 0:
 				return # _0 25%概率不生成，增加随机性
 
 
@@ -127,10 +138,20 @@ func _spawn_texture(texture_pool: Array[Texture2D]) -> void:
 			sprite.scale = spawn_scale_0
 			sprite.position = spawn_position_0
 			_objects_0.append(sprite)
+		texture_0_sub:
+			sprite.modulate = color_0
+			sprite.scale = spawn_scale_0_sub
+			sprite.position = spawn_position_0_sub
+			_objects_0.append(sprite)
 		textures:
 			sprite.modulate = color
 			sprite.scale = spawn_scale
 			sprite.position = spawn_position
+			_objects.append(sprite)
+		texture_sub:
+			sprite.modulate = color
+			sprite.scale = spawn_scale_sub
+			sprite.position = spawn_position_sub
 			_objects.append(sprite)
 	add_child(sprite)
 
@@ -156,6 +177,11 @@ func _move_and_release(object: Sprite2D, delta: float, object_list: Array[Sprite
 
 
 func _on_spawn_timer_timeout() -> void:
-	# 间隔时长后重复spawn
-	_spawn_texture(textures_0)
-	_spawn_texture(textures)
+
+	if randf() < weight_sub:
+		_spawn_texture(texture_0_sub)
+		_spawn_texture(texture_sub)
+		# print(str(self.name) + ": spawn sub texture")
+	else:
+		_spawn_texture(textures_0)
+		_spawn_texture(textures)

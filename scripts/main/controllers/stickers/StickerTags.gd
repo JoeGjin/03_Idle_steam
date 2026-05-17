@@ -3,5 +3,5 @@
 extends Object
 class_name StickerTags
 
-#                    0        1        2    
-enum StickerTag { VIBRANT, BARREN, MYSTERIOUS} # 贴图标签枚举
+# 同时对应world id     0        1        2    
+enum StickerTag { MYSTERIOUS, BARREN, VIBRANT } # 贴图标签枚举

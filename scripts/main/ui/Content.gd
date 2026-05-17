@@ -16,23 +16,27 @@ func _ready() -> void:
 	_load_world_background_and_items(0)
 
 
-
+func _on_world_2_pressed() -> void:
+	# letter.target_world_id = 2
+	# work_board.free_all_children()
+	_load_world_background_and_items(2)
 
 func _on_world_1_pressed() -> void:
-	letter.target_world_id = 1
-	work_board.free_all_children()
+	# letter.target_world_id = 1
+	# work_board.free_all_children()
 	_load_world_background_and_items(1)
 
 func _on_world_0_pressed() -> void:
-	letter.target_world_id = 0
-	work_board.free_all_children()
+	# letter.target_world_id = 0
+	# work_board.free_all_children()
 	_load_world_background_and_items(0)
 
 
 
 
 func _load_world_background_and_items(world_id: int) -> void:
-	_update_letter_background(world_id)
+	# 先不上背景颜色
+	# _update_letter_background(world_id)
 	_add_world_item(world_id)
 
 

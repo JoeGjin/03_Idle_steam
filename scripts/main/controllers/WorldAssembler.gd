@@ -12,9 +12,10 @@ class_name WorldAssembler
 
 @onready var world_root: Node2D = %WorldRoot
 
-var target_world: WorldDef = null
 var current_world_id: int = 0 # 当前世界ID，初始为-1表示未设置
 var is_transitioning: bool = false # 是否正在进行世界切换过渡
+
+var unhandled_letter_tags: Array = [] # 存储未处理的标签，供发送时使用
 
 var _sky: Parallax2D
 var _moon: Parallax2D
@@ -64,12 +65,15 @@ func _input(event):
 
 
 func assemble_world(world_id: int) -> void:
+
 	if world_id < 0 or world_id >= world_defs.size():
 		print("[WORLD ASSEMBLER] Invalid world_id: %d" % world_id)
 		return
 	
 	world_changing.emit(world_id, transition_duration) # 发出世界切换信号
 	is_transitioning = true
+
+	var target_world: WorldDef = null
 
 	target_world = world_defs[world_id]
 	_defs_to_scene(target_world) # 将world def的参数应用到场景节点上
@@ -81,28 +85,35 @@ func assemble_world(world_id: int) -> void:
 
 
 
-func transition_to_world(world_id: int) -> void:
+func transition_to_world(target_world_id: int,
+	sub_world_id: int = -1, # 可选的子世界ID，默认为-1表示未指定
+	sub_world_weight: float = 0.0 # 可选的子世界权重，范围0.0-1.0，默认为0.0表示未指定
+	) -> void:
+	
 	if is_transitioning:
 		print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
 		return
 	
-	if world_id < 0 or world_id >= world_defs.size():
-		print("[WORLD ASSEMBLER] Invalid world_id: %d" % world_id)
+	if target_world_id < 0 or target_world_id >= world_defs.size():
+		print("[WORLD ASSEMBLER] Invalid world_id: %d" % target_world_id)
 		return
-	# if world_id == current_world_id:
-	# 	print("[WORLD ASSEMBLER] Already in world_id: %d" % world_id)
+	# if target_world_id == current_world_id:
+	# 	print("[WORLD ASSEMBLER] Already in world_id: %d" % target_world_id)
 	# 	return
 	
-	world_changing.emit(world_id, transition_duration) # 发出世界切换信号
+	world_changing.emit(target_world_id, transition_duration) # 发出世界切换信号
 	is_transitioning = true
 
-	target_world = world_defs[world_id]
+	var target_world: WorldDef = world_defs[target_world_id]
+	var sub_world: WorldDef = world_defs[sub_world_id]
+
 	# Parallex2D节点透明度开始渐变
 	var tween := create_tween()
 	tween.tween_property(_sky.get_child(1), "modulate:a", 0.0, transition_duration/2)
 	tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 0.0, transition_duration/2)
 	tween.parallel().tween_property(_land.get_child(1), "modulate:a", 0.0, transition_duration/2)
 	tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 0.0, transition_duration/2)
+
 	# 同时moon开始移出场景，新的moon移入场景
 	var moon_main = _moon.get_child(0)
 	var center: Vector2 = _moon.scroll_offset # 公转中心（Moon 本地）
@@ -117,12 +128,14 @@ func transition_to_world(world_id: int) -> void:
 		start_angle,
 		end_angle,
 		transition_duration/2
-	).set_ease(Tween.EASE_IN)
+	).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
+	
 	# moon移出的同时，effect也刚好透明度变为0，moon和effect的texture切换 _defs_to_scene(target_world, 1)
 	tween.tween_callback(func() -> void: 
-		_defs_to_scene(target_world, 1)
+		_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
 		_start_manual_scroll(1)
 		)
+	
 	# moon转回来，texture的颜色变化，effect透明度逐渐变为1
 	tween.tween_property(_sky.get_child(0), "modulate", target_world.sky_main_color, transition_duration/2)
 	tween.parallel().tween_property(_moon.get_child(0), "modulate", target_world.moon_main_color, transition_duration/2)
@@ -139,10 +152,10 @@ func transition_to_world(world_id: int) -> void:
 		end_angle,
 		return_angle,
 		transition_duration/2
-	).set_ease(Tween.EASE_OUT)
+	).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
 	# 同时非Parallex2D节点开始改变（新进素材，间隔，位置）
 	# tween.tween_callback(func() -> void:_start_manual_scroll(1)) # 渐变切换
-	current_world_id = world_id
+	current_world_id = target_world_id
 
 	tween.tween_callback(func() -> void: 
 		world_changed.emit(current_world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
@@ -152,7 +165,7 @@ func transition_to_world(world_id: int) -> void:
 
 
 
-func _defs_to_scene(current_world: WorldDef, mode: int = 0) -> void: # mode: 0直接切换，1渐变切换
+func _defs_to_scene(current_world: WorldDef, mode: int = 0, sub_world: WorldDef = null, sub_world_weight: float = 0.0) -> void: # mode: 0直接切换，1渐变切换
 	if mode == 0:
 		_sky.repeat_size = current_world.sky_repeat_size
 		_sky.autoscroll = current_world.sky_scroll_speed
@@ -183,6 +196,14 @@ func _defs_to_scene(current_world: WorldDef, mode: int = 0) -> void: # mode: 0�
 	_far_1.spawn_position_0 = current_world.far_0_spawn_position
 	# _far_1.spawn_cooldown_0 = current_world.far_0_spwan_cooldown
 	_far_1.spawn_randomness_0 = current_world.far_0_spwan_randomness
+	if sub_world != null:
+		_far_1.texture_0_sub = sub_world.far_0_textures
+		_far_1.spawn_position_0_sub = sub_world.far_0_spawn_position
+		_far_1.spawn_scale_0_sub = sub_world.far_0_spwan_scale
+		_far_1.texture_sub = sub_world.far_1_textures
+		_far_1.spawn_position_sub = sub_world.far_1_spawn_position
+		_far_1.spawn_scale_sub = sub_world.far_1_spwan_scale
+		_far_1.weight_sub = sub_world_weight
 
 	_far_2.scroll_speed = current_world.far_2_scroll_speed
 	_far_2.spawn_scale = current_world.far_2_spwan_scale
@@ -197,6 +218,14 @@ func _defs_to_scene(current_world: WorldDef, mode: int = 0) -> void: # mode: 0�
 	_far_2.spawn_position_0 = current_world.far_0_spawn_position
 	# _far_2.spawn_cooldown_0 = current_world.far_0_spwan_cooldown
 	_far_2.spawn_randomness_0 = current_world.far_0_spwan_randomness
+	if sub_world != null:
+		_far_2.texture_0_sub = sub_world.far_0_textures
+		_far_2.spawn_position_0_sub = sub_world.far_0_spawn_position
+		_far_2.spawn_scale_0_sub = sub_world.far_0_spwan_scale
+		_far_2.texture_sub = sub_world.far_2_textures
+		_far_2.spawn_position_sub = sub_world.far_2_spawn_position
+		_far_2.spawn_scale_sub = sub_world.far_2_spwan_scale
+		_far_2.weight_sub = sub_world_weight
 
 	if mode == 0:
 		_land.repeat_size = current_world.land_repeat_size
@@ -227,6 +256,14 @@ func _defs_to_scene(current_world: WorldDef, mode: int = 0) -> void: # mode: 0�
 	_mid_1.spawn_position_0 = current_world.mid_0_spawn_position
 	# _mid_1.spawn_cooldown_0 = current_world.mid_0_spwan_cooldown
 	_mid_1.spawn_randomness_0 = current_world.mid_0_spwan_randomness
+	if sub_world != null:
+		_mid_1.texture_0_sub = sub_world.mid_0_textures
+		_mid_1.spawn_position_0_sub = sub_world.mid_0_spawn_position
+		_mid_1.spawn_scale_0_sub = sub_world.mid_0_spwan_scale
+		_mid_1.texture_sub = sub_world.mid_1_textures
+		_mid_1.spawn_position_sub = sub_world.mid_1_spawn_position
+		_mid_1.spawn_scale_sub = sub_world.mid_1_spwan_scale
+		_mid_1.weight_sub = sub_world_weight
 
 	_mid_2.scroll_speed = current_world.mid_2_scroll_speed
 	_mid_2.spawn_scale = current_world.mid_2_spwan_scale
@@ -241,6 +278,14 @@ func _defs_to_scene(current_world: WorldDef, mode: int = 0) -> void: # mode: 0�
 	_mid_2.spawn_position_0 = current_world.mid_0_spawn_position
 	# _mid_2.spawn_cooldown_0 = current_world.mid_0_spwan_cooldown
 	_mid_2.spawn_randomness_0 = current_world.mid_0_spwan_randomness
+	if sub_world != null:
+		_mid_2.texture_0_sub = sub_world.mid_0_textures
+		_mid_2.spawn_position_0_sub = sub_world.mid_0_spawn_position
+		_mid_2.spawn_scale_0_sub = sub_world.mid_0_spwan_scale
+		_mid_2.texture_sub = sub_world.mid_2_textures
+		_mid_2.spawn_position_sub = sub_world.mid_2_spawn_position
+		_mid_2.spawn_scale_sub = sub_world.mid_2_spwan_scale
+		_mid_2.weight_sub = sub_world_weight
 
 	_front_1.scroll_speed = current_world.front_1_scroll_speed
 	_front_1.spawn_scale = current_world.front_1_spwan_scale
@@ -255,6 +300,14 @@ func _defs_to_scene(current_world: WorldDef, mode: int = 0) -> void: # mode: 0�
 	_front_1.spawn_position_0 = current_world.front_0_spawn_position
 	# _front_1.spawn_cooldown_0 = current_world.front_0_spwan_cooldown
 	_front_1.spawn_randomness_0 = current_world.front_0_spwan_randomness
+	if sub_world != null:
+		_front_1.texture_0_sub = sub_world.front_0_textures
+		_front_1.spawn_position_0_sub = sub_world.front_0_spawn_position
+		_front_1.spawn_scale_0_sub = sub_world.front_0_spwan_scale
+		_front_1.texture_sub = sub_world.front_1_textures
+		_front_1.spawn_position_sub = sub_world.front_1_spawn_position
+		_front_1.spawn_scale_sub = sub_world.front_1_spwan_scale
+		_front_1.weight_sub = sub_world_weight
 
 	_front_2.scroll_speed = current_world.front_2_scroll_speed
 	_front_2.spawn_scale = current_world.front_2_spwan_scale
@@ -269,7 +322,15 @@ func _defs_to_scene(current_world: WorldDef, mode: int = 0) -> void: # mode: 0�
 	_front_2.spawn_position_0 = current_world.front_0_spawn_position
 	# _front_2.spawn_cooldown_0 = current_world.front_0_spwan_cooldown
 	_front_2.spawn_randomness_0 = current_world.front_0_spwan_randomness
-	
+	if sub_world != null:
+		_front_2.texture_0_sub = sub_world.front_0_textures
+		_front_2.spawn_position_0_sub = sub_world.front_0_spawn_position
+		_front_2.spawn_scale_0_sub = sub_world.front_0_spwan_scale
+		_front_2.texture_sub = sub_world.front_2_textures
+		_front_2.spawn_position_sub = sub_world.front_2_spawn_position
+		_front_2.spawn_scale_sub = sub_world.front_2_spwan_scale
+		_front_2.weight_sub = sub_world_weight
+
 	_light.repeat_size = current_world.light_repeat_size
 	_light.autoscroll = current_world.light_scroll_speed
 	_light.get_child(0).texture = current_world.light_main_texture
