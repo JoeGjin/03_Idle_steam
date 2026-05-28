@@ -14,7 +14,7 @@ var vibe_tag: StickerTags.StickerTag
 
 
 
-func randomize_texture() -> void:
+func randomize_texture() -> void: # to be deleted
 	$TextureRect.texture = load("res://assets/uiroot/stickers/%d.png" % randi_range(1, 5))
 
 

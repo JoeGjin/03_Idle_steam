@@ -97,9 +97,7 @@ func transition_to_world(target_world_id: int,
 	if target_world_id < 0 or target_world_id >= world_defs.size():
 		print("[WORLD ASSEMBLER] Invalid world_id: %d" % target_world_id)
 		return
-	# if target_world_id == current_world_id:
-	# 	print("[WORLD ASSEMBLER] Already in world_id: %d" % target_world_id)
-	# 	return
+
 	
 	world_changing.emit(target_world_id, transition_duration) # 发出世界切换信号
 	is_transitioning = true
@@ -107,60 +105,72 @@ func transition_to_world(target_world_id: int,
 	var target_world: WorldDef = world_defs[target_world_id]
 	var sub_world: WorldDef = world_defs[sub_world_id]
 
-	# Parallex2D节点透明度开始渐变
-	var tween := create_tween()
-	tween.tween_property(_sky.get_child(1), "modulate:a", 0.0, transition_duration/2)
-	tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 0.0, transition_duration/2)
-	tween.parallel().tween_property(_land.get_child(1), "modulate:a", 0.0, transition_duration/2)
-	tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 0.0, transition_duration/2)
 
-	# 同时moon开始移出场景，新的moon移入场景
-	var moon_main = _moon.get_child(0)
-	var center: Vector2 = _moon.scroll_offset # 公转中心（Moon 本地）
-	var r: Vector2 = moon_main.position - center # 半径向量（Moon 本地）
-	var start_angle := r.angle()
-	var end_angle := start_angle - PI
-	var return_angle := start_angle
-	tween.parallel().tween_method(
-		func(a: float) -> void:
-			# 保持半径长度不变，绕 center 旋转
-			moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
-		start_angle,
-		end_angle,
-		transition_duration/2
-	).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
+		
+	if target_world_id != current_world_id:
+
+		# Parallex2D节点透明度开始渐变
+		var tween := create_tween()
+		tween.tween_property(_sky.get_child(1), "modulate:a", 0.0, transition_duration/2)
+		tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 0.0, transition_duration/2)
+		tween.parallel().tween_property(_land.get_child(1), "modulate:a", 0.0, transition_duration/2)
+		tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 0.0, transition_duration/2)
+
+		# 同时moon开始移出场景，新的moon移入场景
+		var moon_main = _moon.get_child(0)
+		var center: Vector2 = _moon.scroll_offset # 公转中心（Moon 本地）
+		var r: Vector2 = moon_main.position - center # 半径向量（Moon 本地）
+		var start_angle := r.angle()
+		var end_angle := start_angle - PI
+		var return_angle := start_angle
+		tween.parallel().tween_method(
+			func(a: float) -> void:
+				# 保持半径长度不变，绕 center 旋转
+				moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
+			start_angle,
+			end_angle,
+			transition_duration/2
+		).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
+		
+		# moon移出的同时，effect也刚好透明度变为0，moon和effect的texture切换 _defs_to_scene(target_world, 1)
+		tween.tween_callback(func() -> void: 
+			_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
+			_start_manual_scroll(1)
+			)
+		
+		# moon转回来，texture的颜色变化，effect透明度逐渐变为1
+		tween.tween_property(_sky.get_child(0), "modulate", target_world.sky_main_color, transition_duration/2)
+		tween.parallel().tween_property(_moon.get_child(0), "modulate", target_world.moon_main_color, transition_duration/2)
+		tween.parallel().tween_property(_land.get_child(0), "modulate", target_world.land_main_color, transition_duration/2)
+		tween.parallel().tween_property(_sea.get_child(0), "modulate", target_world.sea_main_color, transition_duration/2)
+		tween.parallel().tween_property(_sky.get_child(1), "modulate:a", 1.0, transition_duration/2)
+		tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 1.0, transition_duration/2)
+		tween.parallel().tween_property(_land.get_child(1), "modulate:a", 1.0, transition_duration/2)
+		tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 1.0, transition_duration/2)
+		tween.parallel().tween_method(
+			func(a: float) -> void:
+				# 保持半径长度不变，绕 center 旋转
+				moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
+			end_angle,
+			return_angle,
+			transition_duration/2
+		).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+		# 同时非Parallex2D节点开始改变（新进素材，间隔，位置）
+		# tween.tween_callback(func() -> void:_start_manual_scroll(1)) # 渐变切换
+		
+		current_world_id = target_world_id
+
+		tween.tween_callback(func() -> void: 
+			world_changed.emit(current_world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
+			is_transitioning = false
+			)
 	
-	# moon移出的同时，effect也刚好透明度变为0，moon和effect的texture切换 _defs_to_scene(target_world, 1)
-	tween.tween_callback(func() -> void: 
+	else:
 		_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
 		_start_manual_scroll(1)
-		)
-	
-	# moon转回来，texture的颜色变化，effect透明度逐渐变为1
-	tween.tween_property(_sky.get_child(0), "modulate", target_world.sky_main_color, transition_duration/2)
-	tween.parallel().tween_property(_moon.get_child(0), "modulate", target_world.moon_main_color, transition_duration/2)
-	tween.parallel().tween_property(_land.get_child(0), "modulate", target_world.land_main_color, transition_duration/2)
-	tween.parallel().tween_property(_sea.get_child(0), "modulate", target_world.sea_main_color, transition_duration/2)
-	tween.parallel().tween_property(_sky.get_child(1), "modulate:a", 1.0, transition_duration/2)
-	tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 1.0, transition_duration/2)
-	tween.parallel().tween_property(_land.get_child(1), "modulate:a", 1.0, transition_duration/2)
-	tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 1.0, transition_duration/2)
-	tween.parallel().tween_method(
-		func(a: float) -> void:
-			# 保持半径长度不变，绕 center 旋转
-			moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
-		end_angle,
-		return_angle,
-		transition_duration/2
-	).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-	# 同时非Parallex2D节点开始改变（新进素材，间隔，位置）
-	# tween.tween_callback(func() -> void:_start_manual_scroll(1)) # 渐变切换
-	current_world_id = target_world_id
-
-	tween.tween_callback(func() -> void: 
-		world_changed.emit(current_world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
+		world_changed.emit(current_world_id)
 		is_transitioning = false
-		)
+
 	
 
 

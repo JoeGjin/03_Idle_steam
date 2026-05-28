@@ -61,6 +61,7 @@ func _on_crop_and_send_pressed() -> void:
     _play_send_animation()
 
 
+##　和stickercontroller里重复，delete this later
 func _on_letter_animation_finished() -> void:
     free_all_children()
     crop_and_send_button.disabled = false
@@ -125,6 +126,8 @@ func _move_overlapped_items_into_letter(include_borders: bool = true) -> void:
         item.mouse_filter = Control.MOUSE_FILTER_IGNORE # 进入 letter 后不再响应鼠标事件
         
 
+
+##　和stickercontroller里重复，delete this later
 func _get_top_two_worlds(world_scores: Dictionary[int, float]) -> Dictionary:
     var target_world_id_t := -1
     var target_world_weight := -INF
