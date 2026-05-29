@@ -39,6 +39,11 @@ const TAG_BY_STICKER: Dictionary = {
 
 
 
+func get_popup_texture_by_name(texture_name: String) -> Texture2D:
+    for texture in sticker_popup_pool:
+        if texture.resource_path.get_file().get_basename() == texture_name:
+            return texture
+    return null # 如果没有找到匹配的贴图，返回 null
 
 
 func tag_calculation(items: Array[String]) -> Dictionary:

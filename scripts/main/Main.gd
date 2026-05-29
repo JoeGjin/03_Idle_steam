@@ -234,14 +234,18 @@ func _on_send_postcard_timeout() -> void:
     # pet.get_node("letter").show()
     popups.popup()
 
-func _on_popups_memory_chose(chosen: String, unchosen: String) -> void:
+
+func _on_popups_memory_chose(chosen: String, unchosen: String) -> void: # string格式为 0_frontxxx_2_1xx
     
-    print("[POPUPS] Memory chosen: %s, unchosen: %s" % [chosen, unchosen])
+    print("[MEMORY] Memory chosen: %s, unchosen: %s" % [chosen, unchosen])
     _update_memory_slots(chosen)
+    world_assembler.banned_texture = unchosen
     
     pet.get_node("heart").show()
     await get_tree().create_timer(2.0).timeout
     pet.get_node("heart").hide()
+
+    world_assembler.immediate_spawn(chosen)
         
     if world_assembler.is_transitioning:
         print("[MEMORY] World is currently transitioning, skipping world switch")
@@ -253,6 +257,8 @@ func _on_popups_memory_chose(chosen: String, unchosen: String) -> void:
         var sub_world_weight = tag_calc_result["sub_world_weight"]
         print("[MEMORY] Initiating world switch to ID: %d" % target_world_id, " with sub-world ID: %d and weight: %.2f" % [sub_world_id, sub_world_weight])
         world_assembler.transition_to_world(target_world_id, sub_world_id, sub_world_weight) # 切换世界
+        
+
 
 func _update_memory_slots(chosen: String) -> void:
     # 更新 memory_slots 数组，保持最新的6条记录
@@ -263,6 +269,7 @@ func _update_memory_slots(chosen: String) -> void:
 
 
 func _on_change_scene_timeout() -> void:
+    print("[MAIN] Change scene timeout reached, switching world")
     world_assembler.transition_to_world((world_assembler.current_world_id+1)%3) # 切换世界
 
 

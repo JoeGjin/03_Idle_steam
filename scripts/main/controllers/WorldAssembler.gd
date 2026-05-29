@@ -11,11 +11,14 @@ class_name WorldAssembler
 @export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
 
 @onready var world_root: Node2D = %WorldRoot
+@onready var sticker_controller: StickerController = %StickerController
 
 var current_world_id: int = 0 # 当前世界ID，初始为-1表示未设置
 var is_transitioning: bool = false # 是否正在进行世界切换过渡
 
 var unhandled_letter_tags: Array = [] # 存储未处理的标签，供发送时使用
+
+var banned_texture: String = "" # 单个槽位，记录最近一次未选择的texture名称
 
 var _sky: Parallax2D
 var _moon: Parallax2D
@@ -54,15 +57,6 @@ func initiate() -> void:
 
 
 
-# 小键盘控制世界切换
-func _input(event): 
-	for i in range(10):
-		if event.is_action_pressed("%d" % i):
-			# assemble_world(i)
-			transition_to_world(i)
-			break
-
-
 
 func assemble_world(world_id: int) -> void:
 
@@ -99,15 +93,16 @@ func transition_to_world(target_world_id: int,
 		return
 
 	
-	world_changing.emit(target_world_id, transition_duration) # 发出世界切换信号
-	is_transitioning = true
-
 	var target_world: WorldDef = world_defs[target_world_id]
 	var sub_world: WorldDef = world_defs[sub_world_id]
 
 
+	
+	if target_world_id != current_world_id: # 只有在切换到不同世界时才执行过渡动画
 		
-	if target_world_id != current_world_id:
+		world_changing.emit(target_world_id, transition_duration) # 发出世界切换信号
+		is_transitioning = true
+
 
 		# Parallex2D节点透明度开始渐变
 		var tween := create_tween()
@@ -165,13 +160,90 @@ func transition_to_world(target_world_id: int,
 			is_transitioning = false
 			)
 	
-	else:
+	else: # 切换到同一世界但不同子世界，直接切换参数，不需要过渡动画
+		world_changing.emit(target_world_id, 0) # 发出世界切换信号
+		is_transitioning = true
 		_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
-		_start_manual_scroll(1)
+		# _start_manual_scroll(1)
 		world_changed.emit(current_world_id)
 		is_transitioning = false
 
+
+
+func immediate_spawn(texture_name: String) -> void: # string格式为 0_frontxxx_2_1xx
+	# 通过name来确定在哪个层生成素材
+	var target_layer_name = texture_name.split("_")[1] # 例如 "0_front_2" -> "front"
+	var target_sublayer_name = texture_name.split("_")[2] # 例如 "0_front_2" -> "2"
+	# get对应的层
+	var target_layer: ManualParallax
+	match target_layer_name:
+		"far":
+			match target_sublayer_name:
+				"1":
+					target_layer = _far_1
+				"2":
+					target_layer = _far_2
+				"0": # 如果是0层，随机选择一个层生成
+					if randi() % 2 == 0:
+						target_layer = _far_1
+					else:
+						target_layer = _far_2
+		"mid":
+			match target_sublayer_name:
+				"1":
+					target_layer = _mid_1
+				"2":
+					target_layer = _mid_2
+				"0": # 如果是0层，随机选择一个层生成
+					if randi() % 2 == 0:
+						target_layer = _mid_1
+					else:
+						target_layer = _mid_2
+		"front":
+			match target_sublayer_name:
+				"1":
+					target_layer = _front_1
+				"2":
+					target_layer = _front_2
+				"0": # 如果是0层，随机选择一个层生成
+					if randi() % 2 == 0:
+						target_layer = _front_1
+					else:
+						target_layer = _front_2
+	# 从assembler层级手动生成一个新的sprite并加入场景, 需要调用对应的世界def中的参数
+	var sprite = Sprite2D.new()
+	sprite.texture = sticker_controller.get_popup_texture_by_name(texture_name) # 通过贴图名称获取Texture2D资源
+	var target_world_id: int = texture_name.split("_")[0].to_int() # 例如 "0_front_2" -> 0
+	var target_world_def = world_defs[target_world_id] 
 	
+	var color_property_name: String = "%s_%s_color" % [target_layer_name, target_sublayer_name]
+	sprite.modulate = target_world_def.get(color_property_name)
+	var scale_property_name: String = "%s_%s_spawn_scale" % [target_layer_name, target_sublayer_name]
+	sprite.scale = target_world_def.get(scale_property_name)
+	var position_property_name: String = "%s_%s_spawn_position" % [target_layer_name, target_sublayer_name]
+	sprite.position = Vector2(0, target_world_def.get(position_property_name).y)
+	
+	match target_sublayer_name:
+		"1", "2":
+			target_layer._objects.append(sprite)
+		"0":
+			target_layer._objects_0.append(sprite)
+	
+	target_layer.add_child(sprite)
+	target_layer.animation_popup(sprite)
+	
+	
+
+
+func texture_banned(texture_name: String) -> bool:
+	# 检查给定的贴图名称是否在当前世界的禁止列表中
+	# print("[WORLD ASSEMBLER] Checking if texture '%s' is banned (banned_texture: '%s')" % [texture_name, banned_texture])
+	return texture_name == banned_texture
+
+
+
+
+
 
 
 
@@ -194,47 +266,47 @@ func _defs_to_scene(current_world: WorldDef, mode: int = 0, sub_world: WorldDef 
 	
 
 	_far_1.scroll_speed = current_world.far_1_scroll_speed
-	_far_1.spawn_scale = current_world.far_1_spwan_scale
+	_far_1.spawn_scale = current_world.far_1_spawn_scale
 	_far_1.spawn_position = current_world.far_1_spawn_position
-	_far_1.spawn_cooldown = current_world.far_1_spwan_cooldown
-	_far_1.spawn_randomness = current_world.far_1_spwan_randomness
+	_far_1.spawn_cooldown = current_world.far_1_spawn_cooldown
+	_far_1.spawn_randomness = current_world.far_1_spawn_randomness
 	_far_1.textures_0 = current_world.far_0_textures
 	_far_1.color_0 = current_world.far_0_color
 	_far_1.textures = current_world.far_1_textures
-	_far_1.color = current_world.far_1_colors
-	_far_1.spawn_scale_0 = current_world.far_0_spwan_scale
+	_far_1.color = current_world.far_1_color
+	_far_1.spawn_scale_0 = current_world.far_0_spawn_scale
 	_far_1.spawn_position_0 = current_world.far_0_spawn_position
-	# _far_1.spawn_cooldown_0 = current_world.far_0_spwan_cooldown
-	_far_1.spawn_randomness_0 = current_world.far_0_spwan_randomness
+	# _far_1.spawn_cooldown_0 = current_world.far_0_spawn_cooldown
+	_far_1.spawn_randomness_0 = current_world.far_0_spawn_randomness
 	if sub_world != null:
 		_far_1.texture_0_sub = sub_world.far_0_textures
 		_far_1.spawn_position_0_sub = sub_world.far_0_spawn_position
-		_far_1.spawn_scale_0_sub = sub_world.far_0_spwan_scale
+		_far_1.spawn_scale_0_sub = sub_world.far_0_spawn_scale
 		_far_1.texture_sub = sub_world.far_1_textures
 		_far_1.spawn_position_sub = sub_world.far_1_spawn_position
-		_far_1.spawn_scale_sub = sub_world.far_1_spwan_scale
+		_far_1.spawn_scale_sub = sub_world.far_1_spawn_scale
 		_far_1.weight_sub = sub_world_weight
 
 	_far_2.scroll_speed = current_world.far_2_scroll_speed
-	_far_2.spawn_scale = current_world.far_2_spwan_scale
+	_far_2.spawn_scale = current_world.far_2_spawn_scale
 	_far_2.spawn_position = current_world.far_2_spawn_position
-	_far_2.spawn_cooldown = current_world.far_2_spwan_cooldown
-	_far_2.spawn_randomness = current_world.far_2_spwan_randomness
+	_far_2.spawn_cooldown = current_world.far_2_spawn_cooldown
+	_far_2.spawn_randomness = current_world.far_2_spawn_randomness
 	_far_2.textures_0 = current_world.far_0_textures
 	_far_2.color_0 = current_world.far_0_color
 	_far_2.textures = current_world.far_2_textures
-	_far_2.color = current_world.far_2_colors
-	_far_2.spawn_scale_0 = current_world.far_0_spwan_scale
+	_far_2.color = current_world.far_2_color
+	_far_2.spawn_scale_0 = current_world.far_0_spawn_scale
 	_far_2.spawn_position_0 = current_world.far_0_spawn_position
-	# _far_2.spawn_cooldown_0 = current_world.far_0_spwan_cooldown
-	_far_2.spawn_randomness_0 = current_world.far_0_spwan_randomness
+	# _far_2.spawn_cooldown_0 = current_world.far_0_spawn_cooldown
+	_far_2.spawn_randomness_0 = current_world.far_0_spawn_randomness
 	if sub_world != null:
 		_far_2.texture_0_sub = sub_world.far_0_textures
 		_far_2.spawn_position_0_sub = sub_world.far_0_spawn_position
-		_far_2.spawn_scale_0_sub = sub_world.far_0_spwan_scale
+		_far_2.spawn_scale_0_sub = sub_world.far_0_spawn_scale
 		_far_2.texture_sub = sub_world.far_2_textures
 		_far_2.spawn_position_sub = sub_world.far_2_spawn_position
-		_far_2.spawn_scale_sub = sub_world.far_2_spwan_scale
+		_far_2.spawn_scale_sub = sub_world.far_2_spawn_scale
 		_far_2.weight_sub = sub_world_weight
 
 	if mode == 0:
@@ -254,91 +326,91 @@ func _defs_to_scene(current_world: WorldDef, mode: int = 0, sub_world: WorldDef 
 	_sea.get_child(1).texture = current_world.sea_effect_texture
 	
 	_mid_1.scroll_speed = current_world.mid_1_scroll_speed
-	_mid_1.spawn_scale = current_world.mid_1_spwan_scale
+	_mid_1.spawn_scale = current_world.mid_1_spawn_scale
 	_mid_1.spawn_position = current_world.mid_1_spawn_position
-	_mid_1.spawn_cooldown = current_world.mid_1_spwan_cooldown
-	_mid_1.spawn_randomness = current_world.mid_1_spwan_randomness
+	_mid_1.spawn_cooldown = current_world.mid_1_spawn_cooldown
+	_mid_1.spawn_randomness = current_world.mid_1_spawn_randomness
 	_mid_1.textures_0 = current_world.mid_0_textures
 	_mid_1.color_0 = current_world.mid_0_color
 	_mid_1.textures = current_world.mid_1_textures
-	_mid_1.color = current_world.mid_1_colors
-	_mid_1.spawn_scale_0 = current_world.mid_0_spwan_scale
+	_mid_1.color = current_world.mid_1_color
+	_mid_1.spawn_scale_0 = current_world.mid_0_spawn_scale
 	_mid_1.spawn_position_0 = current_world.mid_0_spawn_position
-	# _mid_1.spawn_cooldown_0 = current_world.mid_0_spwan_cooldown
-	_mid_1.spawn_randomness_0 = current_world.mid_0_spwan_randomness
+	# _mid_1.spawn_cooldown_0 = current_world.mid_0_spawn_cooldown
+	_mid_1.spawn_randomness_0 = current_world.mid_0_spawn_randomness
 	if sub_world != null:
 		_mid_1.texture_0_sub = sub_world.mid_0_textures
 		_mid_1.spawn_position_0_sub = sub_world.mid_0_spawn_position
-		_mid_1.spawn_scale_0_sub = sub_world.mid_0_spwan_scale
+		_mid_1.spawn_scale_0_sub = sub_world.mid_0_spawn_scale
 		_mid_1.texture_sub = sub_world.mid_1_textures
 		_mid_1.spawn_position_sub = sub_world.mid_1_spawn_position
-		_mid_1.spawn_scale_sub = sub_world.mid_1_spwan_scale
+		_mid_1.spawn_scale_sub = sub_world.mid_1_spawn_scale
 		_mid_1.weight_sub = sub_world_weight
 
 	_mid_2.scroll_speed = current_world.mid_2_scroll_speed
-	_mid_2.spawn_scale = current_world.mid_2_spwan_scale
+	_mid_2.spawn_scale = current_world.mid_2_spawn_scale
 	_mid_2.spawn_position = current_world.mid_2_spawn_position
-	_mid_2.spawn_cooldown = current_world.mid_2_spwan_cooldown
-	_mid_2.spawn_randomness = current_world.mid_2_spwan_randomness
+	_mid_2.spawn_cooldown = current_world.mid_2_spawn_cooldown
+	_mid_2.spawn_randomness = current_world.mid_2_spawn_randomness
 	_mid_2.textures_0 = current_world.mid_0_textures
 	_mid_2.color_0 = current_world.mid_0_color
 	_mid_2.textures = current_world.mid_2_textures
-	_mid_2.color = current_world.mid_2_colors
-	_mid_2.spawn_scale_0 = current_world.mid_0_spwan_scale
+	_mid_2.color = current_world.mid_2_color
+	_mid_2.spawn_scale_0 = current_world.mid_0_spawn_scale
 	_mid_2.spawn_position_0 = current_world.mid_0_spawn_position
-	# _mid_2.spawn_cooldown_0 = current_world.mid_0_spwan_cooldown
-	_mid_2.spawn_randomness_0 = current_world.mid_0_spwan_randomness
+	# _mid_2.spawn_cooldown_0 = current_world.mid_0_spawn_cooldown
+	_mid_2.spawn_randomness_0 = current_world.mid_0_spawn_randomness
 	if sub_world != null:
 		_mid_2.texture_0_sub = sub_world.mid_0_textures
 		_mid_2.spawn_position_0_sub = sub_world.mid_0_spawn_position
-		_mid_2.spawn_scale_0_sub = sub_world.mid_0_spwan_scale
+		_mid_2.spawn_scale_0_sub = sub_world.mid_0_spawn_scale
 		_mid_2.texture_sub = sub_world.mid_2_textures
 		_mid_2.spawn_position_sub = sub_world.mid_2_spawn_position
-		_mid_2.spawn_scale_sub = sub_world.mid_2_spwan_scale
+		_mid_2.spawn_scale_sub = sub_world.mid_2_spawn_scale
 		_mid_2.weight_sub = sub_world_weight
 
 	_front_1.scroll_speed = current_world.front_1_scroll_speed
-	_front_1.spawn_scale = current_world.front_1_spwan_scale
+	_front_1.spawn_scale = current_world.front_1_spawn_scale
 	_front_1.spawn_position = current_world.front_1_spawn_position
-	_front_1.spawn_cooldown = current_world.front_1_spwan_cooldown
-	_front_1.spawn_randomness = current_world.front_1_spwan_randomness
+	_front_1.spawn_cooldown = current_world.front_1_spawn_cooldown
+	_front_1.spawn_randomness = current_world.front_1_spawn_randomness
 	_front_1.textures_0 = current_world.front_0_textures
 	_front_1.color_0 = current_world.front_0_color
 	_front_1.textures = current_world.front_1_textures
-	_front_1.color = current_world.front_1_colors
-	_front_1.spawn_scale_0 = current_world.front_0_spwan_scale
+	_front_1.color = current_world.front_1_color
+	_front_1.spawn_scale_0 = current_world.front_0_spawn_scale
 	_front_1.spawn_position_0 = current_world.front_0_spawn_position
-	# _front_1.spawn_cooldown_0 = current_world.front_0_spwan_cooldown
-	_front_1.spawn_randomness_0 = current_world.front_0_spwan_randomness
+	# _front_1.spawn_cooldown_0 = current_world.front_0_spawn_cooldown
+	_front_1.spawn_randomness_0 = current_world.front_0_spawn_randomness
 	if sub_world != null:
 		_front_1.texture_0_sub = sub_world.front_0_textures
 		_front_1.spawn_position_0_sub = sub_world.front_0_spawn_position
-		_front_1.spawn_scale_0_sub = sub_world.front_0_spwan_scale
+		_front_1.spawn_scale_0_sub = sub_world.front_0_spawn_scale
 		_front_1.texture_sub = sub_world.front_1_textures
 		_front_1.spawn_position_sub = sub_world.front_1_spawn_position
-		_front_1.spawn_scale_sub = sub_world.front_1_spwan_scale
+		_front_1.spawn_scale_sub = sub_world.front_1_spawn_scale
 		_front_1.weight_sub = sub_world_weight
 
 	_front_2.scroll_speed = current_world.front_2_scroll_speed
-	_front_2.spawn_scale = current_world.front_2_spwan_scale
+	_front_2.spawn_scale = current_world.front_2_spawn_scale
 	_front_2.spawn_position = current_world.front_2_spawn_position
-	_front_2.spawn_cooldown = current_world.front_2_spwan_cooldown
-	_front_2.spawn_randomness = current_world.front_2_spwan_randomness
+	_front_2.spawn_cooldown = current_world.front_2_spawn_cooldown
+	_front_2.spawn_randomness = current_world.front_2_spawn_randomness
 	_front_2.textures_0 = current_world.front_0_textures
 	_front_2.color_0 = current_world.front_0_color
 	_front_2.textures = current_world.front_2_textures
-	_front_2.color = current_world.front_2_colors
-	_front_2.spawn_scale_0 = current_world.front_0_spwan_scale
+	_front_2.color = current_world.front_2_color
+	_front_2.spawn_scale_0 = current_world.front_0_spawn_scale
 	_front_2.spawn_position_0 = current_world.front_0_spawn_position
-	# _front_2.spawn_cooldown_0 = current_world.front_0_spwan_cooldown
-	_front_2.spawn_randomness_0 = current_world.front_0_spwan_randomness
+	# _front_2.spawn_cooldown_0 = current_world.front_0_spawn_cooldown
+	_front_2.spawn_randomness_0 = current_world.front_0_spawn_randomness
 	if sub_world != null:
 		_front_2.texture_0_sub = sub_world.front_0_textures
 		_front_2.spawn_position_0_sub = sub_world.front_0_spawn_position
-		_front_2.spawn_scale_0_sub = sub_world.front_0_spwan_scale
+		_front_2.spawn_scale_0_sub = sub_world.front_0_spawn_scale
 		_front_2.texture_sub = sub_world.front_2_textures
 		_front_2.spawn_position_sub = sub_world.front_2_spawn_position
-		_front_2.spawn_scale_sub = sub_world.front_2_spwan_scale
+		_front_2.spawn_scale_sub = sub_world.front_2_spawn_scale
 		_front_2.weight_sub = sub_world_weight
 
 	_light.repeat_size = current_world.light_repeat_size
@@ -358,3 +430,13 @@ func _start_manual_scroll(mode: int = 0) -> void: # mode: 0直接切换，1渐�
 	_mid_2.start_manual_scroll(mode)
 	_front_1.start_manual_scroll(mode)
 	_front_2.start_manual_scroll(mode)
+
+
+
+# 小键盘控制世界切换
+func _input(event): 
+	for i in range(10):
+		if event.is_action_pressed("%d" % i):
+			# assemble_world(i)
+			transition_to_world(i)
+			break

@@ -28,26 +28,26 @@ class_name WorldDef
 @export var far_0_textures: Array[Texture2D] = []
 @export var far_0_color: Color = Color(1, 1, 1, 1)
 @export var far_1_textures: Array[Texture2D] = []
-@export var far_1_colors: Color = Color(1, 1, 1, 1)
+@export var far_1_color: Color = Color(1, 1, 1, 1)
 @export var far_2_textures: Array[Texture2D] = []
-@export var far_2_colors: Color = Color(1, 1, 1, 1)
+@export var far_2_color: Color = Color(1, 1, 1, 1)
 
-@export var far_0_spwan_scale: Vector2 = Vector2.ONE 
+@export var far_0_spawn_scale: Vector2 = Vector2.ONE 
 @export var far_0_spawn_position: Vector2 = Vector2(1000,0) 
-# @export var far_0_spwan_cooldown: float = 100.0 # 
-@export_range(0.0, 1.0, 0.01) var far_0_spwan_randomness: float = 0.1 
+# @export var far_0_spawn_cooldown: float = 100.0 # 
+@export_range(0.0, 1.0, 0.01) var far_0_spawn_randomness: float = 0.1 
 
 @export var far_1_scroll_speed: Vector2 = Vector2(-20.0, 0)
-@export var far_1_spwan_scale: Vector2 = Vector2.ONE
+@export var far_1_spawn_scale: Vector2 = Vector2.ONE
 @export var far_1_spawn_position: Vector2 = Vector2(1000,0)
-@export var far_1_spwan_cooldown: float = 100.0
-@export_range(0.0, 1.0, 0.01) var far_1_spwan_randomness: float = 0.1
+@export var far_1_spawn_cooldown: float = 100.0
+@export_range(0.0, 1.0, 0.01) var far_1_spawn_randomness: float = 0.1
 
 @export var far_2_scroll_speed: Vector2 = Vector2(-30.0, 0)
-@export var far_2_spwan_scale: Vector2 = Vector2.ONE
+@export var far_2_spawn_scale: Vector2 = Vector2.ONE
 @export var far_2_spawn_position: Vector2 = Vector2(1000,0)
-@export var far_2_spwan_cooldown: float = 100.0
-@export_range(0.0, 1.0, 0.01) var far_2_spwan_randomness: float = 0.1
+@export var far_2_spawn_cooldown: float = 100.0
+@export_range(0.0, 1.0, 0.01) var far_2_spawn_randomness: float = 0.1
 
 
 @export var land_repeat_size: Vector2 = Vector2(4542.0, 0)
@@ -68,51 +68,51 @@ class_name WorldDef
 @export var mid_0_textures: Array[Texture2D] = []
 @export var mid_0_color: Color = Color(1, 1, 1, 1)
 @export var mid_1_textures: Array[Texture2D] = []
-@export var mid_1_colors: Color = Color(1, 1, 1, 1)
+@export var mid_1_color: Color = Color(1, 1, 1, 1)
 @export var mid_2_textures: Array[Texture2D] = []
-@export var mid_2_colors: Color = Color(1, 1, 1, 1)
+@export var mid_2_color: Color = Color(1, 1, 1, 1)
 
-@export var mid_0_spwan_scale: Vector2 = Vector2.ONE 
+@export var mid_0_spawn_scale: Vector2 = Vector2.ONE 
 @export var mid_0_spawn_position: Vector2 = Vector2(1000,0) 
-# @export var mid_0_spwan_cooldown: float = 100.0
-@export_range(0.0, 1.0, 0.01) var mid_0_spwan_randomness: float = 0.1 
+# @export var mid_0_spawn_cooldown: float = 100.0
+@export_range(0.0, 1.0, 0.01) var mid_0_spawn_randomness: float = 0.1 
 
 @export var mid_1_scroll_speed: Vector2 = Vector2(-50.0, 0)
-@export var mid_1_spwan_scale: Vector2 = Vector2.ONE
+@export var mid_1_spawn_scale: Vector2 = Vector2.ONE
 @export var mid_1_spawn_position: Vector2 = Vector2(1200,0)
-@export var mid_1_spwan_cooldown: float = 40.0
-@export_range(0.0, 1.0, 0.01) var mid_1_spwan_randomness: float = 0.1
+@export var mid_1_spawn_cooldown: float = 40.0
+@export_range(0.0, 1.0, 0.01) var mid_1_spawn_randomness: float = 0.1
 
 @export var mid_2_scroll_speed: Vector2 = Vector2(-60.0, 0)
-@export var mid_2_spwan_scale: Vector2 = Vector2.ONE
+@export var mid_2_spawn_scale: Vector2 = Vector2.ONE
 @export var mid_2_spawn_position: Vector2 = Vector2(1200,0)
-@export var mid_2_spwan_cooldown: float = 40.0
-@export_range(0.0, 1.0, 0.01) var mid_2_spwan_randomness: float = 0.1
+@export var mid_2_spawn_cooldown: float = 40.0
+@export_range(0.0, 1.0, 0.01) var mid_2_spawn_randomness: float = 0.1
 
 
 @export var front_0_textures: Array[Texture2D] = []
 @export var front_0_color: Color = Color(1, 1, 1, 1)
 @export var front_1_textures: Array[Texture2D] = []
-@export var front_1_colors: Color = Color(1, 1, 1, 1)
+@export var front_1_color: Color = Color(1, 1, 1, 1)
 @export var front_2_textures: Array[Texture2D] = []
-@export var front_2_colors: Color = Color(1, 1, 1, 1)
+@export var front_2_color: Color = Color(1, 1, 1, 1)
 
-@export var front_0_spwan_scale: Vector2 = Vector2.ONE
+@export var front_0_spawn_scale: Vector2 = Vector2.ONE
 @export var front_0_spawn_position: Vector2 = Vector2(1000,0) 
-# @export var front_0_spwan_cooldown: float = 100.0
-@export_range(0.0, 1.0, 0.01) var front_0_spwan_randomness: float = 0.1
+# @export var front_0_spawn_cooldown: float = 100.0
+@export_range(0.0, 1.0, 0.01) var front_0_spawn_randomness: float = 0.1
 
 @export var front_1_scroll_speed: Vector2 = Vector2(-100.0, 0)
-@export var front_1_spwan_scale: Vector2 = Vector2.ONE
+@export var front_1_spawn_scale: Vector2 = Vector2.ONE
 @export var front_1_spawn_position: Vector2 = Vector2(1500,0)
-@export var front_1_spwan_cooldown: float = 10.0
-@export_range(0.0, 1.0, 0.01) var front_1_spwan_randomness: float = 0.1
+@export var front_1_spawn_cooldown: float = 10.0
+@export_range(0.0, 1.0, 0.01) var front_1_spawn_randomness: float = 0.1
 
 @export var front_2_scroll_speed: Vector2 = Vector2(-130.0, 0)
-@export var front_2_spwan_scale: Vector2 = Vector2.ONE
+@export var front_2_spawn_scale: Vector2 = Vector2.ONE
 @export var front_2_spawn_position: Vector2 = Vector2(1500,0)
-@export var front_2_spwan_cooldown: float = 10.0
-@export_range(0.0, 1.0, 0.01) var front_2_spwan_randomness: float = 0.1
+@export var front_2_spawn_cooldown: float = 10.0
+@export_range(0.0, 1.0, 0.01) var front_2_spawn_randomness: float = 0.1
 
 
 @export var light_repeat_size: Vector2 = Vector2.ZERO

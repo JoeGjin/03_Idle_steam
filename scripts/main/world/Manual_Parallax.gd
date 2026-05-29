@@ -3,6 +3,8 @@ extends Node2D
 class_name ManualParallax
 
 
+@onready var world_assembler: WorldAssembler = %WorldAssembler
+
 @export var scroll_speed: Vector2 = Vector2.ZERO
 
 
@@ -78,6 +80,19 @@ func resume_manual_scroll() -> void:
 
 
 
+
+func animation_popup(node: Sprite2D) -> void:
+	# 在生成时播放一个简单的tween动画，scale从0变到目前的scale，持续0.5秒
+	var tween = create_tween()
+	var original_scale = node.scale
+	node.scale = Vector2.ZERO
+	tween.tween_property(node, "scale", original_scale, 0.5).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+
+
+
+
 func _free_all_children() -> void:
 	for child in get_children():
 		# if child is Sprite2D:
@@ -119,6 +134,7 @@ func _generate_random_texture(texture_pool: Array[Texture2D]) -> Texture2D:
 	var index = randi() % texture_pool.size()
 	return texture_pool[index]
 
+
 func _spawn_texture(texture_pool: Array[Texture2D]) -> void:
 	
 	if texture_pool == textures_0 or texture_pool == texture_0_sub:
@@ -130,6 +146,10 @@ func _spawn_texture(texture_pool: Array[Texture2D]) -> void:
 	var texture = _generate_random_texture(texture_pool)
 	if texture == null:
 		return
+	if world_assembler.texture_banned(texture.resource_path.get_file().get_basename()):
+		print("[MANUAL PARALLAX] Texture '%s' is banned, skipping spawn" % texture.resource_path.get_file().get_basename())
+		return
+
 	var sprite = Sprite2D.new()
 	sprite.texture = texture
 	match texture_pool:
@@ -185,3 +205,4 @@ func _on_spawn_timer_timeout() -> void:
 	else:
 		_spawn_texture(textures_0)
 		_spawn_texture(textures)
+

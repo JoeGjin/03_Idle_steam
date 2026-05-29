@@ -232,11 +232,11 @@ script = ExtResource("5_bb450")
 state_defs = Array[ExtResource("6_1iba3")]([ExtResource("7_yxlcp"), ExtResource("8_ebg2g"), ExtResource("9_gsxep"), ExtResource("10_v0vrg"), ExtResource("11_dg70y"), ExtResource("12_pnhog"), ExtResource("13_2c4at"), ExtResource("14_g6wdg")])
 
 [node name="SendPostcard" type="Timer" parent="Controllers/CharacterStatus" unique_id=1132030756]
-wait_time = 10.0
+wait_time = 60.0
 autostart = true
 
 [node name="ChangeScene" type="Timer" parent="Controllers/CharacterStatus" unique_id=898119425]
-wait_time = 900.0
+wait_time = 600.0
 autostart = true
 
 [node name="CharacterAnimator" type="Node" parent="Controllers" unique_id=1546089583]
