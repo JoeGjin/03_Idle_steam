@@ -25,22 +25,15 @@
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://dth0o1ceru2kl" path="res://scripts/main/controllers/AudioController.gd" id="20_gia1l"]
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
-[ext_resource type="Texture2D" uid="uid://cwi08pjfajcbn" path="res://assets/worldroot/world/1/1_front_0_2.png" id="21_4pegn"]
 [ext_resource type="AudioStream" uid="uid://cqfgpucy1r6t1" path="res://assets/worldroot/pet/tap.mp3" id="21_aw8hi"]
-[ext_resource type="Texture2D" uid="uid://b26ua251slu7m" path="res://assets/worldroot/world/0/0_front_1_3.png" id="22_iarty"]
-[ext_resource type="Texture2D" uid="uid://0fxjuex713q2" path="res://assets/worldroot/world/0/0_front_2_9.png" id="23_tcd68"]
-[ext_resource type="Texture2D" uid="uid://dmxapden7cmd5" path="res://assets/worldroot/world/0/0_mid_1_2.png" id="24_3mhcn"]
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
 [ext_resource type="Script" uid="uid://5cjw761v4fij" path="res://scripts/main/ui/Content.gd" id="24_mou0d"]
-[ext_resource type="Texture2D" uid="uid://dqcf71nlo37d8" path="res://assets/worldroot/world/1/1_far_0_2.png" id="25_nc5fr"]
 [ext_resource type="Script" uid="uid://chieg6qqybv75" path="res://scripts/main/ui/Resize.gd" id="26_fcv70"]
 [ext_resource type="Script" uid="uid://cpqxu882jrdpq" path="res://scripts/main/ui/WorkBoard.gd" id="27_cobve"]
 [ext_resource type="Texture2D" uid="uid://c0bwe5qaepthm" path="res://assets/worldroot/world/1/1_sky_effect.png" id="28_1x1rp"]
-[ext_resource type="Texture2D" uid="uid://1fagsg3mg8bh" path="res://assets/worldroot/world/0/0_far_2_2.png" id="28_3fqo2"]
 [ext_resource type="Shader" uid="uid://br4le3qmgw1l4" path="res://shaders/Blur.gdshader" id="28_8t8ul"]
 [ext_resource type="Script" uid="uid://climyhfv585s8" path="res://scripts/main/world/Blur.gd" id="29_1x1rp"]
 [ext_resource type="Shader" uid="uid://xb3fgjt3mkth" path="res://shaders/MaskGroup.gdshader" id="29_8b871"]
-[ext_resource type="Texture2D" uid="uid://wdhuh3882ppc" path="res://assets/worldroot/world/1/1_front_2_8.png" id="29_nlgwl"]
 [ext_resource type="Script" uid="uid://dadra0l3mlosi" path="res://scripts/main/world/Pet.gd" id="30_v0vrg"]
 [ext_resource type="Script" uid="uid://yorns460rfis" path="res://scripts/main/ui/Letter.gd" id="31_8b871"]
 [ext_resource type="Texture2D" uid="uid://cw2rqg1gy3heb" path="res://assets/worldroot/world/stage/x_sky_main.png" id="31_vshs7"]
@@ -90,7 +83,6 @@
 [ext_resource type="Texture2D" uid="uid://ch77v6qu005j4" path="res://assets/worldroot/world/2/2_front_1_3.png" id="75_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://pkc4o8lou4co" path="res://assets/worldroot/world/2/2_front_0_1.png" id="76_1xgkc"]
 [ext_resource type="Script" uid="uid://1hk5kvupggqx" path="res://scripts/main/output/FloatButtons.gd" id="76_rsknx"]
-[ext_resource type="Script" uid="uid://d4hurwys7lnv5" path="res://scripts/main/output/Popups.gd" id="91_iarty"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -193,18 +185,6 @@ shader_parameter/smoke_speed_y = -0.49199992836999984
 [sub_resource type="ViewportTexture" id="ViewportTexture_8t8ul"]
 viewport_path = NodePath("WorldView")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tcd68"]
-bg_color = Color(0, 0, 0, 0.5)
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-corner_detail = 4
-
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
 draw_scale = 0.75
@@ -246,7 +226,6 @@ script = ExtResource("3_vcsgt")
 [node name="StickerController" type="Node" parent="Controllers" unique_id=769164480]
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
-sticker_popup_pool = Array[Texture2D]([ExtResource("21_4pegn"), ExtResource("22_iarty"), ExtResource("23_tcd68"), ExtResource("24_3mhcn"), ExtResource("25_nc5fr"), ExtResource("76_1xgkc"), ExtResource("51_x1gp3"), ExtResource("28_3fqo2"), ExtResource("29_nlgwl")])
 
 [node name="AudioController" type="Node" parent="Controllers" unique_id=1022251595]
 unique_name_in_owner = true
@@ -963,49 +942,6 @@ text = "__|"
 script = ExtResource("75_qd1pt")
 all_output = NodePath("../..")
 
-[node name="Popups" type="HBoxContainer" parent="AllOutput/FloatButtons" unique_id=785305112]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -180.0
-offset_top = -85.0
-offset_right = 180.0
-offset_bottom = 85.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 20
-script = ExtResource("91_iarty")
-
-[node name="1" type="PanelContainer" parent="AllOutput/FloatButtons/Popups" unique_id=1658905658]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxFlat_tcd68")
-
-[node name="1" type="TextureButton" parent="AllOutput/FloatButtons/Popups/1" unique_id=1290209752]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-texture_normal = ExtResource("76_1xgkc")
-ignore_texture_size = true
-stretch_mode = 5
-
-[node name="2" type="PanelContainer" parent="AllOutput/FloatButtons/Popups" unique_id=1626155046]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxFlat_tcd68")
-
-[node name="2" type="TextureButton" parent="AllOutput/FloatButtons/Popups/2" unique_id=1797083167]
-custom_minimum_size = Vector2(150, 150)
-layout_mode = 2
-texture_normal = ExtResource("76_1xgkc")
-ignore_texture_size = true
-stretch_mode = 5
-
 [connection signal="timeout" from="Controllers/CharacterStatus/SendPostcard" to="." method="_on_send_postcard_timeout"]
 [connection signal="timeout" from="Controllers/CharacterStatus/ChangeScene" to="." method="_on_change_scene_timeout"]
 [connection signal="pressed" from="UIWindow/UIRoot/CollectionBook/Content/Tabs/World_0" to="UIWindow/UIRoot/CollectionBook/Content" method="_on_world_0_pressed"]
@@ -1017,6 +953,3 @@ stretch_mode = 5
 [connection signal="mouse_entered" from="WorldView/WorldRoot/9/Pet/body" to="WorldView/WorldRoot/9/Pet" method="_on_body_mouse_entered"]
 [connection signal="mouse_exited" from="WorldView/WorldRoot/9/Pet/body" to="WorldView/WorldRoot/9/Pet" method="_on_body_mouse_exited"]
 [connection signal="pressed" from="AllOutput/FloatButtons/Exit" to="." method="_on_exit_pressed"]
-[connection signal="memory_chose" from="AllOutput/FloatButtons/Popups" to="." method="_on_popups_memory_chose"]
-[connection signal="pressed" from="AllOutput/FloatButtons/Popups/1/1" to="AllOutput/FloatButtons/Popups" method="_on_1_pressed"]
-[connection signal="pressed" from="AllOutput/FloatButtons/Popups/2/2" to="AllOutput/FloatButtons/Popups" method="_on_2_pressed"]

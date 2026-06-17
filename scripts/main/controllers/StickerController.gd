@@ -6,7 +6,7 @@ class_name StickerController
 #    同时对应world id     0        1        2    
 # enum StickerTag { MYSTERIOUS, BARREN, VIBRANT } # 贴图标签枚举
 
-@export var sticker_popup_pool: Array[Texture2D] = []
+# @export var sticker_popup_pool: Array[Texture2D] = []
 
 var sticker_by_tag: Dictionary = {} # 根据 TAG 分类的贴图列表，格式为 { tag: [sticker_key1, sticker_key2, ...], ... }
 
@@ -39,11 +39,11 @@ const TAG_BY_STICKER: Dictionary = {
 
 
 
-func get_popup_texture_by_name(texture_name: String) -> Texture2D:
-    for texture in sticker_popup_pool:
-        if texture.resource_path.get_file().get_basename() == texture_name:
-            return texture
-    return null # 如果没有找到匹配的贴图，返回 null
+# func get_popup_texture_by_name(texture_name: String) -> Texture2D:
+#     for texture in sticker_popup_pool:
+#         if texture.resource_path.get_file().get_basename() == texture_name:
+#             return texture
+#     return null # 如果没有找到匹配的贴图，返回 null
 
 
 func tag_calculation(items: Array[String]) -> Dictionary:
