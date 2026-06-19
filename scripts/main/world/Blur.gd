@@ -1,9 +1,9 @@
 extends ColorRect
 
-
+@export var lod: int = 0
 
 
 
 func _ready():
-# func _process(_delta: float) -> void:
-    material.set_shader_parameter("lod", %WorldRoot.lod)
+    if lod == 0:
+        material.set_shader_parameter("lod", %WorldRoot.lod)

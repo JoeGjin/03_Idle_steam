@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://gy7cosvfl2xa"]
+
+[ext_resource type="Shader" uid="uid://br4le3qmgw1l4" path="res://shaders/Blur.gdshader" id="1_wee73"]
+[ext_resource type="Script" uid="uid://climyhfv585s8" path="res://scripts/main/world/Blur.gd" id="2_kkhx1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1x1rp"]
+shader = ExtResource("1_wee73")
+shader_parameter/lod = 0.0
+
+[node name="Blur" type="ColorRect" unique_id=1089266835]
+visible = false
+material = SubResource("ShaderMaterial_1x1rp")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_kkhx1")
+metadata/_edit_lock_ = true
