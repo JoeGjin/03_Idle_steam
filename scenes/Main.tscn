@@ -21,7 +21,7 @@
 [ext_resource type="Resource" uid="uid://b02hwfcvjw2lj" path="res://scripts/main/controllers/status/defs/TRANSITING.tres" id="14_g6wdg"]
 [ext_resource type="Script" uid="uid://1hbd6jg7u52s" path="res://scripts/main/ui/UIRoot.gd" id="15_3p2gp"]
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
-[ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/StickerController.gd" id="18_pnhog"]
+[ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/MemoryController.gd" id="18_pnhog"]
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://dth0o1ceru2kl" path="res://scripts/main/controllers/AudioController.gd" id="20_gia1l"]
 [ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
@@ -211,7 +211,7 @@ autostart = true
 unique_name_in_owner = true
 script = ExtResource("3_vcsgt")
 
-[node name="StickerController" type="Node" parent="Controllers" unique_id=769164480]
+[node name="MemoryController" type="Node" parent="Controllers" unique_id=769164480]
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
 
@@ -421,179 +421,179 @@ position = Vector2(966, 540)
 script = ExtResource("6_lhr70")
 lod = 1.5
 
-[node name="1_Sky" type="CanvasLayer" parent="WorldRoot" unique_id=100414531]
+[node name="01_Sky" type="CanvasLayer" parent="WorldRoot" unique_id=100414531]
 
-[node name="Sky" type="Parallax2D" parent="WorldRoot/1_Sky" unique_id=747805663]
+[node name="Sky" type="Parallax2D" parent="WorldRoot/01_Sky" unique_id=747805663]
 unique_name_in_owner = true
 scroll_offset = Vector2(0, 550)
 repeat_size = Vector2(4542, 0)
 autoscroll = Vector2(-5, 0)
 
-[node name="Main" type="Sprite2D" parent="WorldRoot/1_Sky/Sky" unique_id=1813847154]
+[node name="Main" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=1813847154]
 modulate = Color(0.7997416, 0.25649998, 0.95, 1)
 position = Vector2(0, 97.25)
 scale = Vector2(1, 1.3709815)
 texture = ExtResource("31_vshs7")
 
-[node name="Star" type="Sprite2D" parent="WorldRoot/1_Sky/Sky" unique_id=553459747]
+[node name="Star" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=553459747]
 
-[node name="Effect" type="Sprite2D" parent="WorldRoot/1_Sky/Sky" unique_id=905714890]
+[node name="Effect" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=905714890]
 modulate = Color(0.9666667, 1, 0, 1)
 position = Vector2(0, 16)
 texture = ExtResource("28_1x1rp")
 
-[node name="Blur" parent="WorldRoot/1_Sky" unique_id=1089266835 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldRoot/01_Sky" unique_id=1089266835 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="2_POI" type="CanvasLayer" parent="WorldRoot" unique_id=499590116]
+[node name="02_POI" type="CanvasLayer" parent="WorldRoot" unique_id=499590116]
 layer = 2
 
-[node name="POI" type="Node2D" parent="WorldRoot/2_POI" unique_id=293010691]
+[node name="POI" type="Node2D" parent="WorldRoot/02_POI" unique_id=293010691]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="sample" type="Sprite2D" parent="WorldRoot/2_POI/POI" unique_id=355737553]
+[node name="sample" type="Sprite2D" parent="WorldRoot/02_POI/POI" unique_id=355737553]
 position = Vector2(828, 381)
 texture = ExtResource("42_x1gp3")
 
-[node name="Blur" parent="WorldRoot/2_POI" unique_id=1929752123 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldRoot/02_POI" unique_id=1929752123 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="3_Ground" type="CanvasLayer" parent="WorldRoot" unique_id=1262239274]
+[node name="03_Ground" type="CanvasLayer" parent="WorldRoot" unique_id=1262239274]
 layer = 3
 
-[node name="Ground" type="Parallax2D" parent="WorldRoot/3_Ground" unique_id=1013858590]
+[node name="Ground" type="Parallax2D" parent="WorldRoot/03_Ground" unique_id=1013858590]
 unique_name_in_owner = true
 scroll_offset = Vector2(0, 550)
 repeat_size = Vector2(4542, 0)
 autoscroll = Vector2(-40, 0)
 
-[node name="Main" type="Sprite2D" parent="WorldRoot/3_Ground/Ground" unique_id=1425775975]
+[node name="Main" type="Sprite2D" parent="WorldRoot/03_Ground/Ground" unique_id=1425775975]
 modulate = Color(0.25566664, 0.65, 0.2275, 1)
 position = Vector2(0, 72)
 scale = Vector2(0.75, 0.5)
 texture = ExtResource("34_2ki8c")
 offset = Vector2(0, 144)
 
-[node name="Effect" type="Sprite2D" parent="WorldRoot/3_Ground/Ground" unique_id=569461966]
+[node name="Effect" type="Sprite2D" parent="WorldRoot/03_Ground/Ground" unique_id=569461966]
 scale = Vector2(0.5, 0.5)
 offset = Vector2(0, 144)
 
-[node name="Blur" parent="WorldRoot/3_Ground" unique_id=207330368 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldRoot/03_Ground" unique_id=207330368 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="4_Cloud_1" type="CanvasLayer" parent="WorldRoot" unique_id=2118232127]
+[node name="04_Cloud_1" type="CanvasLayer" parent="WorldRoot" unique_id=2118232127]
 layer = 4
 
-[node name="Cloud_1" type="Node2D" parent="WorldRoot/4_Cloud_1" unique_id=236166638]
+[node name="Cloud_1" type="Node2D" parent="WorldRoot/04_Cloud_1" unique_id=236166638]
 unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample1" type="Sprite2D" parent="WorldRoot/4_Cloud_1/Cloud_1" unique_id=48273742]
+[node name="sample1" type="Sprite2D" parent="WorldRoot/04_Cloud_1/Cloud_1" unique_id=48273742]
 position = Vector2(746, 111)
 scale = Vector2(0.75, 0.75)
 texture = ExtResource("45_le2d2")
 
-[node name="sample2" type="Sprite2D" parent="WorldRoot/4_Cloud_1/Cloud_1" unique_id=1719514148]
+[node name="sample2" type="Sprite2D" parent="WorldRoot/04_Cloud_1/Cloud_1" unique_id=1719514148]
 position = Vector2(-1117, 179)
 texture = ExtResource("46_gexia")
 
-[node name="Blur" parent="WorldRoot/4_Cloud_1" unique_id=751263300 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldRoot/04_Cloud_1" unique_id=751263300 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="5_Landform_1" type="CanvasLayer" parent="WorldRoot" unique_id=947855395]
+[node name="05_Landform_1" type="CanvasLayer" parent="WorldRoot" unique_id=947855395]
 layer = 5
 
-[node name="Landform_1" type="Node2D" parent="WorldRoot/5_Landform_1" unique_id=1069212001]
+[node name="Landform_1" type="Node2D" parent="WorldRoot/05_Landform_1" unique_id=1069212001]
 unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample1" type="Sprite2D" parent="WorldRoot/5_Landform_1/Landform_1" unique_id=1539132014]
+[node name="sample1" type="Sprite2D" parent="WorldRoot/05_Landform_1/Landform_1" unique_id=1539132014]
 position = Vector2(-733, 355)
 texture = ExtResource("47_le2d2")
 
-[node name="sample2" type="Sprite2D" parent="WorldRoot/5_Landform_1/Landform_1" unique_id=1052274733]
+[node name="sample2" type="Sprite2D" parent="WorldRoot/05_Landform_1/Landform_1" unique_id=1052274733]
 position = Vector2(580, 323)
 texture = ExtResource("48_gexia")
 
-[node name="Blur" parent="WorldRoot/5_Landform_1" unique_id=924324709 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldRoot/05_Landform_1" unique_id=924324709 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="6_Component_1" type="CanvasLayer" parent="WorldRoot" unique_id=87896012]
+[node name="06_Component_1" type="CanvasLayer" parent="WorldRoot" unique_id=87896012]
 layer = 6
 
-[node name="Component_1" type="Node2D" parent="WorldRoot/6_Component_1" unique_id=183900339]
+[node name="Component_1" type="Node2D" parent="WorldRoot/06_Component_1" unique_id=183900339]
 unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample1" type="Sprite2D" parent="WorldRoot/6_Component_1/Component_1" unique_id=873776214]
+[node name="sample1" type="Sprite2D" parent="WorldRoot/06_Component_1/Component_1" unique_id=873776214]
 position = Vector2(-637, -66)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("51_x1gp3")
 
-[node name="sample2" type="Sprite2D" parent="WorldRoot/6_Component_1/Component_1" unique_id=304575486]
+[node name="sample2" type="Sprite2D" parent="WorldRoot/06_Component_1/Component_1" unique_id=304575486]
 position = Vector2(1676, 202)
 
-[node name="Blur" parent="WorldRoot/6_Component_1" unique_id=12375382 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldRoot/06_Component_1" unique_id=12375382 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="7_Cloud_2" type="CanvasLayer" parent="WorldRoot" unique_id=1986757641]
+[node name="07_Cloud_2" type="CanvasLayer" parent="WorldRoot" unique_id=1986757641]
 layer = 7
 
-[node name="Cloud_2" type="Node2D" parent="WorldRoot/7_Cloud_2" unique_id=473401516]
+[node name="Cloud_2" type="Node2D" parent="WorldRoot/07_Cloud_2" unique_id=473401516]
 unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample1" type="Sprite2D" parent="WorldRoot/7_Cloud_2/Cloud_2" unique_id=1722126394]
+[node name="sample1" type="Sprite2D" parent="WorldRoot/07_Cloud_2/Cloud_2" unique_id=1722126394]
 position = Vector2(-523, 132)
 texture = ExtResource("49_le2d2")
 
-[node name="sample2" type="Sprite2D" parent="WorldRoot/7_Cloud_2/Cloud_2" unique_id=412007097]
+[node name="sample2" type="Sprite2D" parent="WorldRoot/07_Cloud_2/Cloud_2" unique_id=412007097]
 position = Vector2(927, 144)
 texture = ExtResource("50_le2d2")
 
-[node name="Blur" parent="WorldRoot/7_Cloud_2" unique_id=1515022845 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldRoot/07_Cloud_2" unique_id=1515022845 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="8_Landform_2" type="CanvasLayer" parent="WorldRoot" unique_id=1569384005]
+[node name="08_Landform_2" type="CanvasLayer" parent="WorldRoot" unique_id=1569384005]
 layer = 8
 
-[node name="Landform_2" type="Node2D" parent="WorldRoot/8_Landform_2" unique_id=2059314531]
+[node name="Landform_2" type="Node2D" parent="WorldRoot/08_Landform_2" unique_id=2059314531]
 unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample1" type="Sprite2D" parent="WorldRoot/8_Landform_2/Landform_2" unique_id=1679691389]
+[node name="sample1" type="Sprite2D" parent="WorldRoot/08_Landform_2/Landform_2" unique_id=1679691389]
 position = Vector2(-523, 132)
 texture = ExtResource("49_le2d2")
 
-[node name="sample2" type="Sprite2D" parent="WorldRoot/8_Landform_2/Landform_2" unique_id=1376878612]
+[node name="sample2" type="Sprite2D" parent="WorldRoot/08_Landform_2/Landform_2" unique_id=1376878612]
 position = Vector2(927, 144)
 texture = ExtResource("50_le2d2")
 
-[node name="Blur" parent="WorldRoot/8_Landform_2" unique_id=1685530619 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldRoot/08_Landform_2" unique_id=1685530619 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="9_Component_2" type="CanvasLayer" parent="WorldRoot" unique_id=1694294774]
+[node name="09_Component_2" type="CanvasLayer" parent="WorldRoot" unique_id=1694294774]
 layer = 9
 
-[node name="Component_2" type="Node2D" parent="WorldRoot/9_Component_2" unique_id=1513370776]
+[node name="Component_2" type="Node2D" parent="WorldRoot/09_Component_2" unique_id=1513370776]
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
-[node name="sample1" type="Sprite2D" parent="WorldRoot/9_Component_2/Component_2" unique_id=242258277]
+[node name="sample1" type="Sprite2D" parent="WorldRoot/09_Component_2/Component_2" unique_id=242258277]
 position = Vector2(-637, -66)
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("51_x1gp3")
 
-[node name="sample2" type="Sprite2D" parent="WorldRoot/9_Component_2/Component_2" unique_id=1185121538]
+[node name="sample2" type="Sprite2D" parent="WorldRoot/09_Component_2/Component_2" unique_id=1185121538]
 position = Vector2(1676, 202)
 
-[node name="Blur" parent="WorldRoot/9_Component_2" unique_id=1328890254 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldRoot/09_Component_2" unique_id=1328890254 instance=ExtResource("37_csfbn")]
 visible = true
 
 [node name="10_Cloud_3" type="CanvasLayer" parent="WorldRoot" unique_id=414208172]

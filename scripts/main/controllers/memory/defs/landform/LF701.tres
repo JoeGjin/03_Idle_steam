@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MemoryDef" format=3 uid="uid://btjieubx6adyc"]
+
+[ext_resource type="Script" uid="uid://v1a86tare2si" path="res://scripts/main/controllers/memory/MemoryDef.gd" id="1_jj051"]
+[ext_resource type="Texture2D" uid="uid://bin15gdgu3fxq" path="res://assets/worldroot/landform/front/landform_front_1.png" id="2_jj051"]
+
+[resource]
+script = ExtResource("1_jj051")
+texture = ExtResource("2_jj051")
+tags = Array[int]([0, 3, 4, 1])
+pool = 4
+metadata/_custom_type_script = "uid://v1a86tare2si"
