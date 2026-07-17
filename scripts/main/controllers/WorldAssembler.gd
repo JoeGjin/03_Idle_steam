@@ -11,7 +11,7 @@ class_name WorldAssembler
 @export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
 
 @onready var world_root: Node2D = %WorldRoot
-@onready var sticker_controller: StickerController = %StickerController
+@onready var memory_controller: MemoryController = %MemoryController
 
 var current_world_id: int = 0 # 当前世界ID，初始为-1表示未设置
 var is_transitioning: bool = false # 是否正在进行世界切换过渡
@@ -212,7 +212,7 @@ func immediate_spawn(texture_name: String) -> void: # string格式为 0_frontxxx
 						target_layer = _front_2
 	# 从assembler层级手动生成一个新的sprite并加入场景, 需要调用对应的世界def中的参数
 	var sprite = Sprite2D.new()
-	sprite.texture = sticker_controller.get_popup_texture_by_name(texture_name) # 通过贴图名称获取Texture2D资源
+	sprite.texture = memory_controller.get_popup_texture_by_name(texture_name) # 通过贴图名称获取Texture2D资源
 	var target_world_id: int = texture_name.split("_")[0].to_int() # 例如 "0_front_2" -> 0
 	var target_world_def = world_defs[target_world_id] 
 	

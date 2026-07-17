@@ -13,4 +13,5 @@ class_name MemoryDef
 enum Pool { POI, CLOUD, LANDFORM_FAR, LANDFORM_MID, LANDFORM_FRONT, COMPONENT_FAR, COMPONENT_MID, COMPONENT_FRONT }
 @export var pool: Pool = Pool.POI 
 
-# @export var fit_layers: Array[String] = [] # "Cloud_1", "Landform_1", "Component_1", match with world layers
+## 生成距离比率；根据ratio * 自身宽度，对应层的scroll speed，前一个texture的宽度，算出层的updated timer cooldown
+@export var spawn_distance_ratio: float = 5.0 

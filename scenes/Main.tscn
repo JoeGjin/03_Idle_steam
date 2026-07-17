@@ -6,12 +6,12 @@
 [ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/controllers/CharacterAnimator.gd" id="3_vcsgt"]
 [ext_resource type="Script" uid="uid://dlf38k8n2fmdm" path="res://scripts/main/controllers/CharacterStatus.gd" id="5_bb450"]
 [ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="6_1iba3"]
-[ext_resource type="Resource" uid="uid://v8li8wq2glkt" path="res://scripts/main/controllers/world/defs/WORLD_1.tres" id="6_1x1rp"]
+[ext_resource type="Resource" path="res://scripts/main/controllers/world/defs/WORLD_1.tres" id="6_1x1rp"]
 [ext_resource type="Script" uid="uid://cqs5yvp2atmdx" path="res://scripts/main/ui/UIWindow.gd" id="6_ft6cd"]
 [ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/world/WorldRoot.gd" id="6_lhr70"]
-[ext_resource type="Resource" uid="uid://4n0pbkpec5kr" path="res://scripts/main/controllers/world/defs/WORLD_2.tres" id="7_le2d2"]
+[ext_resource type="Resource" path="res://scripts/main/controllers/world/defs/WORLD_2.tres" id="7_le2d2"]
 [ext_resource type="Resource" uid="uid://cfpmr7eqfmvhs" path="res://scripts/main/controllers/status/defs/RESTING.tres" id="7_yxlcp"]
-[ext_resource type="Resource" uid="uid://diuowklnylh2i" path="res://scripts/main/controllers/world/defs/WORLD_0.tres" id="8_8b871"]
+[ext_resource type="Resource" path="res://scripts/main/controllers/world/defs/WORLD_0.tres" id="8_8b871"]
 [ext_resource type="Resource" uid="uid://dbq0jd6o6qpcp" path="res://scripts/main/controllers/status/defs/WALKING.tres" id="8_ebg2g"]
 [ext_resource type="Resource" uid="uid://bunbgarelpvim" path="res://scripts/main/controllers/status/defs/RECORDING.tres" id="9_gsxep"]
 [ext_resource type="Resource" uid="uid://d1tqeypv6fcen" path="res://scripts/main/controllers/status/defs/PICKING.tres" id="10_v0vrg"]
@@ -24,7 +24,7 @@
 [ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/MemoryController.gd" id="18_pnhog"]
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://dth0o1ceru2kl" path="res://scripts/main/controllers/AudioController.gd" id="20_gia1l"]
-[ext_resource type="Script" uid="uid://em6c7og411w6" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
+[ext_resource type="Script" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
 [ext_resource type="AudioStream" uid="uid://cqfgpucy1r6t1" path="res://assets/worldroot/pet/tap.mp3" id="21_aw8hi"]
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
 [ext_resource type="Script" uid="uid://5cjw761v4fij" path="res://scripts/main/ui/Content.gd" id="24_mou0d"]
@@ -43,7 +43,6 @@
 [ext_resource type="Texture2D" uid="uid://tw714yrnrq8f" path="res://assets/worldroot/pet/walk/frame_01.png" id="36_vshs7"]
 [ext_resource type="Texture2D" uid="uid://8uhykrmowd0k" path="res://assets/uiroot/postcard/2.JPG" id="36_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://dbjfnojqk1vek" path="res://assets/worldroot/pet/walk/frame_02.png" id="37_2ki8c"]
-[ext_resource type="Texture2D" uid="uid://dtnbqi1tuknic" path="res://assets/worldroot/pet/test_heart.png" id="37_8cp6k"]
 [ext_resource type="PackedScene" uid="uid://gy7cosvfl2xa" path="res://scenes/Blur.tscn" id="37_csfbn"]
 [ext_resource type="Texture2D" uid="uid://d0j08xdnfer36" path="res://assets/worldroot/pet/walk/frame_03.png" id="38_0owt5"]
 [ext_resource type="Texture2D" uid="uid://ca022vsesuwke" path="res://assets/worldroot/pet/walk/frame_04.png" id="39_o1tg2"]
@@ -70,7 +69,6 @@
 [ext_resource type="Texture2D" uid="uid://bf0m432tyw4rm" path="res://assets/worldroot/world/2/2_mid_1_1.png" id="51_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://wk6bylej7dhi" path="res://assets/worldroot/pet/walk/frame_17.png" id="52_ugmlg"]
 [ext_resource type="Texture2D" uid="uid://c8jfbv6mfvb35" path="res://assets/worldroot/pet/walk/frame_18.png" id="53_qd1pt"]
-[ext_resource type="Texture2D" uid="uid://82q7r1657c2m" path="res://assets/worldroot/pet/test_letter.png" id="69_cm7k6"]
 [ext_resource type="Script" uid="uid://dcyb4abjdhqk2" path="res://scripts/main/output/AllOutput.gd" id="73_ugmlg"]
 [ext_resource type="Texture2D" uid="uid://cf1s3snupdpvf" path="res://assets/worldroot/world/2/2_front_1_1.png" id="74_1xgkc"]
 [ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/WindowResize.gd" id="75_qd1pt"]
@@ -668,16 +666,6 @@ visible = false
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WorldRoot/20_Pet/Pet/body" unique_id=952050975]
 position = Vector2(0, -160)
 shape = SubResource("CapsuleShape2D_gsxep")
-
-[node name="heart" type="Sprite2D" parent="WorldRoot/20_Pet/Pet" unique_id=2016059863]
-visible = false
-position = Vector2(860, -576.6666)
-texture = ExtResource("37_8cp6k")
-
-[node name="letter" type="Sprite2D" parent="WorldRoot/20_Pet/Pet" unique_id=11256415]
-visible = false
-position = Vector2(860, -576.6666)
-texture = ExtResource("69_cm7k6")
 
 [node name="21_Cloud_4" type="CanvasLayer" parent="WorldRoot" unique_id=247601466]
 layer = 21
