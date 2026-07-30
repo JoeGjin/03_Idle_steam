@@ -6,12 +6,9 @@
 [ext_resource type="Script" uid="uid://70gu65o8whvp" path="res://scripts/main/controllers/CharacterAnimator.gd" id="3_vcsgt"]
 [ext_resource type="Script" uid="uid://dlf38k8n2fmdm" path="res://scripts/main/controllers/CharacterStatus.gd" id="5_bb450"]
 [ext_resource type="Script" uid="uid://ch8xwtu03a45p" path="res://scripts/main/controllers/status/CharacterStateDef.gd" id="6_1iba3"]
-[ext_resource type="Resource" path="res://scripts/main/controllers/world/defs/WORLD_1.tres" id="6_1x1rp"]
 [ext_resource type="Script" uid="uid://cqs5yvp2atmdx" path="res://scripts/main/ui/UIWindow.gd" id="6_ft6cd"]
 [ext_resource type="Script" uid="uid://dpfu6a7641onw" path="res://scripts/main/world/WorldRoot.gd" id="6_lhr70"]
-[ext_resource type="Resource" path="res://scripts/main/controllers/world/defs/WORLD_2.tres" id="7_le2d2"]
 [ext_resource type="Resource" uid="uid://cfpmr7eqfmvhs" path="res://scripts/main/controllers/status/defs/RESTING.tres" id="7_yxlcp"]
-[ext_resource type="Resource" path="res://scripts/main/controllers/world/defs/WORLD_0.tres" id="8_8b871"]
 [ext_resource type="Resource" uid="uid://dbq0jd6o6qpcp" path="res://scripts/main/controllers/status/defs/WALKING.tres" id="8_ebg2g"]
 [ext_resource type="Resource" uid="uid://bunbgarelpvim" path="res://scripts/main/controllers/status/defs/RECORDING.tres" id="9_gsxep"]
 [ext_resource type="Resource" uid="uid://d1tqeypv6fcen" path="res://scripts/main/controllers/status/defs/PICKING.tres" id="10_v0vrg"]
@@ -24,7 +21,6 @@
 [ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/MemoryController.gd" id="18_pnhog"]
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
 [ext_resource type="Script" uid="uid://dth0o1ceru2kl" path="res://scripts/main/controllers/AudioController.gd" id="20_gia1l"]
-[ext_resource type="Script" path="res://scripts/main/controllers/world/WorldDef.gd" id="20_hq6as"]
 [ext_resource type="AudioStream" uid="uid://cqfgpucy1r6t1" path="res://assets/worldroot/pet/tap.mp3" id="21_aw8hi"]
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
 [ext_resource type="Script" uid="uid://5cjw761v4fij" path="res://scripts/main/ui/Content.gd" id="24_mou0d"]
@@ -185,7 +181,6 @@ hook_switch = true
 [node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
-world_defs = Array[ExtResource("20_hq6as")]([ExtResource("8_8b871"), ExtResource("6_1x1rp"), ExtResource("7_le2d2")])
 transition_duration = 60.0
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]

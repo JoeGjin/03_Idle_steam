@@ -7,7 +7,7 @@ extends Node
 @onready var mouse_controller: MouseController = %MouseController
 @onready var character_status: CharacterStatus = %CharacterStatus
 @onready var character_animator: CharacterAnimator = %CharacterAnimator
-@onready var sticker_controller: StickerController = %StickerController
+@onready var memory_controller: MemoryController = %MemoryController
 @onready var world_assembler: WorldAssembler = %WorldAssembler
 @onready var audio_controller: AudioController = %AudioController
 
@@ -17,12 +17,10 @@ extends Node
 
 @onready var ui_window: Window = %UIWindow
 @onready var ui_root: Control = %UIRoot
-@onready var letter: Control = %Letter
 
 @onready var debug_world: Node2D = %DebugWorld
 
 @onready var world_output: TextureRect = %WorldOutput
-@onready var popups: Node = %Popups
 
 
 @export var draw_scale: float = 1.0 # 预设的窗口缩放级别，供调试使用
@@ -55,8 +53,8 @@ func _ready():
 	# window_controller.update_crop_to_frame()
 
 	# 初始化世界组装器
-	world_assembler.initiate()
-	world_assembler.assemble_world(starting_world_id) # 默认组装指定世界，后续可以根据需要切换
+	# world_assembler.initiate()
+	# world_assembler.assemble_world(starting_world_id) # 默认组装指定世界，后续可以根据需要切换
 
 	# 启动角色状态机，从 WALKING 状态开始
 	character_status.start(1) 
@@ -116,9 +114,6 @@ func _connect_signals() -> void:
 	world_assembler.world_changing.connect(_on_world_assembler_world_changing)
 	world_assembler.world_changed.connect(_on_world_assembler_world_changed)
 	
-
-	# 连接 letter 的 sent 信号到处理函数
-	letter.sent.connect(_on_letter_sent)
 
 
 func _on_mouse_controller_drag_started():
@@ -228,35 +223,29 @@ func _on_letter_sent(target_world_id: int, sub_world_id: int, sub_world_weight: 
 		world_assembler.transition_to_world(target_world_id, sub_world_id, sub_world_weight) # 切换世界
 
 
-func _on_send_postcard_timeout() -> void:
-	# print("[POSTCARD] SENT")
-	# character_status.start(CharacterStates.CharacterState.SENDING)
-	# pet.get_node("letter").show()
-	popups.popup()
 
-
-func _on_popups_memory_chose(chosen: String, unchosen: String) -> void: # string格式为 0_frontxxx_2_1xx
+# func _on_popups_memory_chose(chosen: String, unchosen: String) -> void: # string格式为 0_frontxxx_2_1xx
 	
-	print("[MEMORY] Memory chosen: %s, unchosen: %s" % [chosen, unchosen])
-	_update_memory_slots(chosen)
-	world_assembler.banned_texture = unchosen
+# 	print("[MEMORY] Memory chosen: %s, unchosen: %s" % [chosen, unchosen])
+# 	_update_memory_slots(chosen)
+# 	world_assembler.banned_texture = unchosen
 	
-	pet.get_node("heart").show()
-	await get_tree().create_timer(2.0).timeout
-	pet.get_node("heart").hide()
+# 	pet.get_node("heart").show()
+# 	await get_tree().create_timer(2.0).timeout
+# 	pet.get_node("heart").hide()
 
-	world_assembler.immediate_spawn(chosen)
+# 	world_assembler.immediate_spawn(chosen)
 		
-	if world_assembler.is_transitioning:
-		print("[MEMORY] World is currently transitioning, skipping world switch")
-		return
-	else :
-		var tag_calc_result := sticker_controller.tag_calculation(memory_slots)
-		var target_world_id = tag_calc_result["target_world_id"]
-		var sub_world_id = tag_calc_result["sub_world_id"]
-		var sub_world_weight = tag_calc_result["sub_world_weight"]
-		print("[MEMORY] Initiating world switch to ID: %d" % target_world_id, " with sub-world ID: %d and weight: %.2f" % [sub_world_id, sub_world_weight])
-		world_assembler.transition_to_world(target_world_id, sub_world_id, sub_world_weight) # 切换世界
+# 	if world_assembler.is_transitioning:
+# 		print("[MEMORY] World is currently transitioning, skipping world switch")
+# 		return
+# 	else :
+# 		var tag_calc_result := memory_controller.tag_calculation(memory_slots)
+# 		var target_world_id = tag_calc_result["target_world_id"]
+# 		var sub_world_id = tag_calc_result["sub_world_id"]
+# 		var sub_world_weight = tag_calc_result["sub_world_weight"]
+# 		print("[MEMORY] Initiating world switch to ID: %d" % target_world_id, " with sub-world ID: %d and weight: %.2f" % [sub_world_id, sub_world_weight])
+# 		world_assembler.transition_to_world(target_world_id, sub_world_id, sub_world_weight) # 切换世界
 		
 
 

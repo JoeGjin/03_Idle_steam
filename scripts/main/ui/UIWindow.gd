@@ -2,7 +2,6 @@ extends Window
 
 
 @onready var close_button: Button = %CloseUI
-@onready var work_board: Control = %WorkBoard
 
 
 
@@ -13,7 +12,6 @@ func open_uiwindow():
 
 
 func close_uiwindow():
-	work_board.free_all_children() # 关闭窗口时清空工作区
 	hide() 
 
 

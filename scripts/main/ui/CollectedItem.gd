@@ -10,8 +10,7 @@ var dragging := false
 var drag_offset := Vector2.ZERO # 鼠标位置与拖动目标位置的偏移（统一用 work_board 坐标系）
 
 var texture_name: String = "" # 记录当前贴图的名字（不带路径和扩展名），方便后续复制时命名使用
-var vibe_tag: StickerTags.StickerTag
-
+var vibe_tag: Tags.Tag
 
 
 func randomize_texture() -> void: # to be deleted
