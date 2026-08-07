@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TagSceneDef" format=3 uid="uid://dmxnm3l275dpj"]
+
+[ext_resource type="Script" uid="uid://jtvff7xj0lcf" path="res://scripts/main/controllers/tagscene/TagSceneDef.gd" id="1_2mb48"]
+
+[resource]
+script = ExtResource("1_2mb48")
+tag_name = 2
+sky_main_color = Color(0.5254902, 0.09803922, 0.5647059, 1)
+cloud_color = Color(0.9844546, 0.8232569, 0.6350498, 0.5)
+metadata/_custom_type_script = "uid://jtvff7xj0lcf"

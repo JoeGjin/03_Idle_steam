@@ -14,12 +14,12 @@ var memories_by_tag: Dictionary[Tags.Tag, MemoryPools] = {}
 
 
 func _ready() -> void:
-    _build_memory_database_by_tag()
+    _build_memories_by_tag()
     if OS.is_debug_build():
         _print_memory_database()
 
 
-func _build_memory_database_by_tag() -> void:
+func _build_memories_by_tag() -> void:
     memories_by_tag.clear()
     var memory_paths := _collect_memory_resource_paths(
         "res://scripts/main/controllers/memory/defs"

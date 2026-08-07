@@ -25,52 +25,54 @@
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
 [ext_resource type="Script" uid="uid://5cjw761v4fij" path="res://scripts/main/ui/Content.gd" id="24_mou0d"]
 [ext_resource type="Script" uid="uid://chieg6qqybv75" path="res://scripts/main/ui/Resize.gd" id="26_fcv70"]
-[ext_resource type="Texture2D" uid="uid://c0bwe5qaepthm" path="res://assets/worldroot/world/1/1_sky_effect.png" id="28_1x1rp"]
+[ext_resource type="Texture2D" uid="uid://c0bwe5qaepthm" path="res://assets/worldroot/_old/1/1_sky_effect.png" id="28_1x1rp"]
 [ext_resource type="Shader" uid="uid://xb3fgjt3mkth" path="res://shaders/MaskGroup.gdshader" id="29_8b871"]
 [ext_resource type="Script" uid="uid://dadra0l3mlosi" path="res://scripts/main/world/Pet.gd" id="30_v0vrg"]
-[ext_resource type="Texture2D" uid="uid://cw2rqg1gy3heb" path="res://assets/worldroot/world/stage/x_sky_main.png" id="31_vshs7"]
+[ext_resource type="Script" uid="uid://kq0fgd67jvox" path="res://scripts/main/world/Sky.gd" id="31_ugmlg"]
+[ext_resource type="Texture2D" uid="uid://cw2rqg1gy3heb" path="res://assets/worldroot/_old/stage/x_sky_main.png" id="31_vshs7"]
 [ext_resource type="Script" uid="uid://dmq4phw1im2m7" path="res://scripts/main/debug/DebugUI.gd" id="32_pdwbg"]
 [ext_resource type="Script" uid="uid://dvy6ipmh42awj" path="res://scripts/main/debug/DebugPet.gd" id="33_2c4at"]
 [ext_resource type="Script" uid="uid://r3h7y0ivusgi" path="res://scripts/main/world/Manual_Parallax.gd" id="33_8b871"]
 [ext_resource type="Script" uid="uid://cp7hocx6yaeww" path="res://scripts/main/ui/PostcardShowing.gd" id="33_csfbn"]
 [ext_resource type="Texture2D" uid="uid://qw8ihojqk8nh" path="res://assets/uiroot/postcard/0.JPG" id="34_1xgkc"]
-[ext_resource type="Texture2D" uid="uid://b737uyfec4n2d" path="res://assets/worldroot/world/stage/x_land_main.png" id="34_2ki8c"]
+[ext_resource type="Texture2D" uid="uid://b737uyfec4n2d" path="res://assets/worldroot/_old/stage/x_land_main.png" id="34_2ki8c"]
 [ext_resource type="Texture2D" uid="uid://m2k0myepg1ad" path="res://assets/uiroot/postcard/1.JPG" id="35_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://tw714yrnrq8f" path="res://assets/worldroot/pet/walk/frame_01.png" id="36_vshs7"]
 [ext_resource type="Texture2D" uid="uid://8uhykrmowd0k" path="res://assets/uiroot/postcard/2.JPG" id="36_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://dbjfnojqk1vek" path="res://assets/worldroot/pet/walk/frame_02.png" id="37_2ki8c"]
 [ext_resource type="PackedScene" uid="uid://gy7cosvfl2xa" path="res://scenes/Blur.tscn" id="37_csfbn"]
+[ext_resource type="Script" uid="uid://dh2yhhqwv7oy6" path="res://scripts/main/world/Ground.gd" id="37_qd1pt"]
 [ext_resource type="Texture2D" uid="uid://d0j08xdnfer36" path="res://assets/worldroot/pet/walk/frame_03.png" id="38_0owt5"]
 [ext_resource type="Texture2D" uid="uid://ca022vsesuwke" path="res://assets/worldroot/pet/walk/frame_04.png" id="39_o1tg2"]
 [ext_resource type="Script" uid="uid://dqilwmdefk6v" path="res://scripts/main/debug/DebugWorld.gd" id="40_8b871"]
 [ext_resource type="Texture2D" uid="uid://caldjd64rysxo" path="res://assets/worldroot/pet/walk/frame_05.png" id="40_hyu0y"]
 [ext_resource type="Texture2D" uid="uid://n4jqj40sd7hn" path="res://assets/worldroot/pet/walk/frame_06.png" id="41_lfilp"]
 [ext_resource type="Texture2D" uid="uid://3phx4jo368dt" path="res://assets/worldroot/pet/walk/frame_07.png" id="42_nu61c"]
-[ext_resource type="Texture2D" uid="uid://dtu4433y30vaw" path="res://assets/worldroot/world/2/2_moon_main.png" id="42_x1gp3"]
+[ext_resource type="Texture2D" uid="uid://dtu4433y30vaw" path="res://assets/worldroot/_old/2/2_moon_main.png" id="42_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://cppatn62r4age" path="res://assets/worldroot/pet/walk/frame_08.png" id="43_e2bht"]
 [ext_resource type="Texture2D" uid="uid://cycgxqgowkynn" path="res://assets/worldroot/pet/walk/frame_09.png" id="44_a3hxr"]
 [ext_resource type="Texture2D" uid="uid://cdsn2nxidun20" path="res://assets/worldroot/pet/walk/frame_10.png" id="45_gcaob"]
-[ext_resource type="Texture2D" uid="uid://va208clua3ek" path="res://assets/worldroot/world/2/2_far_1_1.png" id="45_le2d2"]
+[ext_resource type="Texture2D" uid="uid://va208clua3ek" path="res://assets/worldroot/_old/2/2_far_1_1.png" id="45_le2d2"]
 [ext_resource type="Texture2D" uid="uid://bxc8jlkc4nqek" path="res://assets/worldroot/pet/walk/frame_11.png" id="46_aqa1v"]
-[ext_resource type="Texture2D" uid="uid://bo31m0th4a0hf" path="res://assets/worldroot/world/2/2_far_1_3.png" id="46_gexia"]
+[ext_resource type="Texture2D" uid="uid://bo31m0th4a0hf" path="res://assets/worldroot/_old/2/2_far_1_3.png" id="46_gexia"]
 [ext_resource type="Texture2D" uid="uid://bcgq74htkcq1t" path="res://assets/worldroot/pet/walk/frame_12.png" id="47_8t8ul"]
-[ext_resource type="Texture2D" uid="uid://dnjxjbl002lqm" path="res://assets/worldroot/world/2/2_far_2_1.png" id="47_le2d2"]
+[ext_resource type="Texture2D" uid="uid://dnjxjbl002lqm" path="res://assets/worldroot/_old/2/2_far_2_1.png" id="47_le2d2"]
 [ext_resource type="Texture2D" uid="uid://6505cjl3jjpv" path="res://assets/worldroot/pet/walk/frame_13.png" id="48_1x1rp"]
-[ext_resource type="Texture2D" uid="uid://bfwg4dyp258ig" path="res://assets/worldroot/world/2/2_far_2_3.png" id="48_gexia"]
-[ext_resource type="Texture2D" uid="uid://h2sa30d1efrl" path="res://assets/worldroot/world/2/2_mid_2_1.png" id="49_le2d2"]
+[ext_resource type="Texture2D" uid="uid://bfwg4dyp258ig" path="res://assets/worldroot/_old/2/2_far_2_3.png" id="48_gexia"]
+[ext_resource type="Texture2D" uid="uid://h2sa30d1efrl" path="res://assets/worldroot/_old/2/2_mid_2_1.png" id="49_le2d2"]
 [ext_resource type="Texture2D" uid="uid://2223ma4k10fu" path="res://assets/worldroot/pet/walk/frame_14.png" id="49_ylqph"]
 [ext_resource type="Texture2D" uid="uid://ifyhe0ie372h" path="res://assets/worldroot/pet/walk/frame_15.png" id="50_fcv70"]
-[ext_resource type="Texture2D" uid="uid://djo3x2brnhe3w" path="res://assets/worldroot/world/2/2_mid_2_2.png" id="50_le2d2"]
+[ext_resource type="Texture2D" uid="uid://djo3x2brnhe3w" path="res://assets/worldroot/_old/2/2_mid_2_2.png" id="50_le2d2"]
 [ext_resource type="Texture2D" uid="uid://bu22ebydy0gb3" path="res://assets/worldroot/pet/walk/frame_16.png" id="51_mou0d"]
-[ext_resource type="Texture2D" uid="uid://bf0m432tyw4rm" path="res://assets/worldroot/world/2/2_mid_1_1.png" id="51_x1gp3"]
+[ext_resource type="Texture2D" uid="uid://bf0m432tyw4rm" path="res://assets/worldroot/_old/2/2_mid_1_1.png" id="51_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://wk6bylej7dhi" path="res://assets/worldroot/pet/walk/frame_17.png" id="52_ugmlg"]
 [ext_resource type="Texture2D" uid="uid://c8jfbv6mfvb35" path="res://assets/worldroot/pet/walk/frame_18.png" id="53_qd1pt"]
 [ext_resource type="Script" uid="uid://dcyb4abjdhqk2" path="res://scripts/main/output/AllOutput.gd" id="73_ugmlg"]
-[ext_resource type="Texture2D" uid="uid://cf1s3snupdpvf" path="res://assets/worldroot/world/2/2_front_1_1.png" id="74_1xgkc"]
+[ext_resource type="Texture2D" uid="uid://cf1s3snupdpvf" path="res://assets/worldroot/_old/2/2_front_1_1.png" id="74_1xgkc"]
 [ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/WindowResize.gd" id="75_qd1pt"]
 [ext_resource type="Theme" uid="uid://duf3n0aup2mkp" path="res://themes/FloatButtons.tres" id="75_vwcyu"]
-[ext_resource type="Texture2D" uid="uid://ch77v6qu005j4" path="res://assets/worldroot/world/2/2_front_1_3.png" id="75_x1gp3"]
-[ext_resource type="Texture2D" uid="uid://pkc4o8lou4co" path="res://assets/worldroot/world/2/2_front_0_1.png" id="76_1xgkc"]
+[ext_resource type="Texture2D" uid="uid://ch77v6qu005j4" path="res://assets/worldroot/_old/2/2_front_1_3.png" id="75_x1gp3"]
+[ext_resource type="Texture2D" uid="uid://pkc4o8lou4co" path="res://assets/worldroot/_old/2/2_front_0_1.png" id="76_1xgkc"]
 [ext_resource type="Script" uid="uid://1hk5kvupggqx" path="res://scripts/main/output/FloatButtons.gd" id="76_rsknx"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
@@ -421,6 +423,7 @@ unique_name_in_owner = true
 scroll_offset = Vector2(0, 550)
 repeat_size = Vector2(4542, 0)
 autoscroll = Vector2(-5, 0)
+script = ExtResource("31_ugmlg")
 
 [node name="Main" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=1813847154]
 modulate = Color(0.7997416, 0.25649998, 0.95, 1)
@@ -460,6 +463,7 @@ unique_name_in_owner = true
 scroll_offset = Vector2(0, 550)
 repeat_size = Vector2(4542, 0)
 autoscroll = Vector2(-40, 0)
+script = ExtResource("37_qd1pt")
 
 [node name="Main" type="Sprite2D" parent="WorldRoot/03_Ground/Ground" unique_id=1425775975]
 modulate = Color(0.25566664, 0.65, 0.2275, 1)
@@ -575,6 +579,7 @@ visible = true
 layer = 9
 
 [node name="Component_2" type="Node2D" parent="WorldRoot/09_Component_2" unique_id=1513370776]
+unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
@@ -593,6 +598,7 @@ visible = true
 layer = 10
 
 [node name="Cloud_3" type="Node2D" parent="WorldRoot/10_Cloud_3" unique_id=984731150]
+unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
@@ -611,6 +617,7 @@ visible = true
 layer = 11
 
 [node name="Landform_3" type="Node2D" parent="WorldRoot/11_Landform_3" unique_id=1041735200]
+unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
@@ -629,6 +636,7 @@ visible = true
 layer = 12
 
 [node name="Component_3" type="Node2D" parent="WorldRoot/12_Component_3" unique_id=513690386]
+unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
@@ -714,6 +722,7 @@ texture = ExtResource("76_1xgkc")
 layer = 24
 
 [node name="Cloud_5" type="Node2D" parent="WorldRoot/24_Cloud_5" unique_id=1498339407]
+unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
@@ -729,6 +738,7 @@ texture = ExtResource("76_1xgkc")
 layer = 25
 
 [node name="Landform_5" type="Node2D" parent="WorldRoot/25_Landform_5" unique_id=1665323148]
+unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 
@@ -744,6 +754,7 @@ texture = ExtResource("76_1xgkc")
 layer = 26
 
 [node name="Component_5" type="Node2D" parent="WorldRoot/26_Component_5" unique_id=1203351086]
+unique_name_in_owner = true
 position = Vector2(966, 540)
 script = ExtResource("33_8b871")
 

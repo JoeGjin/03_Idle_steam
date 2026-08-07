@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="TagSceneDef" format=3 uid="uid://duy8h36hqbqli"]
+
+[ext_resource type="Script" uid="uid://jtvff7xj0lcf" path="res://scripts/main/controllers/tagscene/TagSceneDef.gd" id="1_evaas"]
+
+[resource]
+script = ExtResource("1_evaas")
+sky_main_color = Color(0.20392157, 0.21176471, 0.36078432, 1)
+ground_main_color = Color(1, 0.80784315, 0.5372549, 1)
+landform_dark_color = Color(0.10980392, 0.105882354, 0.16078432, 1)
+landform_light_color = Color(0.21960784, 0.21960784, 0.32156864, 1)
+metadata/_custom_type_script = "uid://jtvff7xj0lcf"

@@ -11,7 +11,7 @@ class_name WorldDef
 
 @export var sky_repeat_size: Vector2 = Vector2(4542.0, 0)
 @export var sky_scroll_speed: Vector2 = Vector2(-10.0, 0)
-@export var sky_main_texture: Texture2D = preload("res://assets/worldroot/world/stage/x_sky_main.png")
+# @export var sky_main_texture: Texture2D = preload("res://assets/worldroot/world/stage/x_sky_main.png")
 @export var sky_main_color: Color = Color(0.318, 0.353, 0.612, 1) 
 @export var sky_effect_texture: Texture2D
 @export var sky_effect_color: Color = Color(1, 1, 1, 1)
@@ -52,14 +52,14 @@ class_name WorldDef
 
 @export var land_repeat_size: Vector2 = Vector2(4542.0, 0)
 @export var land_scroll_speed: Vector2 = Vector2(-40, 0)
-@export var land_main_texture: Texture2D = preload("res://assets/worldroot/world/stage/x_land_main.png")
+# @export var land_main_texture: Texture2D = preload("res://assets/worldroot/world/stage/x_land_main.png")
 @export var land_main_color: Color = Color(1, 1, 1, 1)
 @export var land_effect_texture: Texture2D
 @export var land_effect_color: Color = Color(1, 1, 1, 1)
 
 @export var sea_repeat_size: Vector2 = Vector2(3028, 0)
 @export var sea_scroll_speed: Vector2 = Vector2(-20, 0)
-@export var sea_main_texture: Texture2D = preload("res://assets/worldroot/world/stage/x_sea_main.png")
+# @export var sea_main_texture: Texture2D = preload("res://assets/worldroot/world/stage/x_sea_main.png")
 @export var sea_main_color: Color = Color(1, 1, 1, 1)
 @export var sea_effect_texture: Texture2D
 @export var sea_effect_color: Color = Color(1, 1, 1, 1)

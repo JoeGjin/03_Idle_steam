@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cmxphyeprq4qo"]
 
 [ext_resource type="Script" uid="uid://bknfrhchiu35q" path="res://scripts/main/ui/CollectedItem.gd" id="1_iw8ne"]
-[ext_resource type="Texture2D" uid="uid://bir86avjb1noe" path="res://assets/worldroot/world/1/1_far_2_1.png" id="2_iw8ne"]
+[ext_resource type="Texture2D" uid="uid://bir86avjb1noe" path="res://assets/worldroot/_old/1/1_far_2_1.png" id="2_iw8ne"]
 
 [node name="CollectedItem" type="Control" unique_id=1376733076 node_paths=PackedStringArray("texture_rect")]
 custom_minimum_size = Vector2(150, 150)
