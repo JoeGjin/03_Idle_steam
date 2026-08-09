@@ -53,8 +53,7 @@ func _ready():
 	# window_controller.update_crop_to_frame()
 
 	# 初始化世界组装器
-	# world_assembler.initiate()
-	# world_assembler.assemble_world(starting_world_id) # 默认组装指定世界，后续可以根据需要切换
+	world_assembler.assemble_world({2 as Tags.Tag: 1.0}) 
 
 	# 启动角色状态机，从 WALKING 状态开始
 	character_status.start(1) 
@@ -189,18 +188,18 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
 			# world_assembler._assemble_world((world_assembler.current_world_id+1)%2) # 切换世界
 
 
-func _on_world_assembler_world_changing(new_world_id: int, transition_duration: float) -> void:
-	print("[WORLD ASSEMBLER] World changing to ID: %d, transition duration: %.2f seconds" % [new_world_id, transition_duration])
+func _on_world_assembler_world_changing(new_tag_id: int, transition_duration: float) -> void:
+	print("[WORLD ASSEMBLER] World changing to Tag ID: %d, transition duration: %.2f seconds" % [new_tag_id, transition_duration])
 	if world_assembler.is_transitioning:
 		print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
 		return
 	else:
-		audio_controller.ambient_transition(new_world_id, transition_duration)
+		audio_controller.ambient_transition(new_tag_id, transition_duration)
 	# scene_animator.play_world_transition(transition_duration)
 	
 
-func _on_world_assembler_world_changed(new_world_id: int) -> void:
-	print("[WORLD ASSEMBLER] World assembled/transitioned to ID: %d" % new_world_id)
+func _on_world_assembler_world_changed(new_tag_id: int) -> void:
+	print("[WORLD ASSEMBLER] World assembled/transitioned to ID: %d" % new_tag_id)
 	character_status.get_node("ChangeScene").start()
 	# scene_animator.setup_initial_speed()
 

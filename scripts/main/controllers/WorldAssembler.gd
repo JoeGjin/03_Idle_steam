@@ -5,20 +5,15 @@ extends Node
 class_name WorldAssembler
 
 
-
-@export var tag_scenes: Dictionary[Tags.Tag, TagSceneDef] = {}
-
-@export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
-
 @onready var world_root: Node2D = %WorldRoot
 @onready var memory_controller: MemoryController = %MemoryController
 
-# var current_world_id: int = 0 # 当前世界ID，初始为-1表示未设置
-var is_transitioning: bool = false # 是否正在进行世界切换过渡
+@export var tag_scenes: Dictionary[Tags.Tag, TagSceneDef] = {}
+@export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
 
-var unhandled_letter_tags: Array = [] # 存储未处理的标签，供发送时使用
+@export var current_tag_id: int = -1 # 当前世界ID，初始为-1表示未设置
+@export var is_transitioning: bool = false # 是否正在进行世界切换过渡
 
-var banned_texture: String = "" # 单个槽位，记录最近一次未选择的texture名称
 
 
 
@@ -48,24 +43,62 @@ var banned_texture: String = "" # 单个槽位，记录最近一次未选择的t
 @onready var _landform_5: ManualParallax = %Landform_5
 @onready var _component_5: ManualParallax = %Component_5
 
+# @onready var _world_player: AnimationPlayer = %WorldPlayer
+
+# var unhandled_letter_tags: Array = [] # 存储未处理的标签，供发送时使用
+var banned_texture: String = "" # 单个槽位，记录最近一次未选择的texture名称
 
 var _clouds: Array[ManualParallax] = []
 var _landforms: Array[ManualParallax] = []
 var _components: Array[ManualParallax] = []
-# @onready var _world_player: AnimationPlayer = %WorldPlayer
 
 
 
-# signal world_changing(new_world_id: int, transition_duration: float) # 定义世界切换信号，参数为新的世界ID和过渡时长
-# signal world_changed(new_world_id: int)
+signal world_changing(new_tag_id: int, transition_duration: float) # 定义世界切换信号，参数为新的世界ID和过渡时长
+signal world_changed(new_tag_id: int)
 
 
+
+
+# 用于第一次建立场景，直接应用参数，不需要过渡动画
+func assemble_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
+    
+    var main_tag: Tags.Tag = weighted_tags.keys()[0] # 获取权重最高的标签作为主标签
+
+    if main_tag not in tag_scenes:
+        print("[WORLD ASSEMBLER] Invalid tag: %s" % main_tag)
+        return
+
+    world_changing.emit(main_tag, transition_duration) # 发出世界切换信号
+    is_transitioning = true
+
+    _update_def_to_scene(weighted_tags)
+    _start_manual_scroll() # 启动手动滚动的层
+
+
+    world_changed.emit(main_tag) # 发出世界切换信号，供其他系统（如角色状态机）响应
+    is_transitioning = false
 
 
 
 func _ready() -> void:
-    _build_tag_scenes() # 构建tag_scenes字典
+    _build_tag_scenes() 
+    _initialize_manual_parallax_layers()
 
+
+
+# 小键盘控制世界切换
+func _input(event): 
+    for i in range(10):
+        if event.is_action_pressed("%d" % i):
+            # 创建一个权重为1.0的字典，表示选择的标签
+            var target_tag: Dictionary[Tags.Tag, float] = {i as Tags.Tag: 1.0} 
+            assemble_world(target_tag)
+            # transition_to_world(i)
+            break
+
+
+# 从 scripts/main/controllers/tagscene/defs 读取所有 TagSceneDef 资源，并将它们存储在 tag_scenes 字典中
 func _build_tag_scenes() -> void:
     const TAG_SCENE_DEFS_PATH := "res://scripts/main/controllers/tagscene/defs"
 
@@ -92,6 +125,7 @@ func _build_tag_scenes() -> void:
 
 
 
+# 初始化手动滚动的Parallax层的pool，并加入到对应的数组中
 func _initialize_manual_parallax_layers() -> void:
     # 初始化所有手动滚动的Parallax层
     _poi.pool = MemoryDef.Pool.POI
@@ -142,7 +176,7 @@ func _initialize_manual_parallax_layers() -> void:
     _components.append(_component_5)
 
 
-
+# 将tag_scene的参数应用到场景节点上
 func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void: 
     # weighted_tags: {MYSTERIOUS: 0.5, HOLY: 0.3, BARREN: 0.2}
     # mode: 0直接切换(或初始化场景)，1渐变切换
@@ -159,11 +193,13 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
 
     _poi.color = main_tag_scene.poi_color
     _poi.scroll_speed = main_tag_scene.poi_scroll_speed
+    _poi.weighted_tags = weighted_tags
 
 
     _ground.ground_main_color = main_tag_scene.ground_main_color
     _ground.ground_effect_texture = main_tag_scene.ground_effect_texture
     _ground.ground_effect_color = main_tag_scene.ground_effect_color
+
 
     var clouds_count = _clouds.size()
     for i in clouds_count:
@@ -172,6 +208,8 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         var t = float(i) / (clouds_count - 1)
         var speed_ratio = lerp(1.0, main_tag_scene.landform_speed_ratio, t) # 根据云层索引调整速度比率
         cloud.scroll_speed = main_tag_scene.cloud_scroll_speed * speed_ratio
+        cloud.weighted_tags = weighted_tags
+
 
     var landforms_count = _landforms.size()
     for i in landforms_count:
@@ -183,7 +221,9 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         var t = float(i) / (landforms_count - 1)
         var speed_ratio = lerp(1.0, main_tag_scene.landform_speed_ratio, t) # 根据地形层索引调整速度比率
         landform.scroll_speed = main_tag_scene.landform_scroll_speed * speed_ratio
+        landform.weighted_tags = weighted_tags
     
+
     var components_count = _components.size()
     for i in components_count:
         var component = _components[i]
@@ -191,11 +231,186 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         var t = float(i) / (components_count - 1)
         var speed_ratio = lerp(1.0, main_tag_scene.component_speed_ratio, t) # 根据组件层索引调整速度比率
         component.scroll_speed = main_tag_scene.component_scroll_speed * speed_ratio
+        component.weighted_tags = weighted_tags
 
 
 
+# 开始手动滚动的Parallax层
+func _start_manual_scroll(mode: int = 0) -> void: # mode: 0直接切换，1渐变切换
+    _poi.start_manual_scroll(mode)
+    for cloud in _clouds:
+        cloud.start_manual_scroll(mode)
+    for landform in _landforms:
+        landform.start_manual_scroll(mode)
+    for component in _components:
+        component.start_manual_scroll(mode)
 
 
+
+#region old_code
+
+
+
+# func transition_to_world(target_world_id: int,
+# 	sub_world_id: int = -1, # 可选的子世界ID，默认为-1表示未指定
+# 	sub_world_weight: float = 0.0 # 可选的子世界权重，范围0.0-1.0，默认为0.0表示未指定
+# 	) -> void:
+    
+# 	if is_transitioning:
+# 		print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
+# 		return
+    
+# 	if target_world_id < 0 or target_world_id >= world_defs.size():
+# 		print("[WORLD ASSEMBLER] Invalid world_id: %d" % target_world_id)
+# 		return
+
+    
+# 	var target_world: WorldDef = world_defs[target_world_id]
+# 	var sub_world: WorldDef = world_defs[sub_world_id]
+
+
+    
+# 	if target_world_id != current_world_id: # 只有在切换到不同世界时才执行过渡动画
+        
+# 		world_changing.emit(target_world_id, transition_duration) # 发出世界切换信号
+# 		is_transitioning = true
+
+
+# 		# Parallex2D节点透明度开始渐变
+# 		var tween := create_tween()
+# 		tween.tween_property(_sky.get_child(1), "modulate:a", 0.0, transition_duration/2)
+# 		tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 0.0, transition_duration/2)
+# 		tween.parallel().tween_property(_land.get_child(1), "modulate:a", 0.0, transition_duration/2)
+# 		tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 0.0, transition_duration/2)
+
+# 		# 同时moon开始移出场景，新的moon移入场景
+# 		var moon_main = _moon.get_child(0)
+# 		var center: Vector2 = _moon.scroll_offset # 公转中心（Moon 本地）
+# 		var r: Vector2 = moon_main.position - center # 半径向量（Moon 本地）
+# 		var start_angle := r.angle()
+# 		var end_angle := start_angle - PI
+# 		var return_angle := start_angle
+# 		tween.parallel().tween_method(
+# 			func(a: float) -> void:
+# 				# 保持半径长度不变，绕 center 旋转
+# 				moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
+# 			start_angle,
+# 			end_angle,
+# 			transition_duration/2
+# 		).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
+        
+# 		# moon移出的同时，effect也刚好透明度变为0，moon和effect的texture切换 _defs_to_scene(target_world, 1)
+# 		tween.tween_callback(func() -> void: 
+# 			_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
+# 			_start_manual_scroll(1)
+# 			)
+        
+# 		# moon转回来，texture的颜色变化，effect透明度逐渐变为1
+# 		tween.tween_property(_sky.get_child(0), "modulate", target_world.sky_main_color, transition_duration/2)
+# 		tween.parallel().tween_property(_moon.get_child(0), "modulate", target_world.moon_main_color, transition_duration/2)
+# 		tween.parallel().tween_property(_land.get_child(0), "modulate", target_world.land_main_color, transition_duration/2)
+# 		tween.parallel().tween_property(_sea.get_child(0), "modulate", target_world.sea_main_color, transition_duration/2)
+# 		tween.parallel().tween_property(_sky.get_child(1), "modulate:a", 1.0, transition_duration/2)
+# 		tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 1.0, transition_duration/2)
+# 		tween.parallel().tween_property(_land.get_child(1), "modulate:a", 1.0, transition_duration/2)
+# 		tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 1.0, transition_duration/2)
+# 		tween.parallel().tween_method(
+# 			func(a: float) -> void:
+# 				# 保持半径长度不变，绕 center 旋转
+# 				moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
+# 			end_angle,
+# 			return_angle,
+# 			transition_duration/2
+# 		).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
+# 		# 同时非Parallex2D节点开始改变（新进素材，间隔，位置）
+# 		# tween.tween_callback(func() -> void:_start_manual_scroll(1)) # 渐变切换
+        
+# 		current_world_id = target_world_id
+
+# 		tween.tween_callback(func() -> void: 
+# 			world_changed.emit(current_world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
+# 			is_transitioning = false
+# 			)
+    
+# 	else: # 切换到同一世界但不同子世界，直接切换参数，不需要过渡动画
+# 		world_changing.emit(target_world_id, 0) # 发出世界切换信号
+# 		is_transitioning = true
+# 		_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
+# 		# _start_manual_scroll(1)
+# 		world_changed.emit(current_world_id)
+# 		is_transitioning = false
+
+
+
+# func immediate_spawn(texture_name: String) -> void: # string格式为 0_frontxxx_2_1xx
+# 	# 通过name来确定在哪个层生成素材
+# 	var target_layer_name = texture_name.split("_")[1] # 例如 "0_front_2" -> "front"
+# 	var target_sublayer_name = texture_name.split("_")[2] # 例如 "0_front_2" -> "2"
+# 	# get对应的层
+# 	var target_layer: ManualParallax
+# 	match target_layer_name:
+# 		"far":
+# 			match target_sublayer_name:
+# 				"1":
+# 					target_layer = _far_1
+# 				"2":
+# 					target_layer = _far_2
+# 				"0": # 如果是0层，随机选择一个层生成
+# 					if randi() % 2 == 0:
+# 						target_layer = _far_1
+# 					else:
+# 						target_layer = _far_2
+# 		"mid":
+# 			match target_sublayer_name:
+# 				"1":
+# 					target_layer = _mid_1
+# 				"2":
+# 					target_layer = _mid_2
+# 				"0": # 如果是0层，随机选择一个层生成
+# 					if randi() % 2 == 0:
+# 						target_layer = _mid_1
+# 					else:
+# 						target_layer = _mid_2
+# 		"front":
+# 			match target_sublayer_name:
+# 				"1":
+# 					target_layer = _front_1
+# 				"2":
+# 					target_layer = _front_2
+# 				"0": # 如果是0层，随机选择一个层生成
+# 					if randi() % 2 == 0:
+# 						target_layer = _front_1
+# 					else:
+# 						target_layer = _front_2
+# 	# 从assembler层级手动生成一个新的sprite并加入场景, 需要调用对应的世界def中的参数
+# 	var sprite = Sprite2D.new()
+# 	sprite.texture = memory_controller.get_popup_texture_by_name(texture_name) # 通过贴图名称获取Texture2D资源
+# 	var target_world_id: int = texture_name.split("_")[0].to_int() # 例如 "0_front_2" -> 0
+# 	var target_world_def = world_defs[target_world_id] 
+    
+# 	var color_property_name: String = "%s_%s_color" % [target_layer_name, target_sublayer_name]
+# 	sprite.modulate = target_world_def.get(color_property_name)
+# 	var scale_property_name: String = "%s_%s_spawn_scale" % [target_layer_name, target_sublayer_name]
+# 	sprite.scale = target_world_def.get(scale_property_name)
+# 	var position_property_name: String = "%s_%s_spawn_position" % [target_layer_name, target_sublayer_name]
+# 	sprite.position = Vector2(0, target_world_def.get(position_property_name).y)
+    
+# 	match target_sublayer_name:
+# 		"1", "2":
+# 			target_layer._objects.append(sprite)
+# 		"0":
+# 			target_layer._objects_0.append(sprite)
+    
+# 	target_layer.add_child(sprite)
+# 	target_layer.animation_popup(sprite)
+    
+    
+
+
+# func texture_banned(texture_name: String) -> bool:
+# 	# 检查给定的贴图名称是否在当前世界的禁止列表中
+# 	# print("[WORLD ASSEMBLER] Checking if texture '%s' is banned (banned_texture: '%s')" % [texture_name, banned_texture])
+# 	return texture_name == banned_texture
 
 
 
@@ -207,7 +422,7 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
 # 		_sky.get_child(0).modulate = current_world.sky_main_color
 # 		_sky.get_child(1).modulate = current_world.sky_effect_color
 # 	_sky.get_child(1).texture = current_world.sky_effect_texture
-	
+    
 # 	if mode == 0:
 # 		_moon.repeat_size = current_world.moon_repeat_size
 # 		_moon.autoscroll = current_world.moon_scroll_speed
@@ -215,7 +430,7 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
 # 		_moon.get_child(1).modulate = current_world.moon_effect_color
 # 	_moon.get_child(0).texture = current_world.moon_main_texture
 # 	_moon.get_child(1).texture = current_world.moon_effect_texture
-	
+    
 
 # 	_far_1.scroll_speed = current_world.far_1_scroll_speed
 # 	_far_1.spawn_scale = current_world.far_1_spawn_scale
@@ -268,7 +483,7 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
 # 		_land.get_child(0).modulate = current_world.land_main_color
 # 		_land.get_child(1).modulate = current_world.land_effect_color
 # 	_land.get_child(1).texture = current_world.land_effect_texture
-	
+    
 # 	if mode == 0:
 # 		_sea.repeat_size = current_world.sea_repeat_size
 # 		_sea.autoscroll = current_world.sea_scroll_speed
@@ -276,7 +491,7 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
 # 		_sea.get_child(0).modulate = current_world.sea_main_color
 # 		_sea.get_child(1).modulate = current_world.sea_effect_color
 # 	_sea.get_child(1).texture = current_world.sea_effect_texture
-	
+    
 # 	_mid_1.scroll_speed = current_world.mid_1_scroll_speed
 # 	_mid_1.spawn_scale = current_world.mid_1_spawn_scale
 # 	_mid_1.spawn_position = current_world.mid_1_spawn_position
@@ -378,213 +593,4 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
 
 
 
-
-# func assemble_world(world_id: int) -> void:
-
-# 	if world_id < 0 or world_id >= world_defs.size():
-# 		print("[WORLD ASSEMBLER] Invalid world_id: %d" % world_id)
-# 		return
-	
-# 	world_changing.emit(world_id, transition_duration) # 发出世界切换信号
-# 	is_transitioning = true
-
-# 	var target_world: WorldDef = null
-
-# 	target_world = world_defs[world_id]
-# 	_defs_to_scene(target_world) # 将world def的参数应用到场景节点上
-# 	_start_manual_scroll() # 启动手动滚动的层
-# 	current_world_id = world_id
-
-# 	world_changed.emit(current_world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
-# 	is_transitioning = false
-
-
-
-# func transition_to_world(target_world_id: int,
-# 	sub_world_id: int = -1, # 可选的子世界ID，默认为-1表示未指定
-# 	sub_world_weight: float = 0.0 # 可选的子世界权重，范围0.0-1.0，默认为0.0表示未指定
-# 	) -> void:
-	
-# 	if is_transitioning:
-# 		print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
-# 		return
-	
-# 	if target_world_id < 0 or target_world_id >= world_defs.size():
-# 		print("[WORLD ASSEMBLER] Invalid world_id: %d" % target_world_id)
-# 		return
-
-	
-# 	var target_world: WorldDef = world_defs[target_world_id]
-# 	var sub_world: WorldDef = world_defs[sub_world_id]
-
-
-	
-# 	if target_world_id != current_world_id: # 只有在切换到不同世界时才执行过渡动画
-		
-# 		world_changing.emit(target_world_id, transition_duration) # 发出世界切换信号
-# 		is_transitioning = true
-
-
-# 		# Parallex2D节点透明度开始渐变
-# 		var tween := create_tween()
-# 		tween.tween_property(_sky.get_child(1), "modulate:a", 0.0, transition_duration/2)
-# 		tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 0.0, transition_duration/2)
-# 		tween.parallel().tween_property(_land.get_child(1), "modulate:a", 0.0, transition_duration/2)
-# 		tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 0.0, transition_duration/2)
-
-# 		# 同时moon开始移出场景，新的moon移入场景
-# 		var moon_main = _moon.get_child(0)
-# 		var center: Vector2 = _moon.scroll_offset # 公转中心（Moon 本地）
-# 		var r: Vector2 = moon_main.position - center # 半径向量（Moon 本地）
-# 		var start_angle := r.angle()
-# 		var end_angle := start_angle - PI
-# 		var return_angle := start_angle
-# 		tween.parallel().tween_method(
-# 			func(a: float) -> void:
-# 				# 保持半径长度不变，绕 center 旋转
-# 				moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
-# 			start_angle,
-# 			end_angle,
-# 			transition_duration/2
-# 		).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
-		
-# 		# moon移出的同时，effect也刚好透明度变为0，moon和effect的texture切换 _defs_to_scene(target_world, 1)
-# 		tween.tween_callback(func() -> void: 
-# 			_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
-# 			_start_manual_scroll(1)
-# 			)
-		
-# 		# moon转回来，texture的颜色变化，effect透明度逐渐变为1
-# 		tween.tween_property(_sky.get_child(0), "modulate", target_world.sky_main_color, transition_duration/2)
-# 		tween.parallel().tween_property(_moon.get_child(0), "modulate", target_world.moon_main_color, transition_duration/2)
-# 		tween.parallel().tween_property(_land.get_child(0), "modulate", target_world.land_main_color, transition_duration/2)
-# 		tween.parallel().tween_property(_sea.get_child(0), "modulate", target_world.sea_main_color, transition_duration/2)
-# 		tween.parallel().tween_property(_sky.get_child(1), "modulate:a", 1.0, transition_duration/2)
-# 		tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 1.0, transition_duration/2)
-# 		tween.parallel().tween_property(_land.get_child(1), "modulate:a", 1.0, transition_duration/2)
-# 		tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 1.0, transition_duration/2)
-# 		tween.parallel().tween_method(
-# 			func(a: float) -> void:
-# 				# 保持半径长度不变，绕 center 旋转
-# 				moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
-# 			end_angle,
-# 			return_angle,
-# 			transition_duration/2
-# 		).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-# 		# 同时非Parallex2D节点开始改变（新进素材，间隔，位置）
-# 		# tween.tween_callback(func() -> void:_start_manual_scroll(1)) # 渐变切换
-		
-# 		current_world_id = target_world_id
-
-# 		tween.tween_callback(func() -> void: 
-# 			world_changed.emit(current_world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
-# 			is_transitioning = false
-# 			)
-	
-# 	else: # 切换到同一世界但不同子世界，直接切换参数，不需要过渡动画
-# 		world_changing.emit(target_world_id, 0) # 发出世界切换信号
-# 		is_transitioning = true
-# 		_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
-# 		# _start_manual_scroll(1)
-# 		world_changed.emit(current_world_id)
-# 		is_transitioning = false
-
-
-
-# func immediate_spawn(texture_name: String) -> void: # string格式为 0_frontxxx_2_1xx
-# 	# 通过name来确定在哪个层生成素材
-# 	var target_layer_name = texture_name.split("_")[1] # 例如 "0_front_2" -> "front"
-# 	var target_sublayer_name = texture_name.split("_")[2] # 例如 "0_front_2" -> "2"
-# 	# get对应的层
-# 	var target_layer: ManualParallax
-# 	match target_layer_name:
-# 		"far":
-# 			match target_sublayer_name:
-# 				"1":
-# 					target_layer = _far_1
-# 				"2":
-# 					target_layer = _far_2
-# 				"0": # 如果是0层，随机选择一个层生成
-# 					if randi() % 2 == 0:
-# 						target_layer = _far_1
-# 					else:
-# 						target_layer = _far_2
-# 		"mid":
-# 			match target_sublayer_name:
-# 				"1":
-# 					target_layer = _mid_1
-# 				"2":
-# 					target_layer = _mid_2
-# 				"0": # 如果是0层，随机选择一个层生成
-# 					if randi() % 2 == 0:
-# 						target_layer = _mid_1
-# 					else:
-# 						target_layer = _mid_2
-# 		"front":
-# 			match target_sublayer_name:
-# 				"1":
-# 					target_layer = _front_1
-# 				"2":
-# 					target_layer = _front_2
-# 				"0": # 如果是0层，随机选择一个层生成
-# 					if randi() % 2 == 0:
-# 						target_layer = _front_1
-# 					else:
-# 						target_layer = _front_2
-# 	# 从assembler层级手动生成一个新的sprite并加入场景, 需要调用对应的世界def中的参数
-# 	var sprite = Sprite2D.new()
-# 	sprite.texture = memory_controller.get_popup_texture_by_name(texture_name) # 通过贴图名称获取Texture2D资源
-# 	var target_world_id: int = texture_name.split("_")[0].to_int() # 例如 "0_front_2" -> 0
-# 	var target_world_def = world_defs[target_world_id] 
-	
-# 	var color_property_name: String = "%s_%s_color" % [target_layer_name, target_sublayer_name]
-# 	sprite.modulate = target_world_def.get(color_property_name)
-# 	var scale_property_name: String = "%s_%s_spawn_scale" % [target_layer_name, target_sublayer_name]
-# 	sprite.scale = target_world_def.get(scale_property_name)
-# 	var position_property_name: String = "%s_%s_spawn_position" % [target_layer_name, target_sublayer_name]
-# 	sprite.position = Vector2(0, target_world_def.get(position_property_name).y)
-	
-# 	match target_sublayer_name:
-# 		"1", "2":
-# 			target_layer._objects.append(sprite)
-# 		"0":
-# 			target_layer._objects_0.append(sprite)
-	
-# 	target_layer.add_child(sprite)
-# 	target_layer.animation_popup(sprite)
-	
-	
-
-
-# func texture_banned(texture_name: String) -> bool:
-# 	# 检查给定的贴图名称是否在当前世界的禁止列表中
-# 	# print("[WORLD ASSEMBLER] Checking if texture '%s' is banned (banned_texture: '%s')" % [texture_name, banned_texture])
-# 	return texture_name == banned_texture
-
-
-
-
-
-
-
-
-
-
-
-# func _start_manual_scroll(mode: int = 0) -> void: # mode: 0直接切换，1渐变切换
-# 	_far_1.start_manual_scroll(mode)
-# 	_far_2.start_manual_scroll(mode)
-# 	_mid_1.start_manual_scroll(mode)
-# 	_mid_2.start_manual_scroll(mode)
-# 	_front_1.start_manual_scroll(mode)
-# 	_front_2.start_manual_scroll(mode)
-
-
-
-# # 小键盘控制世界切换
-# func _input(event): 
-# 	for i in range(10):
-# 		if event.is_action_pressed("%d" % i):
-# 			# assemble_world(i)
-# 			transition_to_world(i)
-# 			break
+#endregion

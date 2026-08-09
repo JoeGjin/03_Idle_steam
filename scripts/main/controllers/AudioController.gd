@@ -29,8 +29,8 @@ func tap_play() -> void:
 
 
 
-func ambient_transition(new_world_id: int, transition_duration: float) -> void:
-	var new_world_audio: AudioStream = world_assembler.world_defs[new_world_id].ambient_audio
+func ambient_transition(new_tag_id: int, transition_duration: float) -> void:
+	var new_world_audio: AudioStream = world_assembler.tag_scenes[new_tag_id].ambient_audio
 	var fade_duration: float = max(transition_duration * 2.0 / 3.0, 0.01)
 	var fade_in_delay: float = max(transition_duration * 1.0 / 3.0, 0.0)
 
