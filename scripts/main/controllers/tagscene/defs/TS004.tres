@@ -7,8 +7,8 @@
 script = ExtResource("1_bbht3")
 tag_name = 3
 ambient_audio = ExtResource("1_fi0i7")
-sky_main_color = Color(0.84313726, 0.6039216, 0.6627451, 1)
+sky_main_color = Color(0.84313726, 0.5137255, 0.6627451, 1)
 ground_main_color = Color(1, 0.80784315, 0.5372549, 1)
-landform_dark_color = Color(0.92941177, 0.34509805, 0.3019608, 1)
-landform_light_color = Color(0.24705882, 0.14901961, 0.27450982, 1)
+landform_dark_color = Color(0.24705882, 0.14901961, 0.27450982, 1)
+landform_light_color = Color(0.92941177, 0.34509805, 0.3019608, 1)
 metadata/_custom_type_script = "uid://jtvff7xj0lcf"

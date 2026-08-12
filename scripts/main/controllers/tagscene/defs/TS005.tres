@@ -8,10 +8,10 @@
 script = ExtResource("2_34xy1")
 tag_name = 4
 ambient_audio = ExtResource("1_34xy1")
-sky_main_color = Color(0.46666667, 0.61960787, 0.73333335, 1)
+sky_main_color = Color(0.4745098, 0.654902, 0.7882353, 1)
 sky_effect_texture = ExtResource("3_hgnn1")
-sky_effect_color = Color(1, 1, 1, 0.5)
+sky_effect_color = Color(0.007843138, 0.101960786, 0.3019608, 0.6862745)
 cloud_color = Color(0.87034494, 0.6704099, 0.4945157, 0.3)
-landform_dark_color = Color(0.96862745, 0.94509804, 0.85882354, 1)
-landform_light_color = Color(0.5529412, 0.62352943, 0.67058825, 1)
+landform_dark_color = Color(0.5529412, 0.62352943, 0.67058825, 1)
+landform_light_color = Color(0.96862745, 0.94509804, 0.85882354, 1)
 metadata/_custom_type_script = "uid://jtvff7xj0lcf"

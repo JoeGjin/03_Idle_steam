@@ -7,6 +7,6 @@
 script = ExtResource("1_tjw2g")
 is_collectable = true
 texture = ExtResource("2_tjw2g")
-tags = Array[int]([5, 1, 4])
+tags = Array[int]([1, 5, 4])
 spawn_distance_ratio = 3.0
 metadata/_custom_type_script = "uid://v1a86tare2si"

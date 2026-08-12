@@ -10,4 +10,6 @@ sky_main_color = Color(0.7607843, 0.32941177, 0.8, 1)
 sky_effect_texture = ExtResource("2_vhc1f")
 sky_effect_color = Color(1, 1, 0.88235295, 0.5019608)
 cloud_color = Color(0.9844546, 0.8232569, 0.6350498, 0.5)
+landform_dark_color = Color(0.13757291, 0.15190016, 0.015999997, 1)
+landform_light_color = Color(0.71838, 0.78, 0.16379997, 1)
 metadata/_custom_type_script = "uid://jtvff7xj0lcf"

@@ -33,7 +33,6 @@
 [ext_resource type="Script" uid="uid://dvy6ipmh42awj" path="res://scripts/main/debug/DebugPet.gd" id="33_2c4at"]
 [ext_resource type="Script" uid="uid://r3h7y0ivusgi" path="res://scripts/main/world/Manual_Parallax.gd" id="33_8b871"]
 [ext_resource type="Script" uid="uid://cp7hocx6yaeww" path="res://scripts/main/ui/PostcardShowing.gd" id="33_csfbn"]
-[ext_resource type="Texture2D" uid="uid://bkmlajpw570kl" path="res://assets/worldroot/stage/sky/sky_effect_3.png" id="33_gcaob"]
 [ext_resource type="Texture2D" uid="uid://qw8ihojqk8nh" path="res://assets/uiroot/postcard/0.JPG" id="34_1xgkc"]
 [ext_resource type="Texture2D" uid="uid://m2k0myepg1ad" path="res://assets/uiroot/postcard/1.JPG" id="35_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://tw714yrnrq8f" path="res://assets/worldroot/pet/walk/frame_01.png" id="36_vshs7"]
@@ -177,7 +176,6 @@ hook_switch = true
 [node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
-transition_duration = 60.0
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 unique_name_in_owner = true
@@ -419,16 +417,15 @@ autoscroll = Vector2(-5, 0)
 script = ExtResource("31_ugmlg")
 
 [node name="Main" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=1813847154]
-modulate = Color(0.7606666, 0.32800004, 0.8, 1)
+modulate = Color(0.78, 0.9486667, 1, 1)
 self_modulate = Color(1.353256, 1.353256, 1.353256, 1)
 texture = ExtResource("32_a3hxr")
 
 [node name="Star" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=553459747]
 
 [node name="Effect" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=905714890]
-modulate = Color(1, 1, 0.88235295, 0.5019608)
+modulate = Color(0.008999992, 0.10115006, 0.3, 0.6862745)
 material = SubResource("CanvasItemMaterial_gcaob")
-texture = ExtResource("33_gcaob")
 
 [node name="Blur" parent="WorldRoot/01_Sky" unique_id=1089266835 instance=ExtResource("37_csfbn")]
 visible = true

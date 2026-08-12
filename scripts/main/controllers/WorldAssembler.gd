@@ -295,14 +295,31 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         cloud.weighted_tags = weighted_tags
 
 
-    var landforms_count = _landforms.size()
-    for i in landforms_count:
-        var landform = _landforms[i]
+    var active_landforms: Array[ManualParallax] = []
+    var main_tag_pools: MemoryController.MemoryPools
+    if memory_controller.memories_by_tag.has(main_tag):
+        main_tag_pools = memory_controller.memories_by_tag[main_tag]
+    else:
+        push_warning("[WORLD ASSEMBLER] 当前主标签没有可用的 MemoryDef：%s" % main_tag)
+
+    # 只让主标签拥有素材的地形池参与颜色梯度。
+    for landform in _landforms:
+        if main_tag_pools != null and main_tag_pools.by_pool.has(landform.pool):
+            active_landforms.append(landform)
+
+    var active_landforms_count := active_landforms.size()
+    for i in active_landforms_count:
+        var landform := active_landforms[i]
+        var t := 0.0 if active_landforms_count == 1 else float(i) / (active_landforms_count - 1)
         landform.color = main_tag_scene.landform_light_color.lerp(
             main_tag_scene.landform_dark_color,
-            i / 4.0
+            t
             )
-        var t = float(i) / (landforms_count - 1)
+
+    var landforms_count := _landforms.size()
+    for i in landforms_count:
+        var landform := _landforms[i]
+        var t := float(i) / (landforms_count - 1)
         var speed_ratio = lerp(1.0, main_tag_scene.landform_speed_ratio, t) # 根据地形层索引调整速度比率
         landform.scroll_speed = main_tag_scene.landform_scroll_speed * speed_ratio
         landform.weighted_tags = weighted_tags

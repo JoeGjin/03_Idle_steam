@@ -6,6 +6,6 @@
 [resource]
 script = ExtResource("1_yl5jg")
 texture = ExtResource("2_yl5jg")
-tags = Array[int]([0, 3, 4, 1])
+tags = Array[int]([0, 3, 4, 1, 5, 2])
 pool = 4
 metadata/_custom_type_script = "uid://v1a86tare2si"
