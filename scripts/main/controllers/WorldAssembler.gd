@@ -17,9 +17,9 @@ class_name WorldAssembler
 
 
 
-@onready var _sky: Parallax2D = %Sky
+@onready var _sky: WorldSky = %Sky
 @onready var _poi: ManualParallax = %POI
-@onready var _ground: Parallax2D = %Ground
+@onready var _ground: WorldGround = %Ground
 
 @onready var _cloud_1: ManualParallax = %Cloud_1
 @onready var _landform_1: ManualParallax = %Landform_1
@@ -62,6 +62,9 @@ signal world_changed(new_tag_id: int)
 
 # 用于第一次建立场景，直接应用参数，不需要过渡动画
 func assemble_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
+    if weighted_tags.is_empty():
+        push_warning("[WORLD ASSEMBLER] Cannot assemble a world without weighted tags")
+        return
     
     var main_tag: Tags.Tag = weighted_tags.keys()[0] # 获取权重最高的标签作为主标签
 
@@ -72,12 +75,67 @@ func assemble_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
     world_changing.emit(main_tag, transition_duration) # 发出世界切换信号
     is_transitioning = true
 
+    current_tag_id = main_tag # 更新当前世界ID
     _update_def_to_scene(weighted_tags)
-    _start_manual_scroll() # 启动手动滚动的层
-
+    _sky.apply_immediate()
+    _ground.apply_immediate()
+    _start_manual_scroll(0) # 启动手动滚动的层
 
     world_changed.emit(main_tag) # 发出世界切换信号，供其他系统（如角色状态机）响应
     is_transitioning = false
+
+
+
+func transition_to_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
+    if is_transitioning:
+        print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
+        return
+
+    if weighted_tags.is_empty():
+        push_warning("[WORLD ASSEMBLER] Cannot transition without weighted tags")
+        return
+
+    var main_tag: Tags.Tag = weighted_tags.keys()[0]
+
+    if main_tag not in tag_scenes:
+        print("[WORLD ASSEMBLER] Invalid tag: %s" % main_tag)
+        return
+    
+    if main_tag == current_tag_id:
+        print("[WORLD ASSEMBLER] Already in the target world: %s" % main_tag)
+        world_changing.emit(main_tag, transition_duration) # 发出世界切换信号
+        is_transitioning = true
+
+        _update_def_to_scene(weighted_tags) # 切换到新世界的参数（仅参数）
+        _start_manual_scroll(1)
+
+        world_changed.emit(main_tag) # 发出世界切换信号，供其他系统（如角色状态机）响应
+        is_transitioning = false
+    
+    else:
+        var duration := maxf(transition_duration, 0.0)
+        world_changing.emit(main_tag, duration) # 发出世界切换信号
+        is_transitioning = true
+
+        current_tag_id = main_tag # 更新当前世界ID
+        _update_def_to_scene(weighted_tags)
+
+        # 静态层、POI 和其余手动视差层同时开始过渡。
+        _sky.transition_to_target(duration)
+        _ground.transition_to_target(duration)
+        _poi.fade_out_children(duration)
+        _start_non_poi_manual_scroll(1)
+
+        if not is_zero_approx(duration):
+            await get_tree().create_timer(duration).timeout
+
+        # 强制落到目标值，避免 Tween 与计时器同帧结束时留下微小误差。
+        _sky.apply_immediate()
+        _ground.apply_immediate()
+        _poi.start_manual_scroll(0)
+
+        world_changed.emit(main_tag)
+        is_transitioning = false
 
 
 
@@ -93,8 +151,7 @@ func _input(event):
         if event.is_action_pressed("%d" % i):
             # 创建一个权重为1.0的字典，表示选择的标签
             var target_tag: Dictionary[Tags.Tag, float] = {i as Tags.Tag: 1.0} 
-            assemble_world(target_tag)
-            # transition_to_world(i)
+            transition_to_world(target_tag)
             break
 
 
@@ -128,51 +185,78 @@ func _build_tag_scenes() -> void:
 # 初始化手动滚动的Parallax层的pool，并加入到对应的数组中
 func _initialize_manual_parallax_layers() -> void:
     # 初始化所有手动滚动的Parallax层
+    var initial_height: float = -150.00
+    var height_increment: float = initial_height / 5.0 # 将高度均分为5个层级
+    var height_levels: Array[float] = [
+        0,
+        initial_height - height_increment,
+        initial_height - 2 * height_increment,
+        initial_height - 3 * height_increment,
+        initial_height - 4 * height_increment,
+        initial_height - 5 * height_increment
+    ]
+
     _poi.pool = MemoryDef.Pool.POI
+    _poi.position = Vector2(0, height_levels[0])
 
     _cloud_1.pool = MemoryDef.Pool.CLOUD
+    _cloud_1.position = Vector2(0, height_levels[1])
     _clouds.append(_cloud_1)
 
     _landform_1.pool = MemoryDef.Pool.LANDFORM_FAR
+    _landform_1.position = Vector2(0, height_levels[1])
     _landforms.append(_landform_1)
 
     _component_1.pool = MemoryDef.Pool.COMPONENT_FAR
+    _component_1.position = Vector2(0, height_levels[1])
     _components.append(_component_1)
 
     _cloud_2.pool = MemoryDef.Pool.CLOUD
+    _cloud_2.position = Vector2(0, height_levels[2])
     _clouds.append(_cloud_2)
 
     _landform_2.pool = MemoryDef.Pool.LANDFORM_MID
+    _landform_2.position = Vector2(0, height_levels[2])
     _landforms.append(_landform_2)
 
     _component_2.pool = MemoryDef.Pool.COMPONENT_MID
+    _component_2.position = Vector2(0, height_levels[2])
     _components.append(_component_2)
 
     _cloud_3.pool = MemoryDef.Pool.CLOUD
+    _cloud_3.position = Vector2(0, height_levels[3])
     _clouds.append(_cloud_3)
 
     _landform_3.pool = MemoryDef.Pool.LANDFORM_MID
+    _landform_3.position = Vector2(0, height_levels[3])
     _landforms.append(_landform_3)
 
     _component_3.pool = MemoryDef.Pool.COMPONENT_MID
+    _component_3.position = Vector2(0, height_levels[3])
     _components.append(_component_3)
 
     _cloud_4.pool = MemoryDef.Pool.CLOUD
+    _cloud_4.position = Vector2(0, height_levels[4])
     _clouds.append(_cloud_4)
 
     _landform_4.pool = MemoryDef.Pool.LANDFORM_FRONT
+    _landform_4.position = Vector2(0, height_levels[4])
     _landforms.append(_landform_4)
 
     _component_4.pool = MemoryDef.Pool.COMPONENT_FRONT
+    _component_4.position = Vector2(0, height_levels[4])
     _components.append(_component_4)
 
     _cloud_5.pool = MemoryDef.Pool.CLOUD
+    _cloud_5.position = Vector2(0, height_levels[5])
     _clouds.append(_cloud_5)
 
     _landform_5.pool = MemoryDef.Pool.LANDFORM_FRONT
+    _landform_5.position = Vector2(0, height_levels[5])
     _landforms.append(_landform_5)
 
     _component_5.pool = MemoryDef.Pool.COMPONENT_FRONT
+    _component_5.position = Vector2(0, height_levels[5])
     _components.append(_component_5)
 
 
@@ -184,11 +268,11 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
     var main_tag_scene := tag_scenes[main_tag]
     
     
-    _sky.sky_main_color = main_tag_scene.sky_main_color
-    _sky.sky_star_texture = main_tag_scene.sky_star_texture
-    _sky.sky_star_color = main_tag_scene.sky_star_color
-    _sky.sky_effect_texture = main_tag_scene.sky_effect_texture
-    _sky.sky_effect_color = main_tag_scene.sky_effect_color
+    _sky.main_color = main_tag_scene.sky_main_color
+    _sky.star_texture = main_tag_scene.sky_star_texture
+    _sky.star_color = main_tag_scene.sky_star_color
+    _sky.effect_texture = main_tag_scene.sky_effect_texture
+    _sky.effect_color = main_tag_scene.sky_effect_color
 
 
     _poi.color = main_tag_scene.poi_color
@@ -196,9 +280,9 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
     _poi.weighted_tags = weighted_tags
 
 
-    _ground.ground_main_color = main_tag_scene.ground_main_color
-    _ground.ground_effect_texture = main_tag_scene.ground_effect_texture
-    _ground.ground_effect_color = main_tag_scene.ground_effect_color
+    _ground.main_color = main_tag_scene.ground_main_color
+    _ground.effect_texture = main_tag_scene.ground_effect_texture
+    _ground.effect_color = main_tag_scene.ground_effect_color
 
 
     var clouds_count = _clouds.size()
@@ -238,6 +322,11 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
 # 开始手动滚动的Parallax层
 func _start_manual_scroll(mode: int = 0) -> void: # mode: 0直接切换，1渐变切换
     _poi.start_manual_scroll(mode)
+    _start_non_poi_manual_scroll(mode)
+
+
+
+func _start_non_poi_manual_scroll(mode: int = 0) -> void:
     for cloud in _clouds:
         cloud.start_manual_scroll(mode)
     for landform in _landforms:
@@ -251,94 +340,7 @@ func _start_manual_scroll(mode: int = 0) -> void: # mode: 0直接切换，1渐�
 
 
 
-# func transition_to_world(target_world_id: int,
-# 	sub_world_id: int = -1, # 可选的子世界ID，默认为-1表示未指定
-# 	sub_world_weight: float = 0.0 # 可选的子世界权重，范围0.0-1.0，默认为0.0表示未指定
-# 	) -> void:
-    
-# 	if is_transitioning:
-# 		print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
-# 		return
-    
-# 	if target_world_id < 0 or target_world_id >= world_defs.size():
-# 		print("[WORLD ASSEMBLER] Invalid world_id: %d" % target_world_id)
-# 		return
 
-    
-# 	var target_world: WorldDef = world_defs[target_world_id]
-# 	var sub_world: WorldDef = world_defs[sub_world_id]
-
-
-    
-# 	if target_world_id != current_world_id: # 只有在切换到不同世界时才执行过渡动画
-        
-# 		world_changing.emit(target_world_id, transition_duration) # 发出世界切换信号
-# 		is_transitioning = true
-
-
-# 		# Parallex2D节点透明度开始渐变
-# 		var tween := create_tween()
-# 		tween.tween_property(_sky.get_child(1), "modulate:a", 0.0, transition_duration/2)
-# 		tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 0.0, transition_duration/2)
-# 		tween.parallel().tween_property(_land.get_child(1), "modulate:a", 0.0, transition_duration/2)
-# 		tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 0.0, transition_duration/2)
-
-# 		# 同时moon开始移出场景，新的moon移入场景
-# 		var moon_main = _moon.get_child(0)
-# 		var center: Vector2 = _moon.scroll_offset # 公转中心（Moon 本地）
-# 		var r: Vector2 = moon_main.position - center # 半径向量（Moon 本地）
-# 		var start_angle := r.angle()
-# 		var end_angle := start_angle - PI
-# 		var return_angle := start_angle
-# 		tween.parallel().tween_method(
-# 			func(a: float) -> void:
-# 				# 保持半径长度不变，绕 center 旋转
-# 				moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
-# 			start_angle,
-# 			end_angle,
-# 			transition_duration/2
-# 		).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_IN)
-        
-# 		# moon移出的同时，effect也刚好透明度变为0，moon和effect的texture切换 _defs_to_scene(target_world, 1)
-# 		tween.tween_callback(func() -> void: 
-# 			_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
-# 			_start_manual_scroll(1)
-# 			)
-        
-# 		# moon转回来，texture的颜色变化，effect透明度逐渐变为1
-# 		tween.tween_property(_sky.get_child(0), "modulate", target_world.sky_main_color, transition_duration/2)
-# 		tween.parallel().tween_property(_moon.get_child(0), "modulate", target_world.moon_main_color, transition_duration/2)
-# 		tween.parallel().tween_property(_land.get_child(0), "modulate", target_world.land_main_color, transition_duration/2)
-# 		tween.parallel().tween_property(_sea.get_child(0), "modulate", target_world.sea_main_color, transition_duration/2)
-# 		tween.parallel().tween_property(_sky.get_child(1), "modulate:a", 1.0, transition_duration/2)
-# 		tween.parallel().tween_property(_moon.get_child(1), "modulate:a", 1.0, transition_duration/2)
-# 		tween.parallel().tween_property(_land.get_child(1), "modulate:a", 1.0, transition_duration/2)
-# 		tween.parallel().tween_property(_sea.get_child(1), "modulate:a", 1.0, transition_duration/2)
-# 		tween.parallel().tween_method(
-# 			func(a: float) -> void:
-# 				# 保持半径长度不变，绕 center 旋转
-# 				moon_main.position = center + Vector2(cos(a), sin(a)) * r.length(),
-# 			end_angle,
-# 			return_angle,
-# 			transition_duration/2
-# 		).set_trans(Tween.TRANS_QUINT).set_ease(Tween.EASE_OUT)
-# 		# 同时非Parallex2D节点开始改变（新进素材，间隔，位置）
-# 		# tween.tween_callback(func() -> void:_start_manual_scroll(1)) # 渐变切换
-        
-# 		current_world_id = target_world_id
-
-# 		tween.tween_callback(func() -> void: 
-# 			world_changed.emit(current_world_id) # 发出世界切换信号，供其他系统（如角色状态机）响应
-# 			is_transitioning = false
-# 			)
-    
-# 	else: # 切换到同一世界但不同子世界，直接切换参数，不需要过渡动画
-# 		world_changing.emit(target_world_id, 0) # 发出世界切换信号
-# 		is_transitioning = true
-# 		_defs_to_scene(target_world, 1, sub_world, sub_world_weight) # 切换到新世界的参数（渐变切换）
-# 		# _start_manual_scroll(1)
-# 		world_changed.emit(current_world_id)
-# 		is_transitioning = false
 
 
 

@@ -6,8 +6,8 @@
 [resource]
 script = ExtResource("1_lw1tn")
 is_collectable = true
-id = "CP306"
 texture = ExtResource("2_lw1tn")
 tags = Array[int]([2, 0])
 pool = 6
+spawn_distance_ratio = 1.5
 metadata/_custom_type_script = "uid://v1a86tare2si"

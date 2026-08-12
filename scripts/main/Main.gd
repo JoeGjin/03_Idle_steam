@@ -134,9 +134,9 @@ func _on_mouse_controller_right_clicked():
 	# print("[MOUSE] Right clicked")
 	# character_animator._play_click_scale_anim()
 	ui_window.open_uiwindow()
-	if pet.get_node("letter").visible:
-		ui_root.play_receive_postcard()
-		pet.get_node("letter").hide()
+	# if pet.get_node("letter").visible:
+	# 	ui_root.play_receive_postcard()
+	# 	pet.get_node("letter").hide()
 
 
 func _on_pet_mouse_entered_body():
@@ -189,7 +189,7 @@ func _on_character_status_state_changed(new_state: CharacterStates.CharacterStat
 
 
 func _on_world_assembler_world_changing(new_tag_id: int, transition_duration: float) -> void:
-	print("[WORLD ASSEMBLER] World changing to Tag ID: %d, transition duration: %.2f seconds" % [new_tag_id, transition_duration])
+	print("[WORLD ASSEMBLER] World changing to Tag: %s, transition duration: %.2f seconds" % [Tags.Tag.find_key(new_tag_id), transition_duration])
 	if world_assembler.is_transitioning:
 		print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
 		return
@@ -199,27 +199,14 @@ func _on_world_assembler_world_changing(new_tag_id: int, transition_duration: fl
 	
 
 func _on_world_assembler_world_changed(new_tag_id: int) -> void:
-	print("[WORLD ASSEMBLER] World assembled/transitioned to ID: %d" % new_tag_id)
+	print("[WORLD ASSEMBLER] World assembled/transitioned to Tag: %s" % Tags.Tag.find_key(new_tag_id))
 	character_status.get_node("ChangeScene").start()
 	# scene_animator.setup_initial_speed()
 
 
 
-func _on_letter_sent(target_world_id: int, sub_world_id: int, sub_world_weight: float) -> void: # 临时动画
-	print("[LETTER] SENT")
-	character_status.start(CharacterStates.CharacterState.GAZING)
-	 # 临时动画 演示：钻石从天而降，心形出现
-	pet.get_node("diamond").drop_letter()
-	await get_tree().create_timer(5.0).timeout
-	pet.get_node("heart").show()
-	await get_tree().create_timer(2.0).timeout
-	pet.get_node("heart").hide()
-	if world_assembler.is_transitioning:
-		print("[LETTER] World is currently transitioning, skipping world switch")
-		return
-	else :
-		print("[LETTER] Initiating world switch to ID: %d" % target_world_id, " with sub-world ID: %d and weight: %.2f" % [sub_world_id, sub_world_weight])
-		world_assembler.transition_to_world(target_world_id, sub_world_id, sub_world_weight) # 切换世界
+# func _on_letter_sent(target_world_id: int, sub_world_id: int, sub_world_weight: float) -> void: # 临时动画
+# 	pass
 
 
 
@@ -258,4 +245,6 @@ func _update_memory_slots(chosen: String) -> void:
 
 func _on_change_scene_timeout() -> void:
 	print("[MAIN] Change scene timeout reached, switching world")
-	world_assembler.transition_to_world((world_assembler.current_world_id+1)%3) # 切换世界
+	var target_tag := ((world_assembler.current_tag_id + 1) % 3) as Tags.Tag
+	var target_tags: Dictionary[Tags.Tag, float] = {target_tag: 1.0}
+	world_assembler.transition_to_world(target_tags) # 切换世界

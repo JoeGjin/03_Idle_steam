@@ -6,7 +6,6 @@
 [resource]
 script = ExtResource("1_acw2x")
 is_collectable = true
-id = "CP304"
 texture = ExtResource("2_acw2x")
 tags = Array[int]([2, 0])
 pool = 6

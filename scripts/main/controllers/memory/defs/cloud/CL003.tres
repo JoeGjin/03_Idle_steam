@@ -5,8 +5,8 @@
 
 [resource]
 script = ExtResource("1_xxpdh")
-id = "CL003"
 texture = ExtResource("2_xxpdh")
 tags = Array[int]([0, 1, 3])
 pool = 1
+spawn_distance_ratio = 2.0
 metadata/_custom_type_script = "uid://v1a86tare2si"

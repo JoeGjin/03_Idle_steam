@@ -9,7 +9,7 @@ const MPARA_OBJECT_SCENE: PackedScene = preload("res://scenes/MparaObject.tscn")
 @onready var world_assembler: WorldAssembler = %WorldAssembler
 @onready var memory_controller : MemoryController = %MemoryController
 
-@export var spawn_position: Vector2 = Vector2(1920 + 400,0) # 生成位置，默认在屏幕右侧400像素
+@export var spawn_position: Vector2 = Vector2(1920 + 300,0) # 生成位置，默认在屏幕右侧400像素
 
 
 var pool: MemoryDef.Pool 
@@ -49,6 +49,7 @@ var _objects: Array[Sprite2D] = []
 var _is_scrolling: bool = true
 var _spawn_timer: Timer
 var _spawn_cooldown: float = 999.0
+var _fade_tween: Tween
 
 
 #非Parallex2D 手动滚动program开始运行（生成随机texture，移动，到尽头自动释放，间隔时长后重复）
@@ -69,181 +70,258 @@ var _spawn_cooldown: float = 999.0
 
 
 func start_manual_scroll(mode: int = 0) -> void: # mode: 0直接切换，1渐变切换
-	if mode == 0:
-		_free_all_children()
-	elif mode == 1:
-		_free_all_timer() # 先停止计时器，等现有的texture都移出场景后再释放
-		_free_distant_children(0.85)
+    if _fade_tween != null and _fade_tween.is_valid():
+        _fade_tween.kill()
+    _fade_tween = null
+    
+    _free_all_timer() # 先停止计时器
+    
+    match mode:
+        0:
+            _free_all_children()
+        1:
+            _free_distant_children(0.85)
 
-	_initialize_timer()
+    _initialize_timer()
 
-	var next_memory = _choose_memory()
-	_spawn_object(next_memory)
-	_update_spawn_timer(next_memory)
-	
-	_spawn_timer.start()
-	_is_scrolling = true
+    var next_memory = _choose_memory()
+    _spawn_object(next_memory)
+    _update_spawn_timer(next_memory)
+    
+    _spawn_timer.start()
+    _is_scrolling = true
+
+
+
+func fade_out_children(duration: float) -> void:
+    if _fade_tween != null and _fade_tween.is_valid():
+        _fade_tween.kill()
+    _fade_tween = null
+
+    # POI 退场期间不再生成新对象，但已有对象继续向前滚动。
+    _free_all_timer()
+
+    var children_to_fade: Array[Mpara_Object] = []
+    for child in get_children():
+        if child is Mpara_Object:
+            children_to_fade.append(child)
+
+    if children_to_fade.is_empty():
+        return
+
+    var safe_duration := maxf(duration, 0.0)
+    if is_zero_approx(safe_duration):
+        for child in children_to_fade:
+            child.modulate.a = 0.0
+        return
+
+    _fade_tween = create_tween().set_parallel(true)
+    for child in children_to_fade:
+        _fade_tween.tween_property(child, "modulate:a", 0.0, safe_duration)
 
 
 
 func stop_manual_scroll() -> void:
-	_is_scrolling = false
-	_spawn_timer.stop()
+    _is_scrolling = false
+    _spawn_timer.stop()
 
 
 
 func resume_manual_scroll() -> void:
-	if not _is_scrolling:
-		_spawn_timer.start()
-		_is_scrolling = true
+    if not _is_scrolling:
+        _spawn_timer.start()
+        _is_scrolling = true
 
 
 
 func _process(delta: float) -> void:
-	# 移动所有子节点
-	_move_textures(delta)
+    # 移动所有子节点
+    _move_textures(delta)
 
 
 
 func _move_textures(delta: float) -> void:
-	# 移动所有子节点
-	if _is_scrolling:
-		for object in _objects:
-			_move_and_release(object, delta, _objects)
+    # 移动所有子节点
+    if _is_scrolling:
+        for object in _objects:
+            _move_and_release(object, delta, _objects)
 
 
 
 func _move_and_release(object: Sprite2D, delta: float, object_list: Array[Sprite2D]) -> void:
-	object.position += scroll_speed * delta
-	# 如果从场景左侧出去，自动释放
-	if object.position.x < -4000:
-		object_list.erase(object)
-		object.queue_free()
+    object.position += scroll_speed * delta
+    # 如果从场景左侧出去，自动释放
+    if object.position.x < -4000:
+        object_list.erase(object)
+        object.queue_free()
 
 
 
 func _initialize_timer() -> void:
-	# 初始化计时器
-	_spawn_timer = Timer.new()
-	_spawn_timer.wait_time = _spawn_cooldown
-	_spawn_timer.one_shot = false
-	_spawn_timer.autostart = false
-	add_child(_spawn_timer)
-	_spawn_timer.connect("timeout", Callable(self, "_on_spawn_timer_timeout"))
+    # 初始化计时器
+    _spawn_timer = Timer.new()
+    _spawn_timer.wait_time = _spawn_cooldown
+    _spawn_timer.one_shot = false
+    _spawn_timer.autostart = false
+    add_child(_spawn_timer)
+    _spawn_timer.connect("timeout", Callable(self, "_on_spawn_timer_timeout"))
 
 
 
 func _free_all_children() -> void:
-	for child in get_children():
-		if child is Mpara_Object:
-			child.queue_free()
-	_objects.clear()
-	# _objects_0.clear()
+    for child in get_children():
+        if child is Mpara_Object:
+            child.queue_free()
+    _objects.clear()
+    # _objects_0.clear()
 
 
 
 func _free_all_timer() -> void:
-	for timer in get_children():
-		if timer is Timer:
-			timer.stop()
-			timer.queue_free()
+    for timer in get_children():
+        if timer is Timer:
+            timer.stop()
+            timer.queue_free()
 
 
 
 func _free_distant_children(distance_modulus: float) -> void:
-	for child in get_children():
-		if child is Mpara_Object:
-			if child in _objects:
-				if child.position.x > distance_modulus * spawn_position.x:
-					_objects.erase(child)
-					child.queue_free()
+    for child in get_children():
+        if child is Mpara_Object:
+            if child in _objects:
+                if child.position.x > distance_modulus * spawn_position.x:
+                    _objects.erase(child)
+                    child.queue_free()
 
 
 
 func _choose_memory() -> MemoryDef:
-	# 根据 WorldAssembler 分配的的 weighted_tags 设定各tag素材生成的权重
-	# 然后从 MemoryController 的 memories_by_tag 中选择对应的tag & pool中随机选择MemoryDef,并返还
-	var available_tags: Array[Tags.Tag] = []
-	var total_weight: float = 0.0
+    # 根据 WorldAssembler 分配的的 weighted_tags 设定各tag素材生成的权重
+    # 然后从 MemoryController 的 memories_by_tag 中选择对应的tag & pool中随机选择MemoryDef,并返还
+    var available_tags: Array[Tags.Tag] = []
+    var total_weight: float = 0.0
 
-	for tag: Tags.Tag in weighted_tags:
-		var weight: float = maxf(weighted_tags[tag], 0.0)
-		if is_zero_approx(weight):
-			continue
-		if not memory_controller.memories_by_tag.has(tag):
-			continue
+    for tag: Tags.Tag in weighted_tags:
+        var weight: float = maxf(weighted_tags[tag], 0.0)
+        if is_zero_approx(weight):
+            continue
+        if not memory_controller.memories_by_tag.has(tag):
+            continue
 
-		var memory_pools: MemoryController.MemoryPools = memory_controller.memories_by_tag[tag]
-		if not memory_pools.by_pool.has(pool):
-			continue
+        var memory_pools: MemoryController.MemoryPools = memory_controller.memories_by_tag[tag]
+        if not memory_pools.by_pool.has(pool):
+            continue
 
-		var memory_list: MemoryController.MemoryList = memory_pools.by_pool[pool]
-		if memory_list.memories.is_empty():
-			continue
+        var memory_list: MemoryController.MemoryList = memory_pools.by_pool[pool]
+        if memory_list.memories.is_empty():
+            continue
 
-		available_tags.append(tag)
-		total_weight += weight
+        available_tags.append(tag)
+        total_weight += weight
 
-	if available_tags.is_empty():
-		push_warning("[MANUAL PARALLAX] 当前标签和 pool 没有可用的 MemoryDef：%s" % name)
-		return null
+    if available_tags.is_empty():
+        push_warning("[MANUAL PARALLAX] 当前标签和 pool 没有可用的 MemoryDef：%s" % name)
+        return null
 
-	# 用“轮盘赌”方式，按照标签权重随机选出一个标签
-	var selected_tag: Tags.Tag = available_tags.back()
-	var random_weight := randf() * total_weight
-	for tag: Tags.Tag in available_tags:
-		random_weight -= maxf(weighted_tags[tag], 0.0)
-		if random_weight <= 0.0:
-			selected_tag = tag
-			break
+    # 1.加权随机选出 target_tag
+    # 2. 如果 target_tag == main_tag：按 tags 中的位置从前到后查找 target_tag
+    # 3. 否则：先找 [target_tag, main_tag] 的组合，再找 tags[0] == target_tag 的任意组合，最后按 tags 中的位置从第二位开始，依次查找 target_tag
+    var selected_tag: Tags.Tag = available_tags.back()
+    var random_weight := randf() * total_weight
+    for tag: Tags.Tag in available_tags:
+        random_weight -= maxf(weighted_tags[tag], 0.0)
+        if random_weight <= 0.0:
+            selected_tag = tag
+            break
 
-	var selected_pools: MemoryController.MemoryPools = memory_controller.memories_by_tag[selected_tag]
-	var selected_list: MemoryController.MemoryList = selected_pools.by_pool[pool]
-	return selected_list.memories.pick_random()
+    var main_tag: Tags.Tag = weighted_tags.keys()[0]
+    var selected_pools: MemoryController.MemoryPools = memory_controller.memories_by_tag[selected_tag]
+    var selected_list: MemoryController.MemoryList = selected_pools.by_pool[pool]
+    var candidates: Array[MemoryDef] = []
+    var max_tag_count: int = 0
+    for memory: MemoryDef in selected_list.memories:
+        max_tag_count = maxi(max_tag_count, memory.tags.size())
+
+    if selected_tag == main_tag:
+        # 主标签被选中时，优先选择主标签顺位更靠前的 Memory。
+        for tag_index: int in range(max_tag_count):
+            candidates.clear()
+            for memory: MemoryDef in selected_list.memories:
+                if tag_index < memory.tags.size() and memory.tags[tag_index] == selected_tag:
+                    candidates.append(memory)
+            if not candidates.is_empty():
+                return candidates.pick_random()
+    else:
+        # 副标签被选中时，最优先匹配 [副标签, 主标签] 的组合。
+        for memory: MemoryDef in selected_list.memories:
+            if memory.tags.size() >= 2 and memory.tags[0] == selected_tag and memory.tags[1] == main_tag:
+                candidates.append(memory)
+        if not candidates.is_empty():
+            return candidates.pick_random()
+
+        # 没有最优组合时，接受第一顺位为副标签的任意 Memory。
+        candidates.clear()
+        for memory: MemoryDef in selected_list.memories:
+            if not memory.tags.is_empty() and memory.tags[0] == selected_tag:
+                candidates.append(memory)
+        if not candidates.is_empty():
+            return candidates.pick_random()
+
+        # 最后从第二顺位开始，依次寻找副标签，越靠前优先级越高。
+        for tag_index: int in range(1, max_tag_count):
+            candidates.clear()
+            for memory: MemoryDef in selected_list.memories:
+                if tag_index < memory.tags.size() and memory.tags[tag_index] == selected_tag:
+                    candidates.append(memory)
+            if not candidates.is_empty():
+                return candidates.pick_random()
+
+    push_warning("[MANUAL PARALLAX] 已选标签和 pool 没有符合顺位规则的 MemoryDef：%s" % name)
+    return null
 
 
 
 func _spawn_object(memory: MemoryDef = null) -> void:
-	if memory == null:
-		return
-	# 根据Memory Def 生成 Mpara_Object，调用 initialize(memory) 初始化
-	# spawn在 spawn_position 位置
-	var object := MPARA_OBJECT_SCENE.instantiate() as Mpara_Object
-	if object == null:
-		push_error("[MANUAL PARALLAX] 无法实例化 MparaObject 场景")
-		return
+    if memory == null:
+        return
+    # 根据Memory Def 生成 Mpara_Object，调用 initialize(memory) 初始化
+    # spawn在 spawn_position 位置
+    var object := MPARA_OBJECT_SCENE.instantiate() as Mpara_Object
+    if object == null:
+        push_error("[MANUAL PARALLAX] 无法实例化 MparaObject 场景")
+        return
 
-	object.initialize(memory)
-	object.modulate = color
-	add_child(object)
-	object.position = spawn_position
-	_objects.append(object)
+    object.initialize(memory)
+    object.modulate = color
+    add_child(object)
+    object.position = spawn_position
+    _objects.append(object)
 
 
 
 func _update_spawn_timer(memory: MemoryDef = null) -> void:
-	# 根据 memory 的 spawn_distance_ratio * texture宽度算出距离下个object的距离
-	# 然后根据该ManualParallax的 scroll speed，算出下一个object spawn的 cooldown
-	if memory == null or memory.texture == null:
-		return
+    # 根据 memory 的 spawn_distance_ratio * texture宽度算出距离下个object的距离
+    # 然后根据该ManualParallax的 scroll speed，算出下一个object spawn的 cooldown
+    if memory == null or memory.texture == null:
+        return
 
-	var horizontal_speed := absf(scroll_speed.x)
-	if is_zero_approx(horizontal_speed):
-		push_warning("[MANUAL PARALLAX] 水平滚动速度为 0，无法计算生成间隔：%s" % name)
-		return
+    var horizontal_speed := absf(scroll_speed.x)
+    if is_zero_approx(horizontal_speed):
+        push_warning("[MANUAL PARALLAX] 水平滚动速度为 0，无法计算生成间隔：%s" % name)
+        return
 
-	var spawn_distance := maxf(memory.spawn_distance_ratio, 0.0) * memory.texture.get_width()
-	_spawn_cooldown = maxf(spawn_distance / horizontal_speed, 0.001)
-	if is_instance_valid(_spawn_timer):
-		_spawn_timer.wait_time = _spawn_cooldown
+    var spawn_distance := maxf(memory.spawn_distance_ratio, 0.0) * memory.texture.get_width()
+    _spawn_cooldown = maxf(spawn_distance / horizontal_speed, 0.001)
+    if is_instance_valid(_spawn_timer):
+        _spawn_timer.wait_time = _spawn_cooldown
 
 
 
 
 func _on_spawn_timer_timeout() -> void:
-	var next_memory := _choose_memory()
-	_spawn_object(next_memory)
-	_update_spawn_timer(next_memory)
+    var next_memory := _choose_memory()
+    _spawn_object(next_memory)
+    _update_spawn_timer(next_memory)
 
 
 
@@ -268,7 +346,7 @@ func _on_spawn_timer_timeout() -> void:
 
 
 # func _spawn_texture(texture_pool: Array[Texture2D]) -> void:
-	
+    
 # 	if texture_pool == textures_0 or texture_pool == texture_0_sub:
 # 			if randi() % 4 == 0:
 # 				return # _0 25%概率不生成，增加随机性

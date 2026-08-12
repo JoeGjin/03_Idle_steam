@@ -8,4 +8,5 @@ script = ExtResource("1_p3cag")
 is_collectable = true
 texture = ExtResource("2_x756l")
 tags = Array[int]([5, 2, 0])
+spawn_distance_ratio = 3.0
 metadata/_custom_type_script = "uid://v1a86tare2si"
