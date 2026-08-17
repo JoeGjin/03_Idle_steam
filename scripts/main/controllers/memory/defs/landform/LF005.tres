@@ -8,4 +8,5 @@ script = ExtResource("1_8rtlx")
 texture = ExtResource("2_8rtlx")
 tags = Array[int]([0, 3, 4])
 pool = 2
+spawn_distance_ratio = 0.5
 metadata/_custom_type_script = "uid://v1a86tare2si"

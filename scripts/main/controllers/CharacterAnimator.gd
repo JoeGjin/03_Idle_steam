@@ -3,13 +3,20 @@
 extends Node
 class_name CharacterAnimator
 
-@export var pet: Node2D
+@onready var pet: Node2D = %Pet
 @export var shrink_scale := 0.75
 @export var shrink_duration := 0.08
 @export var expand_duration := 0.10
 @export var base_scale: Vector2 = Vector2.ONE
 
 var _click_tween: Tween
+
+
+
+func _ready() -> void:
+    base_scale = pet.scale
+
+
 
 func _play_click_scale_anim() -> void:
     if _click_tween:

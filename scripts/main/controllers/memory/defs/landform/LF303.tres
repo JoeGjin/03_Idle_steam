@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_hpmt6")
 texture = ExtResource("2_hpmt6")
-tags = Array[int]([0, 3, 4, 1, 5])
+tags = Array[int]([0, 3, 4, 1, 5, 2])
 pool = 3
+spawn_distance_ratio = 0.5
 metadata/_custom_type_script = "uid://v1a86tare2si"

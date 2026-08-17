@@ -24,12 +24,17 @@ func _ready() -> void:
 
     get_window().content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
 
+    # AllOutput 会在完整场景 ready 后裁剪原生窗口；缩放基准必须等待裁剪完成。
+    while all_output.has_method("is_window_fit_ready") and not all_output.call("is_window_fit_ready"):
+        await get_tree().process_frame
+
     _base_window_size = get_window().size
 
-    # 关键：根 Control 不要参与 scale
-    all_output.scale = Vector2.ONE
-    all_output.position = Vector2.ZERO
-    all_output.size = Vector2(_base_window_size)
+    # 兼容未启用窗口裁剪的其他场景。
+    if not all_output.has_method("apply_window_scale"):
+        all_output.scale = Vector2.ONE
+        all_output.position = Vector2.ZERO
+        all_output.size = Vector2(_base_window_size)
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -59,6 +64,10 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func _apply_window_scale(scale_value: float) -> void:
+    if all_output.has_method("apply_window_scale"):
+        all_output.call("apply_window_scale", scale_value)
+        return
+
     var window := get_window()
 
     var new_window_size := Vector2i(

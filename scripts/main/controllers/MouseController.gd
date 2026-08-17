@@ -5,7 +5,7 @@ class_name MouseController
 
 enum DragState { IDLE, PENDING, DRAGGING } # 拖拽状态枚举
 
-@export var pet: Node2D
+@onready var pet: Node2D = %Pet
 const DRAG_THRESHOLD := 6.0
 
 var _state := DragState.IDLE

@@ -146,18 +146,18 @@ height = 2000.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
-shader_parameter/mask_enable = 0.9499999787656
-shader_parameter/center_u = 0.4470000212325
-shader_parameter/center_v = 0.48400002299
-shader_parameter/radius_u = 0.3200000152
+shader_parameter/mask_enable = 0.999999977648
+shader_parameter/center_u = 0.4350000206625
+shader_parameter/center_v = 0.494000023465
+shader_parameter/radius_u = 0.3010000142975
 shader_parameter/radius_v = 0.4610000218975
-shader_parameter/feather_px = 15.30000022798836
-shader_parameter/smoke_enable = 0.70999998413008
-shader_parameter/smoke_band_px = 38.20000056922584
-shader_parameter/smoke_amp_px = 69.20000103116304
-shader_parameter/smoke_scale = 18.20000025630064
-shader_parameter/smoke_speed_x = 0.33800011105499994
-shader_parameter/smoke_speed_y = -0.49199992836999984
+shader_parameter/feather_px = 16.80000025034016
+shader_parameter/smoke_enable = 0.67999998480064
+shader_parameter/smoke_band_px = 103.60000154376432
+shader_parameter/smoke_amp_px = 73.60000109672832
+shader_parameter/smoke_scale = 22.70000032335604
+shader_parameter/smoke_speed_x = 0.08800009917999985
+shader_parameter/smoke_speed_y = -2.0
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_8t8ul"]
 viewport_path = NodePath("WorldView")
@@ -402,161 +402,166 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 50
 text = "Add random item"
 
-[node name="WorldRoot" type="Node2D" parent="." unique_id=384608177]
+[node name="WorldView" type="SubViewport" parent="." unique_id=742230146]
+unique_name_in_owner = true
+transparent_bg = true
+size = Vector2i(1920, 1080)
+
+[node name="WorldRoot" type="Node2D" parent="WorldView" unique_id=384608177]
 unique_name_in_owner = true
 script = ExtResource("6_lhr70")
 lod = 1.5
 
-[node name="01_Sky" type="CanvasLayer" parent="WorldRoot" unique_id=100414531]
+[node name="01_Sky" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=100414531]
 
-[node name="Sky" type="Parallax2D" parent="WorldRoot/01_Sky" unique_id=747805663]
+[node name="Sky" type="Parallax2D" parent="WorldView/WorldRoot/01_Sky" unique_id=747805663]
 unique_name_in_owner = true
 scroll_offset = Vector2(0, 540)
 repeat_size = Vector2(4920, 0)
-autoscroll = Vector2(-5, 0)
+autoscroll = Vector2(-20, 0)
 script = ExtResource("31_ugmlg")
 
-[node name="Main" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=1813847154]
+[node name="Main" type="Sprite2D" parent="WorldView/WorldRoot/01_Sky/Sky" unique_id=1813847154]
 modulate = Color(0.78, 0.9486667, 1, 1)
 self_modulate = Color(1.353256, 1.353256, 1.353256, 1)
 texture = ExtResource("32_a3hxr")
 
-[node name="Star" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=553459747]
+[node name="Star" type="Sprite2D" parent="WorldView/WorldRoot/01_Sky/Sky" unique_id=553459747]
 
-[node name="Effect" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=905714890]
+[node name="Effect" type="Sprite2D" parent="WorldView/WorldRoot/01_Sky/Sky" unique_id=905714890]
 modulate = Color(0.008999992, 0.10115006, 0.3, 0.6862745)
 material = SubResource("CanvasItemMaterial_gcaob")
 
-[node name="Blur" parent="WorldRoot/01_Sky" unique_id=1089266835 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/01_Sky" unique_id=1089266835 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="02_POI" type="CanvasLayer" parent="WorldRoot" unique_id=499590116]
+[node name="02_POI" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=499590116]
 layer = 2
 
-[node name="POI" type="Node2D" parent="WorldRoot/02_POI" unique_id=293010691]
+[node name="POI" type="Node2D" parent="WorldView/WorldRoot/02_POI" unique_id=293010691]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="MparaObject2" parent="WorldRoot/02_POI/POI" unique_id=1196637194 instance=ExtResource("39_vwcyu")]
+[node name="MparaObject2" parent="WorldView/WorldRoot/02_POI/POI" unique_id=1196637194 instance=ExtResource("39_vwcyu")]
 position = Vector2(2644, 0)
 texture = ExtResource("37_e2bht")
 
-[node name="Blur" parent="WorldRoot/02_POI" unique_id=1929752123 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/02_POI" unique_id=1929752123 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="03_Ground" type="CanvasLayer" parent="WorldRoot" unique_id=1262239274]
+[node name="03_Ground" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1262239274]
 layer = 3
 
-[node name="Ground" type="Parallax2D" parent="WorldRoot/03_Ground" unique_id=1013858590]
+[node name="Ground" type="Parallax2D" parent="WorldView/WorldRoot/03_Ground" unique_id=1013858590]
 unique_name_in_owner = true
 scroll_offset = Vector2(0, 540)
 repeat_size = Vector2(4920, 0)
-autoscroll = Vector2(-40, 0)
+autoscroll = Vector2(-80, 0)
 script = ExtResource("37_qd1pt")
 
-[node name="Main" type="Sprite2D" parent="WorldRoot/03_Ground/Ground" unique_id=1425775975]
+[node name="Main" type="Sprite2D" parent="WorldView/WorldRoot/03_Ground/Ground" unique_id=1425775975]
 modulate = Color(1, 0.8, 0.6, 1)
 texture = ExtResource("37_a3hxr")
 
-[node name="Effect" type="Sprite2D" parent="WorldRoot/03_Ground/Ground" unique_id=569461966]
+[node name="Effect" type="Sprite2D" parent="WorldView/WorldRoot/03_Ground/Ground" unique_id=569461966]
 
-[node name="Blur" parent="WorldRoot/03_Ground" unique_id=207330368 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/03_Ground" unique_id=207330368 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="04_Cloud_1" type="CanvasLayer" parent="WorldRoot" unique_id=2118232127]
+[node name="04_Cloud_1" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=2118232127]
 layer = 4
 
-[node name="Cloud_1" type="Node2D" parent="WorldRoot/04_Cloud_1" unique_id=236166638]
+[node name="Cloud_1" type="Node2D" parent="WorldView/WorldRoot/04_Cloud_1" unique_id=236166638]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="Blur" parent="WorldRoot/04_Cloud_1" unique_id=751263300 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/04_Cloud_1" unique_id=751263300 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="05_Landform_1" type="CanvasLayer" parent="WorldRoot" unique_id=947855395]
+[node name="05_Landform_1" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=947855395]
 layer = 5
 
-[node name="Landform_1" type="Node2D" parent="WorldRoot/05_Landform_1" unique_id=1069212001]
+[node name="Landform_1" type="Node2D" parent="WorldView/WorldRoot/05_Landform_1" unique_id=1069212001]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="Blur" parent="WorldRoot/05_Landform_1" unique_id=924324709 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/05_Landform_1" unique_id=924324709 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="06_Component_1" type="CanvasLayer" parent="WorldRoot" unique_id=87896012]
+[node name="06_Component_1" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=87896012]
 layer = 6
 
-[node name="Component_1" type="Node2D" parent="WorldRoot/06_Component_1" unique_id=183900339]
+[node name="Component_1" type="Node2D" parent="WorldView/WorldRoot/06_Component_1" unique_id=183900339]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="Blur" parent="WorldRoot/06_Component_1" unique_id=12375382 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/06_Component_1" unique_id=12375382 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="07_Cloud_2" type="CanvasLayer" parent="WorldRoot" unique_id=1986757641]
+[node name="07_Cloud_2" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1986757641]
 layer = 7
 
-[node name="Cloud_2" type="Node2D" parent="WorldRoot/07_Cloud_2" unique_id=473401516]
+[node name="Cloud_2" type="Node2D" parent="WorldView/WorldRoot/07_Cloud_2" unique_id=473401516]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="Blur" parent="WorldRoot/07_Cloud_2" unique_id=1515022845 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/07_Cloud_2" unique_id=1515022845 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="08_Landform_2" type="CanvasLayer" parent="WorldRoot" unique_id=1569384005]
+[node name="08_Landform_2" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1569384005]
 layer = 8
 
-[node name="Landform_2" type="Node2D" parent="WorldRoot/08_Landform_2" unique_id=2059314531]
+[node name="Landform_2" type="Node2D" parent="WorldView/WorldRoot/08_Landform_2" unique_id=2059314531]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="Blur" parent="WorldRoot/08_Landform_2" unique_id=1685530619 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/08_Landform_2" unique_id=1685530619 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="09_Component_2" type="CanvasLayer" parent="WorldRoot" unique_id=1694294774]
+[node name="09_Component_2" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1694294774]
 layer = 9
 
-[node name="Component_2" type="Node2D" parent="WorldRoot/09_Component_2" unique_id=1513370776]
+[node name="Component_2" type="Node2D" parent="WorldView/WorldRoot/09_Component_2" unique_id=1513370776]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="Blur" parent="WorldRoot/09_Component_2" unique_id=1328890254 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/09_Component_2" unique_id=1328890254 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="10_Cloud_3" type="CanvasLayer" parent="WorldRoot" unique_id=414208172]
+[node name="10_Cloud_3" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=414208172]
 layer = 10
 
-[node name="Cloud_3" type="Node2D" parent="WorldRoot/10_Cloud_3" unique_id=984731150]
+[node name="Cloud_3" type="Node2D" parent="WorldView/WorldRoot/10_Cloud_3" unique_id=984731150]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="Blur" parent="WorldRoot/10_Cloud_3" unique_id=608057882 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/10_Cloud_3" unique_id=608057882 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="11_Landform_3" type="CanvasLayer" parent="WorldRoot" unique_id=137937696]
+[node name="11_Landform_3" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=137937696]
 layer = 11
 
-[node name="Landform_3" type="Node2D" parent="WorldRoot/11_Landform_3" unique_id=1041735200]
+[node name="Landform_3" type="Node2D" parent="WorldView/WorldRoot/11_Landform_3" unique_id=1041735200]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="Blur" parent="WorldRoot/11_Landform_3" unique_id=225027240 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/11_Landform_3" unique_id=225027240 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="12_Component_3" type="CanvasLayer" parent="WorldRoot" unique_id=1375529131]
+[node name="12_Component_3" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1375529131]
 layer = 12
 
-[node name="Component_3" type="Node2D" parent="WorldRoot/12_Component_3" unique_id=513690386]
+[node name="Component_3" type="Node2D" parent="WorldView/WorldRoot/12_Component_3" unique_id=513690386]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="Blur" parent="WorldRoot/12_Component_3" unique_id=1536631059 instance=ExtResource("37_csfbn")]
+[node name="Blur" parent="WorldView/WorldRoot/12_Component_3" unique_id=1536631059 instance=ExtResource("37_csfbn")]
 visible = true
 
-[node name="20_Pet" type="CanvasLayer" parent="WorldRoot" unique_id=367772465]
+[node name="20_Pet" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=367772465]
 layer = 20
 
-[node name="Pet" type="AnimatedSprite2D" parent="WorldRoot/20_Pet" unique_id=390694917]
+[node name="Pet" type="AnimatedSprite2D" parent="WorldView/WorldRoot/20_Pet" unique_id=390694917]
 unique_name_in_owner = true
 position = Vector2(687, 745)
 scale = Vector2(0.25, 0.25)
@@ -565,64 +570,59 @@ autoplay = "default"
 frame_progress = 0.8828364
 script = ExtResource("30_v0vrg")
 
-[node name="body" type="Area2D" parent="WorldRoot/20_Pet/Pet" unique_id=815688141]
+[node name="body" type="Area2D" parent="WorldView/WorldRoot/20_Pet/Pet" unique_id=815688141]
 visible = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldRoot/20_Pet/Pet/body" unique_id=952050975]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldView/WorldRoot/20_Pet/Pet/body" unique_id=952050975]
 position = Vector2(0, -160)
 shape = SubResource("CapsuleShape2D_gsxep")
 
-[node name="21_Cloud_4" type="CanvasLayer" parent="WorldRoot" unique_id=247601466]
+[node name="21_Cloud_4" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=247601466]
 layer = 21
 
-[node name="Cloud_4" type="Node2D" parent="WorldRoot/21_Cloud_4" unique_id=2075061201]
+[node name="Cloud_4" type="Node2D" parent="WorldView/WorldRoot/21_Cloud_4" unique_id=2075061201]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="22_Landform_4" type="CanvasLayer" parent="WorldRoot" unique_id=2048764701]
+[node name="22_Landform_4" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=2048764701]
 layer = 22
 
-[node name="Landform_4" type="Node2D" parent="WorldRoot/22_Landform_4" unique_id=101058712]
+[node name="Landform_4" type="Node2D" parent="WorldView/WorldRoot/22_Landform_4" unique_id=101058712]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="23_Component_4" type="CanvasLayer" parent="WorldRoot" unique_id=177813838]
+[node name="23_Component_4" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=177813838]
 layer = 23
 
-[node name="Component_4" type="Node2D" parent="WorldRoot/23_Component_4" unique_id=731749032]
+[node name="Component_4" type="Node2D" parent="WorldView/WorldRoot/23_Component_4" unique_id=731749032]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="24_Cloud_5" type="CanvasLayer" parent="WorldRoot" unique_id=1416639677]
+[node name="24_Cloud_5" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1416639677]
 layer = 24
 
-[node name="Cloud_5" type="Node2D" parent="WorldRoot/24_Cloud_5" unique_id=1498339407]
+[node name="Cloud_5" type="Node2D" parent="WorldView/WorldRoot/24_Cloud_5" unique_id=1498339407]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="25_Landform_5" type="CanvasLayer" parent="WorldRoot" unique_id=1640668445]
+[node name="25_Landform_5" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1640668445]
 layer = 25
 
-[node name="Landform_5" type="Node2D" parent="WorldRoot/25_Landform_5" unique_id=1665323148]
+[node name="Landform_5" type="Node2D" parent="WorldView/WorldRoot/25_Landform_5" unique_id=1665323148]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="26_Component_5" type="CanvasLayer" parent="WorldRoot" unique_id=620013528]
+[node name="26_Component_5" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=620013528]
 layer = 26
 
-[node name="Component_5" type="Node2D" parent="WorldRoot/26_Component_5" unique_id=1203351086]
+[node name="Component_5" type="Node2D" parent="WorldView/WorldRoot/26_Component_5" unique_id=1203351086]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
-[node name="WorldPlayer" type="AnimationPlayer" parent="WorldRoot" unique_id=1986727739]
+[node name="WorldPlayer" type="AnimationPlayer" parent="WorldView/WorldRoot" unique_id=1986727739]
 unique_name_in_owner = true
 root_node = NodePath("")
 libraries/ = SubResource("AnimationLibrary_xa025")
-
-[node name="WorldView" type="SubViewport" parent="." unique_id=742230146]
-unique_name_in_owner = true
-transparent_bg = true
-size = Vector2i(1920, 1080)
 
 [node name="DebugWorld" type="Node2D" parent="WorldView" unique_id=121059888]
 unique_name_in_owner = true
@@ -722,6 +722,6 @@ all_output = NodePath("../..")
 [connection signal="timeout" from="Controllers/CharacterStatus/ChangeScene" to="." method="_on_change_scene_timeout"]
 [connection signal="postcard_showed" from="UIWindow/UIRoot/PostcardShowing" to="UIWindow/UIRoot" method="_on_postcard_showing_postcard_showed"]
 [connection signal="pressed" from="UIWindow/DebugUI/VBoxContainer/AddRandomItem" to="UIWindow/DebugUI" method="_on_add_random_item_pressed"]
-[connection signal="mouse_entered" from="WorldRoot/20_Pet/Pet/body" to="WorldRoot/20_Pet/Pet" method="_on_body_mouse_entered"]
-[connection signal="mouse_exited" from="WorldRoot/20_Pet/Pet/body" to="WorldRoot/20_Pet/Pet" method="_on_body_mouse_exited"]
+[connection signal="mouse_entered" from="WorldView/WorldRoot/20_Pet/Pet/body" to="WorldView/WorldRoot/20_Pet/Pet" method="_on_body_mouse_entered"]
+[connection signal="mouse_exited" from="WorldView/WorldRoot/20_Pet/Pet/body" to="WorldView/WorldRoot/20_Pet/Pet" method="_on_body_mouse_exited"]
 [connection signal="pressed" from="AllOutput/FloatButtons/Exit" to="." method="_on_exit_pressed"]

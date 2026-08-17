@@ -43,14 +43,10 @@ func _ready():
 	# 初始设置缩放
 	_draw_scale_setup()
 
-	# 交叉分配目标
-	_cross_assign_targets()
 
 	# 连接信号（集中管理）
 	_connect_signals()
 
-	# 初始更新window裁剪区域
-	# window_controller.update_crop_to_frame()
 
 	# 初始化世界组装器
 	world_assembler.assemble_world({2 as Tags.Tag: 1.0}) 
@@ -71,30 +67,10 @@ func _scene_into_subviewport():
 
 
 
-func _cross_assign_targets():
-	# 将 pet 赋值给各 controller 的 target
-	# window_controller.pet = pet
-	mouse_controller.pet = pet
-	# character_status.pet = pet
-	character_animator.pet = pet
-
-	# 将 frame 和 world_root 赋值给 window_controller
-	# window_controller.world_root = world_root
-	# window_controller.frame = frame
-
-	# 设置pet base scale
-	character_animator.base_scale = pet.scale
-
-	# 将 world_root 赋值给 world_assembler 和 scene_animator
-	world_assembler.world_root = world_root
 
 
 
 func _draw_scale_setup():
-	# 可选：根据需要调整 world_root 的缩放级别
-	# world_root.scale = DRAW_SCALE
-	# debug_world.scale = DRAW_SCALE
-	# world_output.scale = draw_scale
 	get_window().size *= draw_scale
 
 
@@ -127,16 +103,12 @@ func _on_mouse_controller_drag_ended():
 
 func _on_mouse_controller_left_clicked():
 	#print("[MOUSE] Left clicked")
-	# character_animator._play_click_scale_anim()
+
 	pass
 
 func _on_mouse_controller_right_clicked():
 	# print("[MOUSE] Right clicked")
-	# character_animator._play_click_scale_anim()
 	ui_window.open_uiwindow()
-	# if pet.get_node("letter").visible:
-	# 	ui_root.play_receive_postcard()
-	# 	pet.get_node("letter").hide()
 
 
 func _on_pet_mouse_entered_body():
@@ -195,18 +167,13 @@ func _on_world_assembler_world_changing(new_tag_id: int, transition_duration: fl
 		return
 	else:
 		audio_controller.ambient_transition(new_tag_id, transition_duration)
-	# scene_animator.play_world_transition(transition_duration)
+
 	
 
 func _on_world_assembler_world_changed(new_tag_id: int) -> void:
 	print("[WORLD ASSEMBLER] World assembled/transitioned to Tag: %s" % Tags.Tag.find_key(new_tag_id))
 	character_status.get_node("ChangeScene").start()
-	# scene_animator.setup_initial_speed()
 
-
-
-# func _on_letter_sent(target_world_id: int, sub_world_id: int, sub_world_weight: float) -> void: # 临时动画
-# 	pass
 
 
 

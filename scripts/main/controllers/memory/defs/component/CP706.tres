@@ -9,5 +9,5 @@ is_collectable = true
 texture = ExtResource("2_jv731")
 tags = Array[int]([1, 2])
 pool = 7
-spawn_distance_ratio = 1.5
+spawn_distance_ratio = 2.5
 metadata/_custom_type_script = "uid://v1a86tare2si"
