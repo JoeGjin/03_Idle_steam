@@ -194,7 +194,7 @@ func _choose_memory() -> MemoryDef:
         total_weight += weight
 
     if available_tags.is_empty():
-        push_warning("[MANUAL PARALLAX] 当前标签和 pool 没有可用的 MemoryDef：%s" % name)
+        print("[MANUAL PARALLAX] 当前标签和 pool 没有可用的 MemoryDef：%s" % name)
         return null
 
     # 1.加权随机选出 target_tag

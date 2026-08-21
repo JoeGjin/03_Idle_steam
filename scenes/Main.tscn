@@ -62,8 +62,8 @@
 [ext_resource type="Texture2D" uid="uid://c8jfbv6mfvb35" path="res://assets/worldroot/pet/walk/frame_18.png" id="53_qd1pt"]
 [ext_resource type="Script" uid="uid://dcyb4abjdhqk2" path="res://scripts/main/output/AllOutput.gd" id="73_ugmlg"]
 [ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/WindowResize.gd" id="75_qd1pt"]
-[ext_resource type="Theme" uid="uid://duf3n0aup2mkp" path="res://themes/FloatButtons.tres" id="75_vwcyu"]
 [ext_resource type="Script" uid="uid://1hk5kvupggqx" path="res://scripts/main/output/FloatButtons.gd" id="76_rsknx"]
+[ext_resource type="Script" uid="uid://dw33fgxmmlb83" path="res://scripts/main/output/TransientFxWindow.gd" id="77_transient_fx"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -144,27 +144,75 @@ height = 2000.0
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_xa025"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_corner_button"]
+bg_color = Color(0.321569, 0.145098, 0.807843, 0.92)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.67451, 0.529412, 1, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_corner_button_hover"]
+bg_color = Color(0.466667, 0.25098, 1, 0.98)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.835294, 0.764706, 1, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
 shader_parameter/mask_enable = 0.999999977648
-shader_parameter/center_u = 0.4350000206625
-shader_parameter/center_v = 0.494000023465
-shader_parameter/radius_u = 0.3010000142975
-shader_parameter/radius_v = 0.4610000218975
+shader_parameter/center_u = 0.50000002375
+shader_parameter/center_v = 0.50000002375
+shader_parameter/radius_u = 0.326000015485
+shader_parameter/radius_v = 0.4690000222775
 shader_parameter/feather_px = 16.80000025034016
-shader_parameter/smoke_enable = 0.67999998480064
-shader_parameter/smoke_band_px = 103.60000154376432
-shader_parameter/smoke_amp_px = 73.60000109672832
-shader_parameter/smoke_scale = 22.70000032335604
-shader_parameter/smoke_speed_x = 0.08800009917999985
-shader_parameter/smoke_speed_y = -2.0
+shader_parameter/smoke_enable = 0.50999998860048
+shader_parameter/smoke_band_px = 123.70000184327844
+shader_parameter/smoke_amp_px = 95.5000014230646
+shader_parameter/smoke_scale = 8.60000011324912
+shader_parameter/smoke_speed_x = 0.3030001093924999
+shader_parameter/smoke_speed_y = -1.2849999660375
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_8t8ul"]
 viewport_path = NodePath("WorldView")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_collected_button"]
+bg_color = Color(1, 0.529412, 0.145098, 0.96)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 0.8, 0.505882, 1)
+corner_radius_top_left = 75
+corner_radius_top_right = 75
+corner_radius_bottom_right = 75
+corner_radius_bottom_left = 75
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_collected_button_hover"]
+bg_color = Color(1, 0.647059, 0.286275, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 0.901961, 0.698039, 1)
+corner_radius_top_left = 75
+corner_radius_top_right = 75
+corner_radius_bottom_right = 75
+corner_radius_bottom_left = 75
+
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
-draw_scale = 0.75
+draw_scale = 0.5
 
 [node name="Controllers" type="Node" parent="." unique_id=650551310]
 
@@ -668,10 +716,23 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("73_ugmlg")
+world_vertical_offset = 50.0
 
-[node name="WorldOutput" type="TextureRect" parent="AllOutput" unique_id=119086223]
+[node name="FloatButtonManager" type="Node" parent="AllOutput" unique_id=1694637791 node_paths=PackedStringArray("all_output", "setting_button", "collection_button", "zooming_button", "minimode_button", "collected_item_button")]
 unique_name_in_owner = true
-material = SubResource("ShaderMaterial_pdwbg")
+script = ExtResource("76_rsknx")
+all_output = NodePath("..")
+setting_button = NodePath("../BackFloatLayer/Setting")
+collection_button = NodePath("../BackFloatLayer/Collection")
+zooming_button = NodePath("../BackFloatLayer/Zooming")
+minimode_button = NodePath("../BackFloatLayer/Minimode")
+collected_item_button = NodePath("../FrontFloatLayer/CollectedItem")
+hidden_offset = -180.0
+peek_offset = -40.0
+open_offset = 60.0
+button_size_scale = 2.0
+
+[node name="BackFloatLayer" type="Control" parent="AllOutput" unique_id=237574175]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -679,44 +740,117 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="Setting" type="Button" parent="AllOutput/BackFloatLayer" unique_id=761829475]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 120.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_corner_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
+text = "Setting"
+
+[node name="Collection" type="Button" parent="AllOutput/BackFloatLayer" unique_id=63780363]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 120.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_corner_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
+text = "Collection"
+
+[node name="Zooming" type="Button" parent="AllOutput/BackFloatLayer" unique_id=1861630997 node_paths=PackedStringArray("all_output")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 120.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_corner_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
+text = "Zooming"
+script = ExtResource("75_qd1pt")
+all_output = NodePath("../..")
+
+[node name="Minimode" type="Button" parent="AllOutput/BackFloatLayer" unique_id=1126317815]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 120.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_corner_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
+text = "Minimode"
+
+[node name="WorldOutput" type="TextureRect" parent="AllOutput" unique_id=119086223]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_pdwbg")
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
 texture = SubResource("ViewportTexture_8t8ul")
 expand_mode = 1
 metadata/_edit_lock_ = true
 
-[node name="FloatButtons" type="Control" parent="AllOutput" unique_id=834382649]
+[node name="FrontFloatLayer" type="Control" parent="AllOutput" unique_id=471999990]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
-theme = ExtResource("75_vwcyu")
-script = ExtResource("76_rsknx")
-metadata/_edit_lock_ = true
+mouse_filter = 2
 
-[node name="Exit" type="Button" parent="AllOutput/FloatButtons" unique_id=1753071860]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 1
-offset_right = 50.0
-offset_bottom = 50.0
-text = "X"
+[node name="CollectedItem" type="Button" parent="AllOutput/FrontFloatLayer" unique_id=1452979595]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(150, 150)
+layout_mode = 0
+offset_right = 150.0
+offset_bottom = 150.0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_collected_button")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_collected_button_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_collected_button_hover")
+text = "Memory"
 
-[node name="WindowResize" type="Button" parent="AllOutput/FloatButtons" unique_id=12894625 node_paths=PackedStringArray("all_output")]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
+[node name="TransientFxWindow" type="Window" parent="." unique_id=1588388459]
+unique_name_in_owner = true
+transparent_bg = true
+oversampling_override = 1.0
+size = Vector2i(512, 512)
+visible = false
+transient = true
+unresizable = true
+borderless = true
+transparent = true
+unfocusable = true
+mouse_passthrough = true
+script = ExtResource("77_transient_fx")
+
+[node name="EffectRoot" type="Control" parent="TransientFxWindow" unique_id=537756547]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -50.0
-offset_top = -50.0
-grow_horizontal = 0
-grow_vertical = 0
-text = "__|"
-script = ExtResource("75_qd1pt")
-all_output = NodePath("../..")
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [connection signal="timeout" from="Controllers/CharacterStatus/SendPostcard" to="." method="_on_send_postcard_timeout"]
 [connection signal="timeout" from="Controllers/CharacterStatus/ChangeScene" to="." method="_on_change_scene_timeout"]
@@ -724,4 +858,3 @@ all_output = NodePath("../..")
 [connection signal="pressed" from="UIWindow/DebugUI/VBoxContainer/AddRandomItem" to="UIWindow/DebugUI" method="_on_add_random_item_pressed"]
 [connection signal="mouse_entered" from="WorldView/WorldRoot/20_Pet/Pet/body" to="WorldView/WorldRoot/20_Pet/Pet" method="_on_body_mouse_entered"]
 [connection signal="mouse_exited" from="WorldView/WorldRoot/20_Pet/Pet/body" to="WorldView/WorldRoot/20_Pet/Pet" method="_on_body_mouse_exited"]
-[connection signal="pressed" from="AllOutput/FloatButtons/Exit" to="." method="_on_exit_pressed"]

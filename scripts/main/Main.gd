@@ -21,9 +21,12 @@ extends Node
 @onready var debug_world: Node2D = %DebugWorld
 
 @onready var world_output: TextureRect = %WorldOutput
+@onready var all_output: Control = $AllOutput
 
 
-@export var draw_scale: float = 1.0 # 预设的窗口缩放级别，供调试使用
+## 主原生窗口相对 AllOutput.design_size 的初始显示倍率。
+## 只改变桌宠窗口及其 UI 的显示大小，不改变 WorldView 的 1920×1080 渲染分辨率。
+@export_range(0.1, 3.0, 0.05, "or_greater") var draw_scale: float = 1.0
 @export var starting_world_id: int = 0 # 启动时默认组装的世界ID
 
 
@@ -49,7 +52,7 @@ func _ready():
 
 
 	# 初始化世界组装器
-	world_assembler.assemble_world({2 as Tags.Tag: 1.0}) 
+	world_assembler.assemble_world({1 as Tags.Tag: 1.0}) 
 
 	# 启动角色状态机，从 WALKING 状态开始
 	character_status.start(1) 
@@ -71,7 +74,8 @@ func _scene_into_subviewport():
 
 
 func _draw_scale_setup():
-	get_window().size *= draw_scale
+	if all_output.has_method("set_initial_window_scale"):
+		all_output.call("set_initial_window_scale", draw_scale)
 
 
 func _connect_signals() -> void:
