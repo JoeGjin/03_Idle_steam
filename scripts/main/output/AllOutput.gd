@@ -12,7 +12,6 @@ signal layout_ready(world_visual_rect: Rect2)
 
 @export_group("Debug")
 @export var debug_show_collected_item := false
-@export var debug_show_design_bounds := false
 
 @onready var world_output: TextureRect = %WorldOutput
 
@@ -125,7 +124,6 @@ func _setup_fixed_layout() -> void:
     )
     world_output.position = world_offset
     _world_visual_rect = Rect2(source_fit_rect.position + world_offset, source_fit_rect.size)
-    _setup_debug_design_bounds()
 
     _base_window_size = Vector2i(
         maxi(1, roundi(design_size.x * _initial_content_scale)),
@@ -136,26 +134,6 @@ func _setup_fixed_layout() -> void:
 
     _layout_ready = true
     layout_ready.emit(_world_visual_rect)
-
-
-func _setup_debug_design_bounds() -> void:
-    if not debug_show_design_bounds:
-        return
-
-    var border := Panel.new()
-    border.name = "DebugDesignBounds"
-    border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    border.position = Vector2.ZERO
-    border.size = size
-    border.z_index = 100
-
-    var border_style := StyleBoxFlat.new()
-    border_style.bg_color = Color.TRANSPARENT
-    border_style.border_color = Color(1.0, 0.2, 0.75, 0.95)
-    border_style.set_border_width_all(4)
-    border.add_theme_stylebox_override("panel", border_style)
-
-    add_child(border)
 
 
 func _get_world_source_size() -> Vector2:

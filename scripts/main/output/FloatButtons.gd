@@ -15,6 +15,8 @@ enum RevealState {
 
 
 const ZOOMING_INDEX := 2
+const COLLECTION_INDEX := 1
+const COLLECTED_ITEM_MIN_SCALE_RATIO := 0.6
 
 
 @export var all_output: Control
@@ -50,6 +52,8 @@ var _states: Array[int] = []
 var _move_tweens: Array = []
 var _outside_time := 0.0
 var _ready_for_input := false
+var _collection_attention_time := 0.0
+var _collected_item_tween: Tween
 
 
 func _ready() -> void:
@@ -77,12 +81,22 @@ func _ready() -> void:
 	_ready_for_input = true
 
 	if bool(all_output.call("should_debug_show_collected_item")):
-		show_collected_item()
+		show_collected_item(1, 5)
 
 
 func _process(delta: float) -> void:
 	if not _ready_for_input:
 		return
+
+	if _collection_attention_time > 0.0:
+		_collection_attention_time = maxf(_collection_attention_time - delta, 0.0)
+		for index in _corner_buttons.size():
+			_set_button_state(
+				index,
+				RevealState.OPEN if index == COLLECTION_INDEX else RevealState.PEEK
+			)
+		if _collection_attention_time > 0.0:
+			return
 
 	# 缩放依赖窗口外的全局鼠标位置。拖拽期间锁住按钮，避免窗口尺寸变化后
 	# 本地命中区域离开鼠标，导致 Zooming 收回并中断交互。
@@ -115,22 +129,40 @@ func _process(delta: float) -> void:
 		_set_all_states(RevealState.HIDDEN)
 
 
-func show_collected_item(count: int = 1) -> void:
+func show_collected_item(count: int = 1, max_count: int = 5) -> void:
 	if collected_item_button == null:
 		return
 
-	collected_item_button.text = "Memory" if count <= 1 else "Memory ×%d" % count
-	collected_item_button.show()
-	collected_item_button.modulate.a = 0.0
-	collected_item_button.scale = Vector2.ONE * button_size_scale * 0.75
+	var safe_max_count := maxi(max_count, 1)
+	var safe_count := clampi(count, 0, safe_max_count)
+	if safe_count <= 0:
+		hide_collected_item()
+		return
 
-	var tween := create_tween().set_parallel(true)
-	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	tween.tween_property(collected_item_button, "modulate:a", 1.0, 0.25)
-	tween.tween_property(
+	var count_ratio := 1.0
+	if safe_max_count > 1:
+		count_ratio = float(safe_count - 1) / float(safe_max_count - 1)
+	var size_ratio := lerpf(COLLECTED_ITEM_MIN_SCALE_RATIO, 1.0, count_ratio)
+	var target_scale := Vector2.ONE * button_size_scale * size_ratio
+	var was_visible := collected_item_button.visible
+
+	collected_item_button.text = "Memory" if safe_count <= 1 else "Memory ×%d" % safe_count
+	collected_item_button.show()
+	_kill_collected_item_tween()
+
+	_collected_item_tween = create_tween().set_parallel(true)
+	_collected_item_tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	if not was_visible:
+		collected_item_button.modulate.a = 0.0
+		collected_item_button.scale = target_scale * 0.75
+		_collected_item_tween.tween_property(collected_item_button, "modulate:a", 1.0, 0.25)
+	else:
+		collected_item_button.modulate.a = 1.0
+
+	_collected_item_tween.tween_property(
 		collected_item_button,
 		"scale",
-		Vector2.ONE * button_size_scale,
+		target_scale,
 		0.32
 	)
 
@@ -139,16 +171,37 @@ func hide_collected_item() -> void:
 	if collected_item_button == null or not collected_item_button.visible:
 		return
 
-	var tween := create_tween().set_parallel(true)
-	tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.tween_property(collected_item_button, "modulate:a", 0.0, 0.18)
-	tween.tween_property(
+	_kill_collected_item_tween()
+	_collected_item_tween = create_tween().set_parallel(true)
+	_collected_item_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	_collected_item_tween.tween_property(collected_item_button, "modulate:a", 0.0, 0.18)
+	_collected_item_tween.tween_property(
 		collected_item_button,
 		"scale",
-		Vector2.ONE * button_size_scale * 0.8,
+		collected_item_button.scale * 0.8,
 		0.18
 	)
-	tween.chain().tween_callback(collected_item_button.hide)
+	_collected_item_tween.chain().tween_callback(collected_item_button.hide)
+
+
+func _kill_collected_item_tween() -> void:
+	if _collected_item_tween != null and _collected_item_tween.is_valid():
+		_collected_item_tween.kill()
+
+
+## 收集特效播放时固定展示 Collection，确保粒子的收束点始终与按钮一致。
+func focus_collection(duration: float) -> void:
+	if not _ready_for_input:
+		return
+
+	_collection_attention_time = maxf(duration, 0.0)
+	var old_tween: Tween = _move_tweens[COLLECTION_INDEX]
+	if old_tween != null and old_tween.is_valid():
+		old_tween.kill()
+
+	_states[COLLECTION_INDEX] = RevealState.OPEN
+	collection_button.position = _get_target_position(COLLECTION_INDEX, RevealState.OPEN)
+	collection_button.mouse_filter = Control.MOUSE_FILTER_STOP
 
 
 func _validate_targets() -> bool:

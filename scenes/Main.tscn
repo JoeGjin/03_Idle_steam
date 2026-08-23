@@ -213,6 +213,7 @@ corner_radius_bottom_left = 75
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
 draw_scale = 0.5
+debug_show_design_bounds = true
 
 [node name="Controllers" type="Node" parent="." unique_id=650551310]
 
@@ -249,6 +250,7 @@ script = ExtResource("3_vcsgt")
 [node name="MemoryController" type="Node" parent="Controllers" unique_id=769164480]
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
+collection_interval_seconds = 5.0
 
 [node name="AudioController" type="Node" parent="Controllers" unique_id=1022251595]
 unique_name_in_owner = true
@@ -781,6 +783,7 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
 text = "Zooming"
 script = ExtResource("75_qd1pt")
 all_output = NodePath("../..")
+resize_smoothing = 8.0
 
 [node name="Minimode" type="Button" parent="AllOutput/BackFloatLayer" unique_id=1126317815]
 unique_name_in_owner = true

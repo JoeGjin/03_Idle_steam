@@ -2,6 +2,16 @@ extends Node
 class_name MemoryController
 
 
+signal pending_collection_count_changed(count: int, max_count: int)
+
+
+@export_group("Collection Event")
+## 每次增加待领取次数的间隔。默认 60 秒，之后可在 Inspector 中改回 300 秒。
+@export_range(1.0, 3600.0, 1.0, "or_greater", "suffix:s") var collection_interval_seconds := 60.0
+## 待领取收集事件的累计上限。
+@export_range(1, 100, 1, "or_greater") var max_pending_collection_count := 5
+
+
 
 class MemoryList:
     var memories: Array[MemoryDef] = []
@@ -10,6 +20,9 @@ class MemoryPools:
 var memories_by_tag: Dictionary[Tags.Tag, MemoryPools] = {} 
 # {HOLY:{POI: [memory_1,memory_2],CLOUD: [memory_3,memroy_4]}
 
+var pending_collection_count := 0
+var _collection_event_timer: Timer
+
 
 
 
@@ -17,6 +30,59 @@ func _ready() -> void:
     _build_memories_by_tag()
     if OS.is_debug_build():
         _print_memory_database()
+    _setup_collection_event_timer()
+
+
+func get_max_pending_collection_count() -> int:
+    return maxi(max_pending_collection_count, 1)
+
+
+func add_pending_collection_event(amount: int = 1) -> int:
+    if amount <= 0:
+        return pending_collection_count
+
+    _set_pending_collection_count(
+        mini(
+            pending_collection_count + amount,
+            get_max_pending_collection_count()
+        )
+    )
+    return pending_collection_count
+
+
+## 领取当前全部待处理事件，并将累计次数清零。
+func collect_all_pending_events() -> int:
+    var collected_count := pending_collection_count
+    _set_pending_collection_count(0)
+    return collected_count
+
+
+func _setup_collection_event_timer() -> void:
+    _collection_event_timer = Timer.new()
+    _collection_event_timer.name = "CollectionEventTimer"
+    _collection_event_timer.wait_time = maxf(collection_interval_seconds, 1.0)
+    _collection_event_timer.one_shot = false
+    _collection_event_timer.ignore_time_scale = true
+    _collection_event_timer.process_mode = Node.PROCESS_MODE_ALWAYS
+    _collection_event_timer.timeout.connect(_on_collection_event_timer_timeout)
+    add_child(_collection_event_timer)
+    _collection_event_timer.start()
+
+
+func _on_collection_event_timer_timeout() -> void:
+    add_pending_collection_event()
+
+
+func _set_pending_collection_count(value: int) -> void:
+    var next_count := clampi(value, 0, get_max_pending_collection_count())
+    if next_count == pending_collection_count:
+        return
+
+    pending_collection_count = next_count
+    pending_collection_count_changed.emit(
+        pending_collection_count,
+        get_max_pending_collection_count()
+    )
 
 
 func _build_memories_by_tag() -> void:
@@ -84,5 +150,4 @@ func _print_memory_database() -> void:
 
             for memory: MemoryDef in memory_list.memories:
                 print("      └─ %s" % memory.resource_path.get_file())
-
 

@@ -1,6 +1,11 @@
 extends Window
 
 
+const CollectionFireworkFx = preload("res://scripts/main/output/CollectionFireworkFx.gd")
+const MIN_EFFECT_PADDING := 280.0
+const MAX_EFFECT_PADDING := 380.0
+
+
 @onready var effect_root: Control = %EffectRoot
 
 
@@ -13,6 +18,34 @@ func _ready() -> void:
     hide()
 
 
+func play_collection_firework(
+    origin_screen: Vector2,
+    target_screen: Vector2,
+    collection_count: int = 3,
+    max_collection_count: int = 5
+) -> void:
+    var safe_max_count := maxi(max_collection_count, 1)
+    var safe_count := clampi(collection_count, 1, safe_max_count)
+    var intensity := 1.0
+    if safe_max_count > 1:
+        intensity = float(safe_count - 1) / float(safe_max_count - 1)
+
+    var effect_padding := lerpf(MIN_EFFECT_PADDING, MAX_EFFECT_PADDING, intensity)
+    var effect_rect := _make_effect_rect(
+        origin_screen,
+        target_screen,
+        effect_padding
+    )
+    var effect := CollectionFireworkFx.new()
+    effect.configure(
+        origin_screen - Vector2(effect_rect.position),
+        target_screen - Vector2(effect_rect.position),
+        collection_count,
+        max_collection_count
+    )
+    play_effect(effect, effect_rect, effect.get_duration())
+
+
 func play_effect(effect: CanvasItem, screen_rect: Rect2i, duration: float) -> void:
     _play_generation += 1
     var generation := _play_generation
@@ -21,6 +54,8 @@ func play_effect(effect: CanvasItem, screen_rect: Rect2i, duration: float) -> vo
     position = screen_rect.position
     size = screen_rect.size
     effect_root.add_child(effect)
+    if effect is Control:
+        effect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     show()
 
     if duration <= 0.0:
@@ -40,3 +75,23 @@ func stop_effect() -> void:
 func _clear_effect() -> void:
     for child in effect_root.get_children():
         child.queue_free()
+
+
+func _make_effect_rect(
+    origin_screen: Vector2,
+    target_screen: Vector2,
+    effect_padding: float
+) -> Rect2i:
+    var minimum := Vector2(
+        minf(origin_screen.x, target_screen.x),
+        minf(origin_screen.y, target_screen.y)
+    ) - Vector2.ONE * effect_padding
+    var maximum := Vector2(
+        maxf(origin_screen.x, target_screen.x),
+        maxf(origin_screen.y, target_screen.y)
+    ) + Vector2.ONE * effect_padding
+
+    return Rect2i(
+        Vector2i(floori(minimum.x), floori(minimum.y)),
+        Vector2i(ceili(maximum.x - minimum.x), ceili(maximum.y - minimum.y))
+    )
