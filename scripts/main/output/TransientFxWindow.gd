@@ -1,4 +1,5 @@
 extends Window
+class_name TransientFxWindow
 
 
 const CollectionFireworkFx = preload("res://scripts/main/output/CollectionFireworkFx.gd")
@@ -10,12 +11,26 @@ const MAX_EFFECT_PADDING := 380.0
 
 
 var _play_generation := 0
+var _follow_window: Window
+var _follow_window_start_position := Vector2i.ZERO
+var _effect_window_start_position := Vector2i.ZERO
 
 
 func _ready() -> void:
     # 预先创建透明原生窗口，避免第一次播放特效时出现初始化黑帧。
     show()
     hide()
+    set_process(false)
+
+
+func _process(_delta: float) -> void:
+    if not visible or not is_instance_valid(_follow_window):
+        return
+
+    var window_offset := _follow_window.position - _follow_window_start_position
+    var target_position := _effect_window_start_position + window_offset
+    if position != target_position:
+        position = target_position
 
 
 func play_collection_firework(
@@ -24,9 +39,9 @@ func play_collection_firework(
     collection_count: int = 3,
     max_collection_count: int = 5
 ) -> void:
-    var safe_max_count := maxi(max_collection_count, 1)
-    var safe_count := clampi(collection_count, 1, safe_max_count)
-    var intensity := 1.0
+    var safe_max_count : int = maxi(max_collection_count, 1)
+    var safe_count : int = clampi(collection_count, 1, safe_max_count)
+    var intensity : float = 1.0
     if safe_max_count > 1:
         intensity = float(safe_count - 1) / float(safe_max_count - 1)
 
@@ -43,7 +58,7 @@ func play_collection_firework(
         collection_count,
         max_collection_count
     )
-    play_effect(effect, effect_rect, effect.get_duration())
+    await play_effect(effect, effect_rect, effect.get_duration())
 
 
 func play_effect(effect: CanvasItem, screen_rect: Rect2i, duration: float) -> void:
@@ -53,10 +68,14 @@ func play_effect(effect: CanvasItem, screen_rect: Rect2i, duration: float) -> vo
     _clear_effect()
     position = screen_rect.position
     size = screen_rect.size
+    _follow_window = get_tree().root
+    _follow_window_start_position = _follow_window.position
+    _effect_window_start_position = position
     effect_root.add_child(effect)
     if effect is Control:
         effect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     show()
+    set_process(true)
 
     if duration <= 0.0:
         return
@@ -68,6 +87,8 @@ func play_effect(effect: CanvasItem, screen_rect: Rect2i, duration: float) -> vo
 
 func stop_effect() -> void:
     _play_generation += 1
+    set_process(false)
+    _follow_window = null
     hide()
     _clear_effect()
 

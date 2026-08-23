@@ -31,7 +31,7 @@
 [ext_resource type="Texture2D" uid="uid://blvpwa3mbu5xi" path="res://assets/worldroot/stage/sky/sky_main.png" id="32_a3hxr"]
 [ext_resource type="Script" uid="uid://dmq4phw1im2m7" path="res://scripts/main/debug/DebugUI.gd" id="32_pdwbg"]
 [ext_resource type="Script" uid="uid://dvy6ipmh42awj" path="res://scripts/main/debug/DebugPet.gd" id="33_2c4at"]
-[ext_resource type="Script" uid="uid://r3h7y0ivusgi" path="res://scripts/main/world/Manual_Parallax.gd" id="33_8b871"]
+[ext_resource type="Script" uid="uid://r3h7y0ivusgi" path="res://scripts/main/world/ManualParallax.gd" id="33_8b871"]
 [ext_resource type="Script" uid="uid://cp7hocx6yaeww" path="res://scripts/main/ui/PostcardShowing.gd" id="33_csfbn"]
 [ext_resource type="Texture2D" uid="uid://qw8ihojqk8nh" path="res://assets/uiroot/postcard/0.JPG" id="34_1xgkc"]
 [ext_resource type="Texture2D" uid="uid://m2k0myepg1ad" path="res://assets/uiroot/postcard/1.JPG" id="35_x1gp3"]
@@ -61,9 +61,10 @@
 [ext_resource type="Texture2D" uid="uid://wk6bylej7dhi" path="res://assets/worldroot/pet/walk/frame_17.png" id="52_ugmlg"]
 [ext_resource type="Texture2D" uid="uid://c8jfbv6mfvb35" path="res://assets/worldroot/pet/walk/frame_18.png" id="53_qd1pt"]
 [ext_resource type="Script" uid="uid://dcyb4abjdhqk2" path="res://scripts/main/output/AllOutput.gd" id="73_ugmlg"]
-[ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/WindowResize.gd" id="75_qd1pt"]
-[ext_resource type="Script" uid="uid://1hk5kvupggqx" path="res://scripts/main/output/FloatButtons.gd" id="76_rsknx"]
+[ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/Zooming.gd" id="75_qd1pt"]
+[ext_resource type="Script" uid="uid://1hk5kvupggqx" path="res://scripts/main/output/FloatButtonManager.gd" id="76_rsknx"]
 [ext_resource type="Script" uid="uid://dw33fgxmmlb83" path="res://scripts/main/output/TransientFxWindow.gd" id="77_transient_fx"]
+[ext_resource type="Script" uid="uid://b01oxeqkx7fka" path="res://scripts/main/output/MemoryChoiceWindow.gd" id="78_memory_choice"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -168,6 +169,25 @@ corner_radius_top_right = 60
 corner_radius_bottom_right = 60
 corner_radius_bottom_left = 60
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_recent_memory_bar"]
+bg_color = Color(0.12549, 0.0745098, 0.270588, 0.94)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.67451, 0.529412, 1, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_recent_memory_slot"]
+bg_color = Color(1, 1, 1, 0.18)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
 shader_parameter/mask_enable = 0.999999977648
@@ -210,10 +230,16 @@ corner_radius_top_right = 75
 corner_radius_bottom_right = 75
 corner_radius_bottom_left = 75
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_memory_choice_background"]
+bg_color = Color(1, 1, 1, 0.45)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
 [node name="Main" type="Node" unique_id=987657807]
 script = ExtResource("1_rvslj")
 draw_scale = 0.5
-debug_show_design_bounds = true
 
 [node name="Controllers" type="Node" parent="." unique_id=650551310]
 
@@ -225,6 +251,7 @@ hook_switch = true
 [node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
+global_scroll_speed = 2.0
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
 unique_name_in_owner = true
@@ -250,7 +277,9 @@ script = ExtResource("3_vcsgt")
 [node name="MemoryController" type="Node" parent="Controllers" unique_id=769164480]
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
-collection_interval_seconds = 5.0
+collection_interval_seconds = 20.0
+max_pending_collection_count = 3
+debug_show_collected_item = true
 
 [node name="AudioController" type="Node" parent="Controllers" unique_id=1022251595]
 unique_name_in_owner = true
@@ -718,9 +747,10 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("73_ugmlg")
-world_vertical_offset = 50.0
+design_size = Vector2(1600, 1400)
+world_vertical_offset = 30.0
 
-[node name="FloatButtonManager" type="Node" parent="AllOutput" unique_id=1694637791 node_paths=PackedStringArray("all_output", "setting_button", "collection_button", "zooming_button", "minimode_button", "collected_item_button")]
+[node name="FloatButtonManager" type="Node" parent="AllOutput" unique_id=1694637791 node_paths=PackedStringArray("all_output", "setting_button", "collection_button", "zooming_button", "minimode_button", "collected_item_button", "recent_memory_bar", "recent_memory_texture_1", "recent_memory_texture_2", "recent_memory_texture_3")]
 unique_name_in_owner = true
 script = ExtResource("76_rsknx")
 all_output = NodePath("..")
@@ -729,9 +759,14 @@ collection_button = NodePath("../BackFloatLayer/Collection")
 zooming_button = NodePath("../BackFloatLayer/Zooming")
 minimode_button = NodePath("../BackFloatLayer/Minimode")
 collected_item_button = NodePath("../FrontFloatLayer/CollectedItem")
+recent_memory_bar = NodePath("../BackFloatLayer/RecentMemoryBar")
+recent_memory_texture_1 = NodePath("../BackFloatLayer/RecentMemoryBar/Memory1/Texture1")
+recent_memory_texture_2 = NodePath("../BackFloatLayer/RecentMemoryBar/Memory2/Texture2")
+recent_memory_texture_3 = NodePath("../BackFloatLayer/RecentMemoryBar/Memory3/Texture3")
 hidden_offset = -180.0
 peek_offset = -40.0
 open_offset = 60.0
+recent_memory_bar_vertical_offset = -30.0
 button_size_scale = 2.0
 
 [node name="BackFloatLayer" type="Control" parent="AllOutput" unique_id=237574175]
@@ -783,7 +818,6 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
 text = "Zooming"
 script = ExtResource("75_qd1pt")
 all_output = NodePath("../..")
-resize_smoothing = 8.0
 
 [node name="Minimode" type="Button" parent="AllOutput/BackFloatLayer" unique_id=1126317815]
 unique_name_in_owner = true
@@ -797,6 +831,76 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_corner_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
 text = "Minimode"
+
+[node name="RecentMemoryBar" type="Panel" parent="AllOutput/BackFloatLayer" unique_id=1260786484]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(660, 190)
+layout_mode = 0
+offset_right = 660.0
+offset_bottom = 190.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_recent_memory_bar")
+
+[node name="Memory1" type="Panel" parent="AllOutput/BackFloatLayer/RecentMemoryBar" unique_id=759637427]
+layout_mode = 0
+offset_left = 87.0
+offset_top = 20.0
+offset_right = 237.0
+offset_bottom = 170.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_recent_memory_slot")
+
+[node name="Texture1" type="TextureRect" parent="AllOutput/BackFloatLayer/RecentMemoryBar/Memory1" unique_id=1753645417]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Memory2" type="Panel" parent="AllOutput/BackFloatLayer/RecentMemoryBar" unique_id=672477964]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 20.0
+offset_right = 405.0
+offset_bottom = 170.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_recent_memory_slot")
+
+[node name="Texture2" type="TextureRect" parent="AllOutput/BackFloatLayer/RecentMemoryBar/Memory2" unique_id=580133314]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Memory3" type="Panel" parent="AllOutput/BackFloatLayer/RecentMemoryBar" unique_id=1562253178]
+layout_mode = 0
+offset_left = 423.0
+offset_top = 20.0
+offset_right = 573.0
+offset_bottom = 170.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_recent_memory_slot")
+
+[node name="Texture3" type="TextureRect" parent="AllOutput/BackFloatLayer/RecentMemoryBar/Memory3" unique_id=1622680799]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="WorldOutput" type="TextureRect" parent="AllOutput" unique_id=119086223]
 unique_name_in_owner = true
@@ -854,6 +958,66 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="MemoryChoiceWindow" type="Window" parent="." unique_id=951942085]
+unique_name_in_owner = true
+transparent_bg = true
+size = Vector2i(800, 600)
+visible = false
+transient = true
+unresizable = true
+borderless = true
+transparent = true
+script = ExtResource("78_memory_choice")
+initial_vertical_offset = 100.0
+
+[node name="ChoiceRoot" type="Control" parent="MemoryChoiceWindow" unique_id=1407600423]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ChoiceLeft" type="TextureButton" parent="MemoryChoiceWindow/ChoiceRoot" unique_id=299540892]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 240.0
+offset_bottom = 240.0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Background" type="Panel" parent="MemoryChoiceWindow/ChoiceRoot/ChoiceLeft" unique_id=1654448228]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_memory_choice_background")
+
+[node name="ChoiceRight" type="TextureButton" parent="MemoryChoiceWindow/ChoiceRoot" unique_id=795795326]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 336.0
+offset_right = 576.0
+offset_bottom = 240.0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Background" type="Panel" parent="MemoryChoiceWindow/ChoiceRoot/ChoiceRight" unique_id=995139472]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_memory_choice_background")
 
 [connection signal="timeout" from="Controllers/CharacterStatus/SendPostcard" to="." method="_on_send_postcard_timeout"]
 [connection signal="timeout" from="Controllers/CharacterStatus/ChangeScene" to="." method="_on_change_scene_timeout"]

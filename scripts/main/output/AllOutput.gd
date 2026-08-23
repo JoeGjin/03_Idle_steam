@@ -10,9 +10,6 @@ signal layout_ready(world_visual_rect: Rect2)
 ## 负值向上，正值向下；依附于椭圆范围的浮动按钮会一起移动。
 @export_range(-600.0, 600.0, 1.0, "suffix:px") var world_vertical_offset := 0.0
 
-@export_group("Debug")
-@export var debug_show_collected_item := false
-
 @onready var world_output: TextureRect = %WorldOutput
 
 
@@ -36,10 +33,6 @@ func is_layout_ready() -> bool:
 
 func set_initial_window_scale(scale_value: float) -> void:
     _initial_content_scale = maxf(scale_value, 0.01)
-
-
-func should_debug_show_collected_item() -> bool:
-    return debug_show_collected_item
 
 
 func get_base_window_size() -> Vector2i:
@@ -72,7 +65,7 @@ func is_point_in_world(point: Vector2) -> bool:
     return normalized.length_squared() <= 1.0
 
 
-func apply_window_scale(scale_value: float, window_center: Vector2) -> void:
+func apply_window_scale(scale_value: float, _window_center: Vector2) -> void:
     if not _layout_ready:
         return
 
@@ -83,16 +76,8 @@ func apply_window_scale(scale_value: float, window_center: Vector2) -> void:
         maxi(1, roundi(design_size.x * physical_scale)),
         maxi(1, roundi(design_size.y * physical_scale))
     )
-    var new_window_position_float := window_center - Vector2(new_window_size) * 0.5
-    var new_window_position := Vector2i(
-        roundi(new_window_position_float.x),
-        roundi(new_window_position_float.y)
-    )
-
     if window.size != new_window_size:
         window.size = new_window_size
-    if window.position != new_window_position:
-        window.position = new_window_position
     scale = Vector2.ONE * physical_scale
     position = Vector2.ZERO
 

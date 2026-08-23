@@ -1,5 +1,5 @@
 extends Sprite2D
-class_name Mpara_Object
+class_name MparaObject
 
 
 @export var memory_def: MemoryDef
@@ -15,5 +15,4 @@ func initialize(incoming_memory_def: MemoryDef) -> void:
 func _ready() -> void:
     centered = false
     global_position = Vector2.ZERO
-
 

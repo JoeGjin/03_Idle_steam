@@ -23,6 +23,7 @@ const DEBUG_DESIGN_BOUNDS_NAME := "DebugDesignBounds"
 @onready var memory_controller: MemoryController = %MemoryController
 @onready var world_assembler: WorldAssembler = %WorldAssembler
 @onready var audio_controller: AudioController = %AudioController
+@onready var change_scene_timer: Timer = $Controllers/CharacterStatus/ChangeScene
 
 # World
 @onready var world_root: Node2D = %WorldRoot
@@ -37,10 +38,13 @@ const DEBUG_DESIGN_BOUNDS_NAME := "DebugDesignBounds"
 @onready var float_button_manager: Node = %FloatButtonManager
 @onready var collection_button: Button = %Collection
 @onready var collected_item_button: Button = %CollectedItem
-@onready var transient_fx_window: Window = %TransientFxWindow
+@onready var transient_fx_window: TransientFxWindow = %TransientFxWindow
+@onready var memory_choice_window: MemoryChoiceWindow = %MemoryChoiceWindow
 
 
-var memory_slots: Array[String] = ["", "", "", "", "", ""]
+var memory_slots: Array[Tags.Tag] = []
+var recent_chosen_memories: Array[MemoryDef] = []
+var _collection_flow_active := false
 
 
 #region 生命周期与初始化
@@ -141,22 +145,54 @@ func _on_collection_requested() -> void:
 
 
 func _on_collected_item_requested() -> void:
-    if memory_controller.pending_collection_count <= 0:
+    if _collection_flow_active or memory_controller.pending_collection_count <= 0:
         return
 
+    _collection_flow_active = true
     var origin_screen := _get_control_screen_center(collected_item_button)
     float_button_manager.call("focus_collection", 1.5)
-    var target_screen := _get_control_screen_center(collection_button)
-    var max_count := memory_controller.get_max_pending_collection_count()
-    var collected_count := memory_controller.collect_all_pending_events()
+    var target_screen: Vector2 = float_button_manager.call(
+        "get_collection_open_screen_center"
+    )
+    var max_count : int = memory_controller.get_max_pending_collection_count()
+    var collected_count : int = memory_controller.collect_all_pending_events()
 
-    transient_fx_window.call(
-        "play_collection_firework",
+    await transient_fx_window.play_collection_firework(
         origin_screen,
         target_screen,
         collected_count,
         max_count
     )
+
+    change_scene_timer.stop()
+    float_button_manager.call("set_memory_choice_active", true)
+    memory_choice_window.begin_choices(get_tree().root)
+    var choice_weighted_tags := world_assembler.get_current_weighted_tags()
+    var chosen_tags: Array[Tags.Tag] = []
+    var chosen_memories: Array[MemoryDef] = []
+    for _round_index in collected_count:
+        var choices := memory_controller.get_random_collectable_memories(
+            choice_weighted_tags,
+            2
+        )
+        if choices.size() < 2:
+            push_warning(
+                "[MEMORY CHOICE] 当前 weighted_tags 无法提供两个可收集 MemoryDef，选择流程提前结束"
+            )
+            break
+
+        var chosen_memory := await memory_choice_window.play_choice(
+            choices[0],
+            choices[1],
+            _get_pet_screen_position()
+        )
+        chosen_tags.append(chosen_memory.tags[0])
+        chosen_memories.append(chosen_memory)
+
+    _update_memory_slots(chosen_tags, chosen_memories)
+    memory_choice_window.finish_choices()
+    float_button_manager.call("set_memory_choice_active", false)
+    _collection_flow_active = false
 
 
 func _sync_pending_collection_ui() -> void:
@@ -179,6 +215,10 @@ func _on_memory_controller_pending_collection_count_changed(
 
 func _get_control_screen_center(control: Control) -> Vector2:
     return control.get_screen_transform() * (control.size * 0.5)
+
+
+func _get_pet_screen_position() -> Vector2:
+    return world_output.get_screen_transform() * pet.global_position
 
 #endregion
 
@@ -257,7 +297,7 @@ func _on_world_assembler_world_changed(new_tag_id: int) -> void:
         "[WORLD ASSEMBLER] World assembled/transitioned to Tag: %s"
         % Tags.Tag.find_key(new_tag_id)
     )
-    character_status.get_node("ChangeScene").start()
+    change_scene_timer.start()
 
 
 func _on_change_scene_timeout() -> void:
@@ -271,10 +311,93 @@ func _on_change_scene_timeout() -> void:
 
 #region Memory
 
-func _update_memory_slots(chosen: String) -> void:
-    memory_slots.append(chosen)
-    if memory_slots.size() > 6:
-        memory_slots.pop_front()
-    print("[MEMORY SLOTS] Updated memory slots: " + str(memory_slots))
+func _update_memory_slots(
+    chosen_tags: Array[Tags.Tag],
+    chosen_memories: Array[MemoryDef]
+) -> void:
+    # 一整批选择完成后统一更新；后续世界变化信号也从这里发出。
+    for chosen_tag in chosen_tags:
+        memory_slots.push_front(chosen_tag)
+    while memory_slots.size() > 9:
+        memory_slots.pop_back()
+
+    for chosen_memory: MemoryDef in chosen_memories:
+        recent_chosen_memories.push_front(chosen_memory)
+    while recent_chosen_memories.size() > 3:
+        recent_chosen_memories.pop_back()
+    world_assembler.set_recently_chosen_memories(recent_chosen_memories)
+    float_button_manager.call("set_recent_memories", recent_chosen_memories)
+
+    if not chosen_memories.is_empty():
+        var recent_memory_names: Array[String] = []
+        for memory: MemoryDef in recent_chosen_memories:
+            var memory_name := memory.resource_name
+            if memory_name.is_empty() and not memory.resource_path.is_empty():
+                memory_name = memory.resource_path.get_file().get_basename()
+            recent_memory_names.append(memory_name)
+        print("[RECENT MEMORIES] Updated recent memories: %s" % [recent_memory_names])
+
+    var slot_names: Array[String] = []
+    for tag in memory_slots:
+        slot_names.append(String(Tags.Tag.find_key(tag)))
+
+    var weighted_tags := _calculate_memory_slot_weights()
+    var weighted_tag_names: Dictionary[String, float] = {}
+    for tag: Tags.Tag in weighted_tags:
+        weighted_tag_names[String(Tags.Tag.find_key(tag))] = weighted_tags[tag]
+
+    print(
+        "[MEMORY SLOTS] Updated memory slots: %s, weighted tags: %s"
+        % [slot_names, weighted_tag_names]
+    )
+
+    # 二选一批次完成并准备触发世界过渡时，从头计算下次自动切换时间。
+    change_scene_timer.start()
+    if not weighted_tags.is_empty():
+        world_assembler.transition_to_world(weighted_tags)
+
+
+
+func _calculate_memory_slot_weights() -> Dictionary[Tags.Tag, float]:
+    var tag_counts: Dictionary[Tags.Tag, int] = {}
+    var first_slot_indices: Dictionary[Tags.Tag, int] = {}
+    var sorted_tags: Array[Tags.Tag] = []
+
+    # memory_slots 从新到旧排列；相同权重时，最近出现的 Tag 排在前面。
+    for slot_index: int in range(memory_slots.size()):
+        var tag := memory_slots[slot_index]
+        if not tag_counts.has(tag):
+            tag_counts[tag] = 0
+            first_slot_indices[tag] = slot_index
+            sorted_tags.append(tag)
+        tag_counts[tag] += 1
+
+    for index: int in range(sorted_tags.size()):
+        var best_index := index
+        for candidate_index: int in range(index + 1, sorted_tags.size()):
+            var candidate_tag := sorted_tags[candidate_index]
+            var best_tag := sorted_tags[best_index]
+            var candidate_is_higher := tag_counts[candidate_tag] > tag_counts[best_tag]
+            var candidate_is_more_recent := (
+                tag_counts[candidate_tag] == tag_counts[best_tag]
+                and first_slot_indices[candidate_tag] < first_slot_indices[best_tag]
+            )
+            if candidate_is_higher or candidate_is_more_recent:
+                best_index = candidate_index
+
+        if best_index != index:
+            var current_tag := sorted_tags[index]
+            sorted_tags[index] = sorted_tags[best_index]
+            sorted_tags[best_index] = current_tag
+
+    var weighted_tags: Dictionary[Tags.Tag, float] = {}
+    var slot_count := memory_slots.size()
+    if slot_count <= 0:
+        return weighted_tags
+
+    for tag: Tags.Tag in sorted_tags:
+        weighted_tags[tag] = float(tag_counts[tag]) / float(slot_count)
+
+    return weighted_tags
 
 #endregion

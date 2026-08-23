@@ -10,9 +10,17 @@ class_name WorldAssembler
 
 @export var tag_scenes: Dictionary[Tags.Tag, TagSceneDef] = {}
 @export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
+## 全局滚动速度倍率，同时作用于 Parallax2D 和手动视差层。
+@export_range(0.0, 4.0, 0.05, "or_greater") var global_scroll_speed: float = 1.0:
+    set(value):
+        global_scroll_speed = maxf(value, 0.0)
+        if is_node_ready():
+            _apply_global_scroll_speed()
 
-@export var current_tag_id: int = -1 # 当前世界ID，初始为-1表示未设置
+@export var current_tag_id: Tags.Tag = Tags.Tag.MYSTERIOUS # 当前世界的主标签
 @export var is_transitioning: bool = false # 是否正在进行世界切换过渡
+
+var current_weighted_tags: Dictionary[Tags.Tag, float] = {}
 
 
 
@@ -51,6 +59,13 @@ var banned_texture: String = "" # 单个槽位，记录最近一次未选择的t
 var _clouds: Array[ManualParallax] = []
 var _landforms: Array[ManualParallax] = []
 var _components: Array[ManualParallax] = []
+var _sky_base_autoscroll: Vector2
+var _ground_base_autoscroll: Vector2
+var _manual_base_scroll_speeds: Dictionary = {}
+
+var _last_memory_by_layer: Dictionary = {}
+var _spawned_objects_by_memory: Dictionary = {}
+var _recently_chosen_memories: Array[MemoryDef] = []
 
 
 
@@ -107,8 +122,6 @@ func transition_to_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         is_transitioning = true
 
         _update_def_to_scene(weighted_tags) # 切换到新世界的参数（仅参数）
-        _start_manual_scroll(1)
-
         world_changed.emit(main_tag) # 发出世界切换信号，供其他系统（如角色状态机）响应
         is_transitioning = false
     
@@ -124,7 +137,7 @@ func transition_to_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         _sky.transition_to_target(duration)
         _ground.transition_to_target(duration)
         _poi.fade_out_children(duration)
-        _start_non_poi_manual_scroll(1)
+        _start_non_poi_manual_scroll(1, false)
 
         if not is_zero_approx(duration):
             await get_tree().create_timer(duration).timeout
@@ -132,7 +145,7 @@ func transition_to_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         # 强制落到目标值，避免 Tween 与计时器同帧结束时留下微小误差。
         _sky.apply_immediate()
         _ground.apply_immediate()
-        _poi.start_manual_scroll(0)
+        _poi.start_manual_scroll(0, false)
 
         world_changed.emit(main_tag)
         is_transitioning = false
@@ -142,6 +155,27 @@ func transition_to_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
 func _ready() -> void:
     _build_tag_scenes() 
     _initialize_manual_parallax_layers()
+    _sky_base_autoscroll = _sky.autoscroll
+    _ground_base_autoscroll = _ground.autoscroll
+    _apply_global_scroll_speed()
+
+
+func get_current_weighted_tags() -> Dictionary[Tags.Tag, float]:
+    var result: Dictionary[Tags.Tag, float] = {}
+    for tag: Tags.Tag in current_weighted_tags:
+        result[tag] = current_weighted_tags[tag]
+    return result
+
+
+
+func set_recently_chosen_memories(memories: Array[MemoryDef]) -> void:
+    _recently_chosen_memories.clear()
+    for memory: MemoryDef in memories:
+        if memory == null or _recently_chosen_memories.has(memory):
+            continue
+        _recently_chosen_memories.append(memory)
+        if _recently_chosen_memories.size() >= 3:
+            break
 
 
 
@@ -266,6 +300,10 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
     # mode: 0直接切换(或初始化场景)，1渐变切换
     var main_tag: Tags.Tag = weighted_tags.keys()[0] # 获取权重最高的标签作为主标签
     var main_tag_scene := tag_scenes[main_tag]
+
+    current_weighted_tags.clear()
+    for tag: Tags.Tag in weighted_tags:
+        current_weighted_tags[tag] = weighted_tags[tag]
     
     
     _sky.main_color = main_tag_scene.sky_main_color
@@ -276,7 +314,7 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
 
 
     _poi.color = main_tag_scene.poi_color
-    _poi.scroll_speed = main_tag_scene.poi_scroll_speed
+    _set_manual_base_scroll_speed(_poi, main_tag_scene.poi_scroll_speed)
     _poi.weighted_tags = weighted_tags
 
 
@@ -291,7 +329,10 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         cloud.color = main_tag_scene.cloud_color
         var t = float(i) / (clouds_count - 1)
         var speed_ratio = lerp(1.0, main_tag_scene.landform_speed_ratio, t) # 根据云层索引调整速度比率
-        cloud.scroll_speed = main_tag_scene.cloud_scroll_speed * speed_ratio
+        _set_manual_base_scroll_speed(
+            cloud,
+            main_tag_scene.cloud_scroll_speed * speed_ratio
+        )
         cloud.weighted_tags = weighted_tags
 
 
@@ -321,7 +362,10 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         var landform := _landforms[i]
         var t := float(i) / (landforms_count - 1)
         var speed_ratio = lerp(1.0, main_tag_scene.landform_speed_ratio, t) # 根据地形层索引调整速度比率
-        landform.scroll_speed = main_tag_scene.landform_scroll_speed * speed_ratio
+        _set_manual_base_scroll_speed(
+            landform,
+            main_tag_scene.landform_scroll_speed * speed_ratio
+        )
         landform.weighted_tags = weighted_tags
     
 
@@ -331,25 +375,137 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         component.color = main_tag_scene.component_color
         var t = float(i) / (components_count - 1)
         var speed_ratio = lerp(1.0, main_tag_scene.component_speed_ratio, t) # 根据组件层索引调整速度比率
-        component.scroll_speed = main_tag_scene.component_scroll_speed * speed_ratio
+        _set_manual_base_scroll_speed(
+            component,
+            main_tag_scene.component_scroll_speed * speed_ratio
+        )
         component.weighted_tags = weighted_tags
 
 
 
+func _set_manual_base_scroll_speed(layer: ManualParallax, speed: Vector2) -> void:
+    _manual_base_scroll_speeds[layer] = speed
+    layer.scroll_speed = speed * global_scroll_speed
+
+
+
+func _apply_global_scroll_speed() -> void:
+    _sky.autoscroll = _sky_base_autoscroll * global_scroll_speed
+    _ground.autoscroll = _ground_base_autoscroll * global_scroll_speed
+    for layer: ManualParallax in _manual_base_scroll_speeds:
+        if is_instance_valid(layer):
+            layer.scroll_speed = _manual_base_scroll_speeds[layer] * global_scroll_speed
+
+
+
+# 每层按自己的 Timer 独立请求；先到的请求先占用实际空间，不再依赖逻辑轮次对齐。
+func get_manual_parallax_memory(layer: ManualParallax) -> MemoryDef:
+    var layer_id := layer.get_instance_id()
+    var excluded_memories: Array[MemoryDef] = []
+    if _last_memory_by_layer.has(layer_id):
+        var previous_memory := _last_memory_by_layer[layer_id] as MemoryDef
+        if previous_memory != null:
+            excluded_memories.append(previous_memory)
+
+    var recent_candidates := layer.get_recent_memory_candidates(
+        _recently_chosen_memories,
+        excluded_memories
+    )
+    for memory: MemoryDef in recent_candidates:
+        if not _is_memory_blocked_by_other_layer(memory, layer):
+            return memory
+
+    for memory: MemoryDef in layer.get_memory_candidates(excluded_memories):
+        if not _is_memory_blocked_by_other_layer(memory, layer):
+            return memory
+
+    var suppress_warning := layer.pool in [
+        MemoryDef.Pool.CLOUD,
+        MemoryDef.Pool.LANDFORM_FAR,
+        MemoryDef.Pool.LANDFORM_MID,
+        MemoryDef.Pool.LANDFORM_FRONT,
+    ]
+    if not suppress_warning:
+        var pool_name := String(MemoryDef.Pool.keys()[layer.pool])
+        push_warning(
+            "[MANUAL PARALLAX] 候选不足，已严格跳过本次生成：layer=%s, pool=%s"
+            % [layer.name, pool_name]
+        )
+    return null
+
+
+
+# 只有实例化成功后才登记，确保层内“上一次”与跨层空间占用都对应实际生成结果。
+func register_manual_parallax_spawn(
+    layer: ManualParallax,
+    memory: MemoryDef,
+    object: MparaObject
+) -> void:
+    if layer == null or memory == null or object == null or not is_instance_valid(object):
+        return
+
+    _last_memory_by_layer[layer.get_instance_id()] = memory
+    var object_refs: Array = _spawned_objects_by_memory.get(memory, [])
+    object_refs.append(weakref(object))
+    _spawned_objects_by_memory[memory] = object_refs
+
+
+
+func _is_memory_blocked_by_other_layer(
+    memory: MemoryDef,
+    requesting_layer: ManualParallax
+) -> bool:
+    if memory == null or memory.texture == null:
+        return false
+    if not _spawned_objects_by_memory.has(memory):
+        return false
+
+    var safe_distance := maxf(memory.spawn_distance_ratio, 0.0) * memory.texture.get_width()
+    if safe_distance <= 0.0:
+        return false
+
+    var requesting_spawn_x := requesting_layer.to_global(requesting_layer.spawn_position).x
+    var object_refs: Array = _spawned_objects_by_memory[memory]
+    var is_blocked := false
+    for index: int in range(object_refs.size() - 1, -1, -1):
+        var object_ref := object_refs[index] as WeakRef
+        var object: MparaObject
+        if object_ref != null:
+            object = object_ref.get_ref() as MparaObject
+
+        if object == null or not is_instance_valid(object) or object.is_queued_for_deletion():
+            object_refs.remove_at(index)
+            continue
+
+        var source_layer := object.get_parent() as ManualParallax
+        if source_layer == null or source_layer == requesting_layer:
+            continue
+
+        if absf(requesting_spawn_x - object.global_position.x) < safe_distance:
+            is_blocked = true
+
+    if object_refs.is_empty():
+        _spawned_objects_by_memory.erase(memory)
+    else:
+        _spawned_objects_by_memory[memory] = object_refs
+    return is_blocked
+
+
+
 # 开始手动滚动的Parallax层
-func _start_manual_scroll(mode: int = 0) -> void: # mode: 0直接切换，1渐变切换
-    _poi.start_manual_scroll(mode)
-    _start_non_poi_manual_scroll(mode)
+func _start_manual_scroll(mode: int = 0, spawn_immediately: bool = true) -> void:
+    _poi.start_manual_scroll(mode, spawn_immediately)
+    _start_non_poi_manual_scroll(mode, spawn_immediately)
 
 
 
-func _start_non_poi_manual_scroll(mode: int = 0) -> void:
+func _start_non_poi_manual_scroll(mode: int = 0, spawn_immediately: bool = true) -> void:
     for cloud in _clouds:
-        cloud.start_manual_scroll(mode)
+        cloud.start_manual_scroll(mode, spawn_immediately)
     for landform in _landforms:
-        landform.start_manual_scroll(mode)
+        landform.start_manual_scroll(mode, spawn_immediately)
     for component in _components:
-        component.start_manual_scroll(mode)
+        component.start_manual_scroll(mode, spawn_immediately)
 
 
 
