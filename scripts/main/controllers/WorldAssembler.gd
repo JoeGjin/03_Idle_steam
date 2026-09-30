@@ -10,6 +10,7 @@ class_name WorldAssembler
 
 @export var tag_scenes: Dictionary[Tags.Tag, TagSceneDef] = {}
 @export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
+@export_range(0.0, 500.0, 1.0, "suffix:px") var component_ground_sink: float = 0.0
 ## 全局滚动速度倍率，同时作用于 Parallax2D 和手动视差层。
 @export_range(0.0, 4.0, 0.05, "or_greater") var global_scroll_speed: float = 1.0:
     set(value):
@@ -219,6 +220,7 @@ func _build_tag_scenes() -> void:
 # 初始化手动滚动的Parallax层的pool，并加入到对应的数组中
 func _initialize_manual_parallax_layers() -> void:
     # 初始化所有手动滚动的Parallax层
+    var viewport_bottom_y := get_viewport().get_visible_rect().size.y
     var initial_height: float = -150.00
     var height_increment: float = initial_height / 5.0 # 将高度均分为5个层级
     var height_levels: Array[float] = [
@@ -234,63 +236,63 @@ func _initialize_manual_parallax_layers() -> void:
     _poi.position = Vector2(0, height_levels[0])
 
     _cloud_1.pool = MemoryDef.Pool.CLOUD
-    _cloud_1.position = Vector2(0, height_levels[1])
+    _cloud_1.position = Vector2(0, viewport_bottom_y + height_levels[1])
     _clouds.append(_cloud_1)
 
     _landform_1.pool = MemoryDef.Pool.LANDFORM_FAR
-    _landform_1.position = Vector2(0, height_levels[1])
+    _landform_1.position = Vector2(0, viewport_bottom_y + height_levels[1])
     _landforms.append(_landform_1)
 
     _component_1.pool = MemoryDef.Pool.COMPONENT_FAR
-    _component_1.position = Vector2(0, height_levels[1])
+    _component_1.position = Vector2(0, viewport_bottom_y + height_levels[1])
     _components.append(_component_1)
 
     _cloud_2.pool = MemoryDef.Pool.CLOUD
-    _cloud_2.position = Vector2(0, height_levels[2])
+    _cloud_2.position = Vector2(0, viewport_bottom_y + height_levels[2])
     _clouds.append(_cloud_2)
 
     _landform_2.pool = MemoryDef.Pool.LANDFORM_MID
-    _landform_2.position = Vector2(0, height_levels[2])
+    _landform_2.position = Vector2(0, viewport_bottom_y + height_levels[2])
     _landforms.append(_landform_2)
 
     _component_2.pool = MemoryDef.Pool.COMPONENT_MID
-    _component_2.position = Vector2(0, height_levels[2])
+    _component_2.position = Vector2(0, viewport_bottom_y + height_levels[2])
     _components.append(_component_2)
 
     _cloud_3.pool = MemoryDef.Pool.CLOUD
-    _cloud_3.position = Vector2(0, height_levels[3])
+    _cloud_3.position = Vector2(0, viewport_bottom_y + height_levels[3])
     _clouds.append(_cloud_3)
 
     _landform_3.pool = MemoryDef.Pool.LANDFORM_MID
-    _landform_3.position = Vector2(0, height_levels[3])
+    _landform_3.position = Vector2(0, viewport_bottom_y + height_levels[3])
     _landforms.append(_landform_3)
 
     _component_3.pool = MemoryDef.Pool.COMPONENT_MID
-    _component_3.position = Vector2(0, height_levels[3])
+    _component_3.position = Vector2(0, viewport_bottom_y + height_levels[3])
     _components.append(_component_3)
 
     _cloud_4.pool = MemoryDef.Pool.CLOUD
-    _cloud_4.position = Vector2(0, height_levels[4])
+    _cloud_4.position = Vector2(0, viewport_bottom_y + height_levels[4])
     _clouds.append(_cloud_4)
 
     _landform_4.pool = MemoryDef.Pool.LANDFORM_FRONT
-    _landform_4.position = Vector2(0, height_levels[4])
+    _landform_4.position = Vector2(0, viewport_bottom_y + height_levels[4])
     _landforms.append(_landform_4)
 
     _component_4.pool = MemoryDef.Pool.COMPONENT_FRONT
-    _component_4.position = Vector2(0, height_levels[4])
+    _component_4.position = Vector2(0, viewport_bottom_y + height_levels[4])
     _components.append(_component_4)
 
     _cloud_5.pool = MemoryDef.Pool.CLOUD
-    _cloud_5.position = Vector2(0, height_levels[5])
+    _cloud_5.position = Vector2(0, viewport_bottom_y + height_levels[5])
     _clouds.append(_cloud_5)
 
     _landform_5.pool = MemoryDef.Pool.LANDFORM_FRONT
-    _landform_5.position = Vector2(0, height_levels[5])
+    _landform_5.position = Vector2(0, viewport_bottom_y + height_levels[5])
     _landforms.append(_landform_5)
 
     _component_5.pool = MemoryDef.Pool.COMPONENT_FRONT
-    _component_5.position = Vector2(0, height_levels[5])
+    _component_5.position = Vector2(0, viewport_bottom_y + height_levels[5])
     _components.append(_component_5)
 
 
@@ -328,7 +330,7 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         var cloud = _clouds[i]
         cloud.color = main_tag_scene.cloud_color
         var t = float(i) / (clouds_count - 1)
-        var speed_ratio = lerp(1.0, main_tag_scene.landform_speed_ratio, t) # 根据云层索引调整速度比率
+        var speed_ratio = lerp(1.0, main_tag_scene.cloud_speed_ratio, t) # 根据云层索引调整速度比率
         _set_manual_base_scroll_speed(
             cloud,
             main_tag_scene.cloud_scroll_speed * speed_ratio
@@ -448,6 +450,14 @@ func register_manual_parallax_spawn(
     var object_refs: Array = _spawned_objects_by_memory.get(memory, [])
     object_refs.append(weakref(object))
     _spawned_objects_by_memory[memory] = object_refs
+
+
+
+func get_component_ground_y(component_layer: ManualParallax, world_x: float) -> Variant:
+    var layer_index := _components.find(component_layer)
+    if layer_index < 0 or layer_index >= _landforms.size():
+        return null
+    return _landforms[layer_index].get_ground_y(world_x)
 
 
 

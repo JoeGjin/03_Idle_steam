@@ -15,3 +15,5 @@ enum Pool { POI, CLOUD, LANDFORM_FAR, LANDFORM_MID, LANDFORM_FRONT, COMPONENT_FA
 
 ## 生成距离比率；根据ratio * 自身宽度，对应层的scroll speed，前一个texture的宽度，算出层的updated timer cooldown
 @export var spawn_distance_ratio: float = 0.8 
+
+@export var spawn_height: float = 0.0 # 生成高度，默认0.0，表示在地面上生成; 浮空高度大约在300.0

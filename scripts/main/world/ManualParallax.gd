@@ -6,6 +6,7 @@ class_name ManualParallax
 const MPARA_OBJECT_SCENE: PackedScene = preload("res://scenes/MparaObject.tscn")
 const SPAWN_DISTANCE_EPSILON := 1.0
 const SPAWN_RECHECK_INTERVAL := 0.25
+const SURFACE_ALPHA_THRESHOLD := 0.1
 
 
 @onready var world_assembler: WorldAssembler = %WorldAssembler
@@ -26,6 +27,7 @@ var _is_scrolling: bool = true
 var _spawn_timer: Timer
 var _spawn_cooldown: float = 999.0
 var _fade_tween: Tween
+var _surface_height_maps: Dictionary = {}
 
 
 #非Parallex2D 手动滚动program开始运行（生成随机texture，移动，到尽头自动释放，间隔时长后重复）
@@ -416,9 +418,96 @@ func _spawn_object(memory: MemoryDef = null) -> void:
     object.initialize(memory)
     object.modulate = color
     add_child(object)
-    object.position = spawn_position
+    # Sprite2D 使用左上角原点，因此上移纹理高度，让左下角对齐层的生成高度。
+    var object_height := memory.texture.get_height() * absf(object.scale.y)
+    var is_component := pool in [
+        MemoryDef.Pool.COMPONENT_FAR,
+        MemoryDef.Pool.COMPONENT_MID,
+        MemoryDef.Pool.COMPONENT_FRONT,
+    ]
+    var component_half_width := memory.texture.get_width() * absf(object.scale.x) * 0.5
+    var horizontal_anchor_offset := component_half_width if is_component else 0.0
+    object.position = spawn_position - Vector2(horizontal_anchor_offset, object_height)
+
+    if pool in [
+        MemoryDef.Pool.LANDFORM_FAR,
+        MemoryDef.Pool.LANDFORM_MID,
+        MemoryDef.Pool.LANDFORM_FRONT,
+    ]:
+        _get_surface_height_map(memory.texture)
+
+    if is_component:
+        var component_world_x := to_global(spawn_position).x
+        var ground_y: Variant = world_assembler.get_component_ground_y(self, component_world_x)
+        if ground_y != null:
+            object.global_position.y = ground_y - object_height + world_assembler.component_ground_sink
+
     _objects.append(object)
     world_assembler.register_manual_parallax_spawn(self, memory, object)
+
+
+
+func get_ground_y(world_x: float) -> Variant:
+    if pool not in [
+        MemoryDef.Pool.LANDFORM_FAR,
+        MemoryDef.Pool.LANDFORM_MID,
+        MemoryDef.Pool.LANDFORM_FRONT,
+    ]:
+        return null
+
+    # 从最新生成的地形开始查找，与当前可见地形的覆盖顺序一致。
+    for index: int in range(_objects.size() - 1, -1, -1):
+        var landform := _objects[index] as MparaObject
+        if landform == null or not is_instance_valid(landform) or landform.texture == null:
+            continue
+
+        var height_map: PackedInt32Array = _get_surface_height_map(landform.texture)
+        if height_map.is_empty():
+            continue
+
+        # 精灵左上角是原点；to_local 同时处理节点位置与缩放，flip_h 再映射回图像列。
+        var local_point := landform.to_local(Vector2(world_x, landform.global_position.y))
+        var pixel_x := floori(local_point.x)
+        if landform.flip_h:
+            pixel_x = landform.texture.get_width() - 1 - pixel_x
+        if pixel_x < 0 or pixel_x >= height_map.size():
+            continue
+
+        var surface_y := height_map[pixel_x]
+        if surface_y < 0:
+            continue
+        if landform.flip_v:
+            surface_y = landform.texture.get_height() - 1 - surface_y
+        return landform.to_global(Vector2(
+            local_point.x,
+            float(surface_y)
+        )).y
+
+    return null
+
+
+
+func _get_surface_height_map(texture: Texture2D) -> PackedInt32Array:
+    var texture_id := texture.get_instance_id()
+    if _surface_height_maps.has(texture_id):
+        return _surface_height_maps[texture_id]
+
+    var image := texture.get_image()
+    if image == null or image.is_empty():
+        _surface_height_maps[texture_id] = PackedInt32Array()
+        return _surface_height_maps[texture_id]
+
+    var height_map := PackedInt32Array()
+    height_map.resize(image.get_width())
+    for x: int in range(image.get_width()):
+        height_map[x] = -1
+        for y: int in range(image.get_height()):
+            if image.get_pixel(x, y).a > SURFACE_ALPHA_THRESHOLD:
+                height_map[x] = y
+                break
+
+    _surface_height_maps[texture_id] = height_map
+    return height_map
 
 
 

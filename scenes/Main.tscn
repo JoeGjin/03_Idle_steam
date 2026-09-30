@@ -40,7 +40,7 @@
 [ext_resource type="Texture2D" uid="uid://dbjfnojqk1vek" path="res://assets/worldroot/pet/walk/frame_02.png" id="37_2ki8c"]
 [ext_resource type="Texture2D" uid="uid://cj3sajlc6aso6" path="res://assets/worldroot/stage/ground/ground_main.png" id="37_a3hxr"]
 [ext_resource type="PackedScene" uid="uid://gy7cosvfl2xa" path="res://scenes/Blur.tscn" id="37_csfbn"]
-[ext_resource type="Texture2D" uid="uid://roktu3f57yip" path="res://assets/worldroot/poi/poi_7.png" id="37_e2bht"]
+[ext_resource type="Texture2D" uid="uid://dk1mdcvt5k2to" path="res://assets/worldroot/poi/poi_6.png" id="37_e2bht"]
 [ext_resource type="Script" uid="uid://dh2yhhqwv7oy6" path="res://scripts/main/world/Ground.gd" id="37_qd1pt"]
 [ext_resource type="Texture2D" uid="uid://d0j08xdnfer36" path="res://assets/worldroot/pet/walk/frame_03.png" id="38_0owt5"]
 [ext_resource type="Texture2D" uid="uid://ca022vsesuwke" path="res://assets/worldroot/pet/walk/frame_04.png" id="39_o1tg2"]
@@ -190,7 +190,7 @@ corner_radius_bottom_left = 20
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
-shader_parameter/mask_enable = 0.999999977648
+shader_parameter/mask_enable = 0.8999999798832
 shader_parameter/center_u = 0.50000002375
 shader_parameter/center_v = 0.50000002375
 shader_parameter/radius_u = 0.326000015485
@@ -251,6 +251,7 @@ hook_switch = true
 [node name="WorldAssembler" type="Node" parent="Controllers" unique_id=2095624893]
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
+component_ground_sink = 125.0
 global_scroll_speed = 2.0
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]

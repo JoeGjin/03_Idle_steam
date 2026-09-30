@@ -32,4 +32,4 @@ class_name TagSceneDef
 
 @export var component_color: Color = Color(1, 1, 1, 1)
 @export var component_scroll_speed: Vector2 = Vector2(-80, 0)
-@export var component_speed_ratio: float = 2.5 # 从远到近速度的乘数
+@export var component_speed_ratio: float = 2.0 # 从远到近速度的乘数
