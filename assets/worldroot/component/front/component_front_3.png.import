@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3slvicneemv3"
-path="res://.godot/imported/poi_2.png-5b064e45bbe31f2f384575e8db55aff3.ctex"
+uid="uid://da7lmtvlk50jo"
+path="res://.godot/imported/component_front_3.png-8cb7936593e7bb547ab809b356accac7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/worldroot/poi/poi_2.png"
-dest_files=["res://.godot/imported/poi_2.png-5b064e45bbe31f2f384575e8db55aff3.ctex"]
+source_file="res://assets/worldroot/component/front/component_front_3.png"
+dest_files=["res://.godot/imported/component_front_3.png-8cb7936593e7bb547ab809b356accac7.ctex"]
 
 [params]
 

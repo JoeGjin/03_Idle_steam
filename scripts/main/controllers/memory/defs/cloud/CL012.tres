@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="MemoryDef" format=3 uid="uid://bo7f0gf052ic1"]
+
+[ext_resource type="Script" uid="uid://v1a86tare2si" path="res://scripts/main/controllers/memory/MemoryDef.gd" id="1_3orgy"]
+[ext_resource type="Texture2D" uid="uid://bxdkxkk2t13kt" path="res://assets/worldroot/component/far/component_far_16.png" id="2_x6vkn"]
+
+[resource]
+script = ExtResource("1_3orgy")
+is_collectable = true
+texture = ExtResource("2_x6vkn")
+tags = Array[int]([2, 5])
+pool = 1
+spawn_alignment = 1
+spawn_distance_ratio = 3.0
+spawn_height = 400.0
+metadata/_custom_type_script = "uid://v1a86tare2si"

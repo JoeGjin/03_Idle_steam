@@ -182,7 +182,7 @@ func set_recently_chosen_memories(memories: Array[MemoryDef]) -> void:
 
 # 小键盘控制世界切换
 func _input(event): 
-    for i in range(10):
+    for i in range(Tags.Tag.size()):
         if event.is_action_pressed("%d" % i):
             # 创建一个权重为1.0的字典，表示选择的标签
             var target_tag: Dictionary[Tags.Tag, float] = {i as Tags.Tag: 1.0} 
@@ -298,7 +298,7 @@ func _initialize_manual_parallax_layers() -> void:
 
 # 将tag_scene的参数应用到场景节点上
 func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void: 
-    # weighted_tags: {MYSTERIOUS: 0.5, HOLY: 0.3, BARREN: 0.2}
+    # weighted_tags: {MYSTERIOUS: 0.5, PEACEFUL: 0.3, BARREN: 0.2}
     # mode: 0直接切换(或初始化场景)，1渐变切换
     var main_tag: Tags.Tag = weighted_tags.keys()[0] # 获取权重最高的标签作为主标签
     var main_tag_scene := tag_scenes[main_tag]
@@ -458,6 +458,15 @@ func get_component_ground_y(component_layer: ManualParallax, world_x: float) -> 
     if layer_index < 0 or layer_index >= _landforms.size():
         return null
     return _landforms[layer_index].get_ground_y(world_x)
+
+
+
+func get_cloud_layer_origin_y(cloud_layer: ManualParallax) -> Variant:
+    # Cloud 与 Landform 按相同顺序初始化，云只对齐对应层的原点。
+    var layer_index := _clouds.find(cloud_layer)
+    if layer_index < 0 or layer_index >= _landforms.size():
+        return null
+    return _landforms[layer_index].to_global(Vector2.ZERO).y
 
 
 

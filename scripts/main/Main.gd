@@ -302,7 +302,7 @@ func _on_world_assembler_world_changed(new_tag_id: int) -> void:
 
 func _on_change_scene_timeout() -> void:
     print("[MAIN] Change scene timeout reached, switching world")
-    var target_tag := ((world_assembler.current_tag_id + 1) % 3) as Tags.Tag
+    var target_tag := ((world_assembler.current_tag_id + 1) % Tags.Tag.size()) as Tags.Tag
     var target_tags: Dictionary[Tags.Tag, float] = {target_tag: 1.0}
     world_assembler.transition_to_world(target_tags)
 

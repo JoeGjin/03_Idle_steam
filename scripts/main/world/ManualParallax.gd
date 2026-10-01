@@ -425,22 +425,34 @@ func _spawn_object(memory: MemoryDef = null) -> void:
         MemoryDef.Pool.COMPONENT_MID,
         MemoryDef.Pool.COMPONENT_FRONT,
     ]
+    var is_cloud := pool == MemoryDef.Pool.CLOUD
+    var is_poi := pool == MemoryDef.Pool.POI
+    var is_landform := pool in [
+        MemoryDef.Pool.LANDFORM_FAR,
+        MemoryDef.Pool.LANDFORM_MID,
+        MemoryDef.Pool.LANDFORM_FRONT,
+    ]
     var component_half_width := memory.texture.get_width() * absf(object.scale.x) * 0.5
     var horizontal_anchor_offset := component_half_width if is_component else 0.0
     object.position = spawn_position - Vector2(horizontal_anchor_offset, object_height)
 
-    if pool in [
-        MemoryDef.Pool.LANDFORM_FAR,
-        MemoryDef.Pool.LANDFORM_MID,
-        MemoryDef.Pool.LANDFORM_FRONT,
-    ]:
+    if is_landform:
         _get_surface_height_map(memory.texture)
 
-    if is_component:
-        var component_world_x := to_global(spawn_position).x
-        var ground_y: Variant = world_assembler.get_component_ground_y(self, component_world_x)
-        if ground_y != null:
-            object.global_position.y = ground_y - object_height + world_assembler.component_ground_sink
+    if is_component or is_cloud or is_poi:
+        if memory.spawn_alignment == MemoryDef.SpawnAlignment.SPAWN_HEIGHT:
+            object.position.y -= memory.spawn_height
+        elif is_component:
+            var component_world_x := to_global(spawn_position).x
+            var ground_y: Variant = world_assembler.get_component_ground_y(self, component_world_x)
+            if ground_y != null:
+                object.global_position.y = ground_y - object_height + world_assembler.component_ground_sink
+        elif is_cloud:
+            var layer_origin_y: Variant = world_assembler.get_cloud_layer_origin_y(self)
+            if layer_origin_y != null:
+                object.global_position.y = layer_origin_y - object_height
+        else:
+            object.position.y = -object_height
 
     _objects.append(object)
     world_assembler.register_manual_parallax_spawn(self, memory, object)

@@ -21,7 +21,7 @@ class MemoryList:
 class MemoryPools:
     var by_pool: Dictionary[MemoryDef.Pool, MemoryList] = {}
 var memories_by_tag: Dictionary[Tags.Tag, MemoryPools] = {} 
-# {HOLY:{POI: [memory_1,memory_2],CLOUD: [memory_3,memroy_4]}
+# {PEACEFUL:{POI: [memory_1,memory_2],CLOUD: [memory_3,memroy_4]}
 var collectable_memories: Array[MemoryDef] = []
 
 var pending_collection_count := 0
