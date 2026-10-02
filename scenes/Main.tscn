@@ -29,6 +29,7 @@
 [ext_resource type="Script" uid="uid://dadra0l3mlosi" path="res://scripts/main/world/Pet.gd" id="30_v0vrg"]
 [ext_resource type="Script" uid="uid://kq0fgd67jvox" path="res://scripts/main/world/Sky.gd" id="31_ugmlg"]
 [ext_resource type="Texture2D" uid="uid://blvpwa3mbu5xi" path="res://assets/worldroot/stage/sky/sky_main.png" id="32_a3hxr"]
+[ext_resource type="Shader" uid="uid://cgj27505yr6v4" path="res://shaders/InvertColor.gdshader" id="32_gcaob"]
 [ext_resource type="Script" uid="uid://dmq4phw1im2m7" path="res://scripts/main/debug/DebugUI.gd" id="32_pdwbg"]
 [ext_resource type="Script" uid="uid://dvy6ipmh42awj" path="res://scripts/main/debug/DebugPet.gd" id="33_2c4at"]
 [ext_resource type="Script" uid="uid://r3h7y0ivusgi" path="res://scripts/main/world/ManualParallax.gd" id="33_8b871"]
@@ -73,6 +74,10 @@
 [sub_resource type="Theme" id="Theme_ft6cd"]
 Window/styles/embedded_border = SubResource("StyleBoxEmpty_cvmbd")
 Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_aqa1v"]
+shader = ExtResource("32_gcaob")
+shader_parameter/invert_amount = 0.0
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_gcaob"]
 blend_mode = 1
@@ -190,7 +195,7 @@ corner_radius_bottom_left = 20
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
-shader_parameter/mask_enable = 0.8999999798832
+shader_parameter/mask_enable = 0.999999977648
 shader_parameter/center_u = 0.50000002375
 shader_parameter/center_v = 0.50000002375
 shader_parameter/radius_u = 0.326000015485
@@ -252,6 +257,11 @@ hook_switch = true
 unique_name_in_owner = true
 script = ExtResource("19_2c4at")
 component_ground_sink = 125.0
+group_1_scale_factor = 0.5
+group_2_scale_factor = 0.55
+group_4_scale_factor = 0.65
+group_5_scale_factor = 0.7
+poi_scale_factor = 0.7
 global_scroll_speed = 2.0
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
@@ -497,8 +507,8 @@ autoscroll = Vector2(-20, 0)
 script = ExtResource("31_ugmlg")
 
 [node name="Main" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=1813847154]
-modulate = Color(0.78, 0.9486667, 1, 1)
-self_modulate = Color(1.353256, 1.353256, 1.353256, 1)
+modulate = Color(1, 0.6901961, 1, 1)
+material = SubResource("ShaderMaterial_aqa1v")
 texture = ExtResource("32_a3hxr")
 
 [node name="Star" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=553459747]
@@ -518,7 +528,7 @@ unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
 [node name="MparaObject2" parent="WorldRoot/02_POI/POI" unique_id=1196637194 instance=ExtResource("39_vwcyu")]
-position = Vector2(2644, 0)
+position = Vector2(1993, -2)
 texture = ExtResource("37_e2bht")
 
 [node name="Blur" parent="WorldRoot/02_POI" unique_id=1929752123 instance=ExtResource("37_csfbn")]
@@ -638,8 +648,8 @@ layer = 20
 
 [node name="Pet" type="AnimatedSprite2D" parent="WorldRoot/20_Pet" unique_id=390694917]
 unique_name_in_owner = true
-position = Vector2(700, 801)
-scale = Vector2(0.25, 0.25)
+position = Vector2(700, 800)
+scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
 frame_progress = 0.8828364
@@ -761,6 +771,7 @@ zooming_button = NodePath("../BackFloatLayer/Zooming")
 minimode_button = NodePath("../BackFloatLayer/Minimode")
 collected_item_button = NodePath("../FrontFloatLayer/CollectedItem")
 recent_memory_bar = NodePath("../BackFloatLayer/RecentMemoryBar")
+disable_recent_memory_bar = true
 recent_memory_texture_1 = NodePath("../BackFloatLayer/RecentMemoryBar/Memory1/Texture1")
 recent_memory_texture_2 = NodePath("../BackFloatLayer/RecentMemoryBar/Memory2/Texture2")
 recent_memory_texture_3 = NodePath("../BackFloatLayer/RecentMemoryBar/Memory3/Texture3")

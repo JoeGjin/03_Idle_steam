@@ -10,6 +10,6 @@ texture = ExtResource("2_oaesy")
 tags = Array[int]([2, 5])
 pool = 1
 spawn_alignment = 1
-spawn_distance_ratio = 3.0
+spawn_distance_ratio = 5.0
 spawn_height = 400.0
 metadata/_custom_type_script = "uid://v1a86tare2si"

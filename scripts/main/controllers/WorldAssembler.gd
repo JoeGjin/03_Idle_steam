@@ -11,6 +11,15 @@ class_name WorldAssembler
 @export var tag_scenes: Dictionary[Tags.Tag, TagSceneDef] = {}
 @export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
 @export_range(0.0, 500.0, 1.0, "suffix:px") var component_ground_sink: float = 0.0
+## 同组的 Cloud、Landform、Component 共用倍率，组号从后往前排列。
+@export_range(0.01, 2.0, 0.01, "or_greater") var group_1_scale_factor: float = 0.4
+@export_range(0.01, 2.0, 0.01, "or_greater") var group_2_scale_factor: float = 0.5
+@export_range(0.01, 2.0, 0.01, "or_greater") var group_3_scale_factor: float = 0.6
+@export_range(0.01, 2.0, 0.01, "or_greater") var group_4_scale_factor: float = 0.7
+@export_range(0.01, 2.0, 0.01, "or_greater") var group_5_scale_factor: float = 0.8
+@export_range(0.01, 2.0, 0.01, "or_greater") var poi_scale_factor: float = 0.5
+## 所有手动视差素材的随机缩放幅度；0.1 表示基础倍率上下浮动 10%，0 表示关闭。
+@export_range(0.0, 1.0, 0.01) var spawn_scale_randomness: float = 0.1
 ## 全局滚动速度倍率，同时作用于 Parallax2D 和手动视差层。
 @export_range(0.0, 4.0, 0.05, "or_greater") var global_scroll_speed: float = 1.0:
     set(value):
@@ -221,7 +230,7 @@ func _build_tag_scenes() -> void:
 func _initialize_manual_parallax_layers() -> void:
     # 初始化所有手动滚动的Parallax层
     var viewport_bottom_y := get_viewport().get_visible_rect().size.y
-    var initial_height: float = -150.00
+    var initial_height: float = -300.00
     var height_increment: float = initial_height / 5.0 # 将高度均分为5个层级
     var height_levels: Array[float] = [
         0,
@@ -233,7 +242,8 @@ func _initialize_manual_parallax_layers() -> void:
     ]
 
     _poi.pool = MemoryDef.Pool.POI
-    _poi.position = Vector2(0, height_levels[0])
+    _poi.position = Vector2(0, viewport_bottom_y + height_levels[0])
+    _poi.spawn_scale_factor = poi_scale_factor
 
     _cloud_1.pool = MemoryDef.Pool.CLOUD
     _cloud_1.position = Vector2(0, viewport_bottom_y + height_levels[1])
@@ -294,6 +304,18 @@ func _initialize_manual_parallax_layers() -> void:
     _component_5.pool = MemoryDef.Pool.COMPONENT_FRONT
     _component_5.position = Vector2(0, viewport_bottom_y + height_levels[5])
     _components.append(_component_5)
+
+    var group_scale_factors: Array[float] = [
+        group_1_scale_factor,
+        group_2_scale_factor,
+        group_3_scale_factor,
+        group_4_scale_factor,
+        group_5_scale_factor,
+    ]
+    for i in group_scale_factors.size():
+        _clouds[i].spawn_scale_factor = group_scale_factors[i]
+        _landforms[i].spawn_scale_factor = group_scale_factors[i]
+        _components[i].spawn_scale_factor = group_scale_factors[i]
 
 
 # 将tag_scene的参数应用到场景节点上
@@ -414,11 +436,11 @@ func get_manual_parallax_memory(layer: ManualParallax) -> MemoryDef:
         excluded_memories
     )
     for memory: MemoryDef in recent_candidates:
-        if not _is_memory_blocked_by_other_layer(memory, layer):
+        if can_spawn_manual_parallax_memory(layer, memory):
             return memory
 
     for memory: MemoryDef in layer.get_memory_candidates(excluded_memories):
-        if not _is_memory_blocked_by_other_layer(memory, layer):
+        if can_spawn_manual_parallax_memory(layer, memory):
             return memory
 
     var suppress_warning := layer.pool in [
@@ -434,6 +456,13 @@ func get_manual_parallax_memory(layer: ManualParallax) -> MemoryDef:
             % [layer.name, pool_name]
         )
     return null
+
+
+
+func can_spawn_manual_parallax_memory(layer: ManualParallax, memory: MemoryDef) -> bool:
+    if layer == null or memory == null or memory.texture == null or memory.pool != layer.pool:
+        return false
+    return not _is_memory_blocked_by_other_layer(memory, layer)
 
 
 
@@ -479,10 +508,15 @@ func _is_memory_blocked_by_other_layer(
     if not _spawned_objects_by_memory.has(memory):
         return false
 
-    var safe_distance := maxf(memory.spawn_distance_ratio, 0.0) * memory.texture.get_width()
-    if safe_distance <= 0.0:
+    var distance_ratio := maxf(memory.spawn_distance_ratio, 0.0)
+    if distance_ratio <= 0.0:
         return false
 
+    var requesting_width := (
+        memory.texture.get_width()
+        * requesting_layer.spawn_scale_factor
+        * absf(requesting_layer.global_scale.x)
+    )
     var requesting_spawn_x := requesting_layer.to_global(requesting_layer.spawn_position).x
     var object_refs: Array = _spawned_objects_by_memory[memory]
     var is_blocked := false
@@ -500,7 +534,15 @@ func _is_memory_blocked_by_other_layer(
         if source_layer == null or source_layer == requesting_layer:
             continue
 
-        if absf(requesting_spawn_x - object.global_position.x) < safe_distance:
+        # 跨层使用世界坐标宽度，并以较大的实例为准，兼容不同组的缩放。
+        var object_width := memory.texture.get_width() * absf(object.global_scale.x)
+        var safe_distance := distance_ratio * maxf(requesting_width, object_width)
+        var object_anchor_x := object.global_position.x
+        if source_layer.is_component_layer():
+            object_anchor_x = source_layer.to_global(Vector2(
+                source_layer.get_object_spawn_anchor_x(object), 0.0
+            )).x
+        if absf(requesting_spawn_x - object_anchor_x) < safe_distance:
             is_blocked = true
 
     if object_refs.is_empty():

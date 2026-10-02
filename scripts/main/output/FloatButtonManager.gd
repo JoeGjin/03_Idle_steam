@@ -27,6 +27,15 @@ const COLLECTED_ITEM_MIN_SCALE_RATIO := 0.6
 @export var minimode_button: Button
 @export var collected_item_button: Button
 @export var recent_memory_bar: Panel
+## 暂时关闭最近记忆栏的显示，记忆数据仍正常更新。
+@export var disable_recent_memory_bar := false:
+	set(value):
+		disable_recent_memory_bar = value
+		if not _ready_for_input:
+			return
+		if value:
+			_set_button_state(RECENT_MEMORY_BAR_INDEX, RevealState.HIDDEN)
+		recent_memory_bar.visible = not value and _has_recent_memories and not _memory_choice_active
 @export var recent_memory_texture_1: TextureRect
 @export var recent_memory_texture_2: TextureRect
 @export var recent_memory_texture_3: TextureRect
@@ -229,7 +238,7 @@ func set_recent_memories(memories: Array[MemoryDef]) -> void:
 		memory_panel.visible = has_texture
 		_has_recent_memories = _has_recent_memories or has_texture
 
-	if _has_recent_memories and not _memory_choice_active:
+	if not disable_recent_memory_bar and _has_recent_memories and not _memory_choice_active:
 		recent_memory_bar.show()
 	else:
 		_set_button_state(RECENT_MEMORY_BAR_INDEX, RevealState.HIDDEN)
@@ -259,7 +268,7 @@ func set_memory_choice_active(active: bool) -> void:
 			(control as BaseButton).disabled = active
 		if active:
 			control.hide()
-		elif index != RECENT_MEMORY_BAR_INDEX or _has_recent_memories:
+		elif index != RECENT_MEMORY_BAR_INDEX or (not disable_recent_memory_bar and _has_recent_memories):
 			control.show()
 
 
@@ -356,6 +365,8 @@ func _setup_button_layout() -> void:
 
 func _find_hovered_button(mouse_position: Vector2) -> int:
 	for index in _floating_controls.size():
+		if index == RECENT_MEMORY_BAR_INDEX and disable_recent_memory_bar:
+			continue
 		if _states[index] == RevealState.HIDDEN:
 			continue
 		if index == RECENT_MEMORY_BAR_INDEX and not _has_recent_memories:
@@ -380,6 +391,10 @@ func _set_all_states(state: int) -> void:
 
 
 func _set_button_state(index: int, state: int) -> void:
+	if index == RECENT_MEMORY_BAR_INDEX and disable_recent_memory_bar:
+		state = RevealState.HIDDEN
+		recent_memory_bar.hide()
+
 	if index == ZOOMING_INDEX and _is_zooming_dragging():
 		state = RevealState.OPEN
 
