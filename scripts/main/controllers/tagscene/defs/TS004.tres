@@ -2,13 +2,18 @@
 
 [ext_resource type="Script" uid="uid://jtvff7xj0lcf" path="res://scripts/main/controllers/tagscene/TagSceneDef.gd" id="1_bbht3"]
 [ext_resource type="AudioStream" uid="uid://qpueq8keswgf" path="res://assets/audio/ambient_waves.wav" id="1_fi0i7"]
+[ext_resource type="Texture2D" uid="uid://dwgurx5glh6y8" path="res://assets/worldroot/stage/sky/sky_effect_1.png" id="3_hfm7m"]
 
 [resource]
 script = ExtResource("1_bbht3")
 tag_name = 3
 ambient_audio = ExtResource("1_fi0i7")
-sky_main_color = Color(0.84313726, 0.5137255, 0.6627451, 1)
-ground_main_color = Color(1, 0.80784315, 0.5372549, 1)
-landform_dark_color = Color(0.24705882, 0.14901961, 0.27450982, 1)
-landform_light_color = Color(0.92941177, 0.34509805, 0.3019608, 1)
+sky_main_color = Color(2.088, 0.773, 0.877, 1)
+sky_effect_texture = ExtResource("3_hfm7m")
+sky_effect_color = Color(0.7607843, 0.44705883, 0.9411765, 1)
+sky_invert_amount = 1.0
+ground_main_color = Color(4.441, 2.452, 1.683, 1)
+cloud_color = Color(1.177, 1.064, 1.089, 0.353)
+landform_dark_color = Color(1.775, 0.578, 0.979, 1)
+landform_light_color = Color(5.204, 2.186, 1.925, 1)
 metadata/_custom_type_script = "uid://jtvff7xj0lcf"

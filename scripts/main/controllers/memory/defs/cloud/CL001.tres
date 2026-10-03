@@ -9,5 +9,5 @@ texture = ExtResource("2_oden0")
 tags = Array[int]([0, 1, 3])
 pool = 1
 spawn_alignment = 1
-spawn_distance_ratio = 5.0
+spawn_distance_ratio = 3.0
 metadata/_custom_type_script = "uid://v1a86tare2si"

@@ -2,16 +2,18 @@
 
 [ext_resource type="AudioStream" uid="uid://c014lfv7y68ve" path="res://assets/audio/ambient_desert.wav" id="1_dab2p"]
 [ext_resource type="Script" uid="uid://jtvff7xj0lcf" path="res://scripts/main/controllers/tagscene/TagSceneDef.gd" id="2_kplk4"]
-[ext_resource type="Texture2D" uid="uid://tiaccoq4vuhp" path="res://assets/worldroot/stage/sky/sky_effect_4.png" id="3_kplk4"]
+[ext_resource type="Texture2D" uid="uid://dwgurx5glh6y8" path="res://assets/worldroot/stage/sky/sky_effect_1.png" id="3_dab2p"]
 
 [resource]
 script = ExtResource("2_kplk4")
 tag_name = 5
 ambient_audio = ExtResource("1_dab2p")
-sky_main_color = Color(0.4745098, 0.654902, 0.7882353, 1)
-sky_effect_texture = ExtResource("3_kplk4")
-sky_effect_color = Color(0.007843138, 0.101960786, 0.3019608, 0.6862745)
-cloud_color = Color(0.87034494, 0.6704099, 0.4945157, 0.3)
-landform_dark_color = Color(0.5529412, 0.62352943, 0.67058825, 1)
-landform_light_color = Color(0.96862745, 0.94509804, 0.85882354, 1)
+sky_main_color = Color(0.74, 1.458, 1.684, 1)
+sky_effect_texture = ExtResource("3_dab2p")
+sky_effect_color = Color(0.9607843, 0.34509805, 0, 1)
+sky_invert_amount = 679.0
+ground_main_color = Color(3.307, 3.344, 3.354, 1)
+cloud_color = Color(1.177, 1.064, 1.089, 0.353)
+landform_dark_color = Color(3.001, 3.014, 3.168, 1)
+landform_light_color = Color(4.697, 4.715, 4.958, 1)
 metadata/_custom_type_script = "uid://jtvff7xj0lcf"

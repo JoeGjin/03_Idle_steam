@@ -1,5 +1,5 @@
 shader_type canvas_item;
-render_mode unshaded;
+render_mode unshaded, blend_premul_alpha;
 
 // TextureRect / Sprite2D 版本：用自身 TEXTURE 采样
 uniform float mask_enable : hint_range(0.0, 1.0, 0.01) = 1.0;
@@ -98,5 +98,7 @@ void fragment() {
     // mask_enable=0 => 不遮盖；=1 => 正常遮盖
     mask = mix(1.0, mask, clamp(mask_enable, 0.0, 1.0));
 
-    COLOR = vec4(col.rgb, col.a * mask);
+    // 透明 WorldView 的 RGB 已预乘 Alpha；遮罩需同步衰减 RGB 和 Alpha，
+    // 配合预乘混合，避免半透明边缘被再次乘 Alpha 而变暗。
+    COLOR = vec4(col.rgb * mask, col.a * mask);
 }
