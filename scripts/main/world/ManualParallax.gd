@@ -430,9 +430,17 @@ func _spawn_object(memory: MemoryDef = null) -> void:
         return
 
     object.initialize(memory)
-    var scale_randomness := clampf(world_assembler.spawn_scale_randomness, 0.0, 1.0)
-    var random_scale_factor := randf_range(1.0 - scale_randomness, 1.0 + scale_randomness)
-    object.scale = Vector2.ONE * maxf(spawn_scale_factor * random_scale_factor, 0.01)
+    var is_landform := pool in [
+        MemoryDef.Pool.LANDFORM_FAR,
+        MemoryDef.Pool.LANDFORM_MID,
+        MemoryDef.Pool.LANDFORM_FRONT,
+    ]
+    if is_landform:
+        object.scale = Vector2.ONE
+    else:
+        var scale_randomness := clampf(world_assembler.spawn_scale_randomness, 0.0, 1.0)
+        var random_scale_factor := randf_range(1.0 - scale_randomness, 1.0 + scale_randomness)
+        object.scale = Vector2.ONE * maxf(spawn_scale_factor * random_scale_factor, 0.01)
     object.modulate = color
     add_child(object)
     # Sprite2D 使用左上角原点，因此上移纹理高度，让左下角对齐层的生成高度。
@@ -440,11 +448,6 @@ func _spawn_object(memory: MemoryDef = null) -> void:
     var is_component := is_component_layer()
     var is_cloud := pool == MemoryDef.Pool.CLOUD
     var is_poi := pool == MemoryDef.Pool.POI
-    var is_landform := pool in [
-        MemoryDef.Pool.LANDFORM_FAR,
-        MemoryDef.Pool.LANDFORM_MID,
-        MemoryDef.Pool.LANDFORM_FRONT,
-    ]
     var component_half_width := memory.texture.get_width() * absf(object.scale.x) * 0.5
     var horizontal_anchor_offset := component_half_width if is_component else 0.0
     object.position = spawn_position - Vector2(horizontal_anchor_offset, object_height)

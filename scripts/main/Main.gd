@@ -56,7 +56,7 @@ func _ready() -> void:
     _connect_signals()
     _sync_pending_collection_ui()
 
-    world_assembler.assemble_world({1 as Tags.Tag: 1.0})
+    world_assembler.assemble_world({starting_world_id as Tags.Tag: 1.0})
     character_status.start(1)
 
 

@@ -35,6 +35,7 @@
 [ext_resource type="Script" uid="uid://r3h7y0ivusgi" path="res://scripts/main/world/ManualParallax.gd" id="33_8b871"]
 [ext_resource type="Script" uid="uid://cp7hocx6yaeww" path="res://scripts/main/ui/PostcardShowing.gd" id="33_csfbn"]
 [ext_resource type="Texture2D" uid="uid://qw8ihojqk8nh" path="res://assets/uiroot/postcard/0.JPG" id="34_1xgkc"]
+[ext_resource type="Texture2D" uid="uid://dwgurx5glh6y8" path="res://assets/worldroot/stage/sky/sky_effect_1.png" id="34_gcaob"]
 [ext_resource type="Texture2D" uid="uid://m2k0myepg1ad" path="res://assets/uiroot/postcard/1.JPG" id="35_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://tw714yrnrq8f" path="res://assets/worldroot/pet/walk/frame_01.png" id="36_vshs7"]
 [ext_resource type="Texture2D" uid="uid://8uhykrmowd0k" path="res://assets/uiroot/postcard/2.JPG" id="36_x1gp3"]
@@ -48,6 +49,7 @@
 [ext_resource type="PackedScene" uid="uid://brvu78a7s017f" path="res://scenes/MparaObject.tscn" id="39_vwcyu"]
 [ext_resource type="Script" uid="uid://dqilwmdefk6v" path="res://scripts/main/debug/DebugWorld.gd" id="40_8b871"]
 [ext_resource type="Texture2D" uid="uid://caldjd64rysxo" path="res://assets/worldroot/pet/walk/frame_05.png" id="40_hyu0y"]
+[ext_resource type="Texture2D" uid="uid://yyhyprpv5k8d" path="res://assets/worldroot/landform/far/landform_far_1.png" id="41_8t8ul"]
 [ext_resource type="Texture2D" uid="uid://n4jqj40sd7hn" path="res://assets/worldroot/pet/walk/frame_06.png" id="41_lfilp"]
 [ext_resource type="Texture2D" uid="uid://3phx4jo368dt" path="res://assets/worldroot/pet/walk/frame_07.png" id="42_nu61c"]
 [ext_resource type="Texture2D" uid="uid://cppatn62r4age" path="res://assets/worldroot/pet/walk/frame_08.png" id="43_e2bht"]
@@ -61,6 +63,7 @@
 [ext_resource type="Texture2D" uid="uid://bu22ebydy0gb3" path="res://assets/worldroot/pet/walk/frame_16.png" id="51_mou0d"]
 [ext_resource type="Texture2D" uid="uid://wk6bylej7dhi" path="res://assets/worldroot/pet/walk/frame_17.png" id="52_ugmlg"]
 [ext_resource type="Texture2D" uid="uid://c8jfbv6mfvb35" path="res://assets/worldroot/pet/walk/frame_18.png" id="53_qd1pt"]
+[ext_resource type="Texture2D" uid="uid://m8lin72q3vjx" path="res://assets/worldroot/landform/front/landform_front_4.png" id="61_1x1rp"]
 [ext_resource type="Script" uid="uid://dcyb4abjdhqk2" path="res://scripts/main/output/AllOutput.gd" id="73_ugmlg"]
 [ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/Zooming.gd" id="75_qd1pt"]
 [ext_resource type="Script" uid="uid://1hk5kvupggqx" path="res://scripts/main/output/FloatButtonManager.gd" id="76_rsknx"]
@@ -77,7 +80,7 @@ Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_aqa1v"]
 shader = ExtResource("32_gcaob")
-shader_parameter/invert_amount = 0.0
+shader_parameter/invert_amount = 1.0
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_gcaob"]
 blend_mode = 1
@@ -507,15 +510,16 @@ autoscroll = Vector2(-20, 0)
 script = ExtResource("31_ugmlg")
 
 [node name="Main" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=1813847154]
-modulate = Color(1, 0.6901961, 1, 1)
+modulate = Color(1.3920115, 1.0155008, 1.0477731, 1)
 material = SubResource("ShaderMaterial_aqa1v")
 texture = ExtResource("32_a3hxr")
 
 [node name="Star" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=553459747]
 
 [node name="Effect" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=905714890]
-modulate = Color(0.008999992, 0.10115006, 0.3, 0.6862745)
+modulate = Color(0.69803923, 0.3137255, 0.52156866, 1)
 material = SubResource("CanvasItemMaterial_gcaob")
+texture = ExtResource("34_gcaob")
 
 [node name="Blur" parent="WorldRoot/01_Sky" unique_id=1089266835 instance=ExtResource("37_csfbn")]
 visible = true
@@ -545,7 +549,7 @@ autoscroll = Vector2(-80, 0)
 script = ExtResource("37_qd1pt")
 
 [node name="Main" type="Sprite2D" parent="WorldRoot/03_Ground/Ground" unique_id=1425775975]
-modulate = Color(1, 0.8, 0.6, 1)
+modulate = Color(1.3661274, 0.7806107, 1.1661948, 1)
 texture = ExtResource("37_a3hxr")
 
 [node name="Effect" type="Sprite2D" parent="WorldRoot/03_Ground/Ground" unique_id=569461966]
@@ -569,6 +573,11 @@ layer = 5
 [node name="Landform_1" type="Node2D" parent="WorldRoot/05_Landform_1" unique_id=1069212001]
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
+
+[node name="MparaObject3" parent="WorldRoot/05_Landform_1/Landform_1" unique_id=1673114578 instance=ExtResource("39_vwcyu")]
+modulate = Color(3.1048012, 1.8838044, 2.336958, 1)
+position = Vector2(-1535, 375)
+texture = ExtResource("41_8t8ul")
 
 [node name="Blur" parent="WorldRoot/05_Landform_1" unique_id=924324709 instance=ExtResource("37_csfbn")]
 visible = true
@@ -648,7 +657,7 @@ layer = 20
 
 [node name="Pet" type="AnimatedSprite2D" parent="WorldRoot/20_Pet" unique_id=390694917]
 unique_name_in_owner = true
-position = Vector2(700, 800)
+position = Vector2(800, 850)
 scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
@@ -697,6 +706,11 @@ layer = 25
 unique_name_in_owner = true
 script = ExtResource("33_8b871")
 
+[node name="MparaObject4" parent="WorldRoot/25_Landform_5/Landform_5" unique_id=756551596 instance=ExtResource("39_vwcyu")]
+modulate = Color(1.0083525, 0.77149636, 0.99256206, 1)
+position = Vector2(-1000, 933)
+texture = ExtResource("61_1x1rp")
+
 [node name="26_Component_5" type="CanvasLayer" parent="WorldRoot" unique_id=620013528]
 layer = 26
 
@@ -706,7 +720,6 @@ script = ExtResource("33_8b871")
 
 [node name="WorldPlayer" type="AnimationPlayer" parent="WorldRoot" unique_id=1986727739]
 unique_name_in_owner = true
-root_node = NodePath("")
 libraries/ = SubResource("AnimationLibrary_xa025")
 
 [node name="WorldView" type="SubViewport" parent="." unique_id=742230146]

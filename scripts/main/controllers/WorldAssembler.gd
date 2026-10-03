@@ -11,14 +11,14 @@ class_name WorldAssembler
 @export var tag_scenes: Dictionary[Tags.Tag, TagSceneDef] = {}
 @export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
 @export_range(0.0, 500.0, 1.0, "suffix:px") var component_ground_sink: float = 0.0
-## 同组的 Cloud、Landform、Component 共用倍率，组号从后往前排列。
+## 同组的 Cloud、Component 共用倍率，组号从后往前排列；Landform 保持原始尺寸。
 @export_range(0.01, 2.0, 0.01, "or_greater") var group_1_scale_factor: float = 0.4
 @export_range(0.01, 2.0, 0.01, "or_greater") var group_2_scale_factor: float = 0.5
 @export_range(0.01, 2.0, 0.01, "or_greater") var group_3_scale_factor: float = 0.6
 @export_range(0.01, 2.0, 0.01, "or_greater") var group_4_scale_factor: float = 0.7
 @export_range(0.01, 2.0, 0.01, "or_greater") var group_5_scale_factor: float = 0.8
 @export_range(0.01, 2.0, 0.01, "or_greater") var poi_scale_factor: float = 0.5
-## 所有手动视差素材的随机缩放幅度；0.1 表示基础倍率上下浮动 10%，0 表示关闭。
+## 除 Landform 外手动视差素材的随机缩放幅度；0.1 表示基础倍率上下浮动 10%，0 表示关闭。
 @export_range(0.0, 1.0, 0.01) var spawn_scale_randomness: float = 0.1
 ## 全局滚动速度倍率，同时作用于 Parallax2D 和手动视差层。
 @export_range(0.0, 4.0, 0.05, "or_greater") var global_scroll_speed: float = 1.0:
@@ -230,7 +230,7 @@ func _build_tag_scenes() -> void:
 func _initialize_manual_parallax_layers() -> void:
     # 初始化所有手动滚动的Parallax层
     var viewport_bottom_y := get_viewport().get_visible_rect().size.y
-    var initial_height: float = -300.00
+    var initial_height: float = -150.00
     var height_increment: float = initial_height / 5.0 # 将高度均分为5个层级
     var height_levels: Array[float] = [
         0,
@@ -314,7 +314,6 @@ func _initialize_manual_parallax_layers() -> void:
     ]
     for i in group_scale_factors.size():
         _clouds[i].spawn_scale_factor = group_scale_factors[i]
-        _landforms[i].spawn_scale_factor = group_scale_factors[i]
         _components[i].spawn_scale_factor = group_scale_factors[i]
 
 
@@ -331,6 +330,7 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
     
     
     _sky.main_color = main_tag_scene.sky_main_color
+    _sky.invert_amount = main_tag_scene.sky_invert_amount
     _sky.star_texture = main_tag_scene.sky_star_texture
     _sky.star_color = main_tag_scene.sky_star_color
     _sky.effect_texture = main_tag_scene.sky_effect_texture

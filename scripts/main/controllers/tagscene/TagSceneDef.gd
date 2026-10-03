@@ -13,6 +13,7 @@ class_name TagSceneDef
 @export var sky_star_color: Color = Color(1, 1, 1, 0) 
 @export var sky_effect_texture: Texture2D
 @export var sky_effect_color: Color = Color(1, 1, 1, 0) 
+@export var sky_invert_amount: float = 0.0 # 反转量，0为正常(夜晚)，1为完全反转(白昼)
 
 @export var poi_color: Color = Color(1, 1, 1, 1)
 @export var poi_scroll_speed: Vector2 = Vector2(-40, 0)

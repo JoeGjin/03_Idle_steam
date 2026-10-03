@@ -1,14 +1,15 @@
 [gd_resource type="Resource" script_class="TagSceneDef" format=3 uid="uid://duy8h36hqbqli"]
 
 [ext_resource type="Script" uid="uid://jtvff7xj0lcf" path="res://scripts/main/controllers/tagscene/TagSceneDef.gd" id="1_evaas"]
-[ext_resource type="Texture2D" uid="uid://tiaccoq4vuhp" path="res://assets/worldroot/stage/sky/sky_effect_4.png" id="2_op6k3"]
+[ext_resource type="Texture2D" uid="uid://dwgurx5glh6y8" path="res://assets/worldroot/stage/sky/sky_effect_1.png" id="2_op6k3"]
 
 [resource]
 script = ExtResource("1_evaas")
-sky_main_color = Color(0.84705883, 0.64705884, 0.7176471, 1)
+sky_main_color = Color(1.392, 1.016, 1.048, 1)
 sky_effect_texture = ExtResource("2_op6k3")
-sky_effect_color = Color(0.45490196, 0.45490196, 0.39607844, 0.5019608)
-ground_main_color = Color(1, 0.80784315, 0.5372549, 1)
-landform_dark_color = Color(0.10980392, 0.105882354, 0.16078432, 1)
-landform_light_color = Color(0.21960784, 0.21960784, 0.32156864, 1)
+sky_effect_color = Color(0.69803923, 0.3137255, 0.52156866, 1)
+sky_invert_amount = 1.0
+ground_main_color = Color(1.366, 0.781, 1.166, 1)
+landform_dark_color = Color(1.008, 0.771, 0.993, 1)
+landform_light_color = Color(3.105, 1.884, 2.337, 1)
 metadata/_custom_type_script = "uid://jtvff7xj0lcf"
