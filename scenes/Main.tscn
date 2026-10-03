@@ -48,7 +48,7 @@
 [ext_resource type="PackedScene" uid="uid://brvu78a7s017f" path="res://scenes/MparaObject.tscn" id="39_vwcyu"]
 [ext_resource type="Script" uid="uid://dqilwmdefk6v" path="res://scripts/main/debug/DebugWorld.gd" id="40_8b871"]
 [ext_resource type="Texture2D" uid="uid://caldjd64rysxo" path="res://assets/worldroot/pet/walk/frame_05.png" id="40_hyu0y"]
-[ext_resource type="Texture2D" uid="uid://biq35xdgqp574" path="res://assets/worldroot/component/far/component_far_17.png" id="41_1x1rp"]
+[ext_resource type="Texture2D" uid="uid://biq35xdgqp574" path="res://assets/worldroot/cloud/cloud_13.png" id="41_1x1rp"]
 [ext_resource type="Texture2D" uid="uid://yyhyprpv5k8d" path="res://assets/worldroot/landform/far/landform_far_1.png" id="41_8t8ul"]
 [ext_resource type="Texture2D" uid="uid://n4jqj40sd7hn" path="res://assets/worldroot/pet/walk/frame_06.png" id="41_lfilp"]
 [ext_resource type="Texture2D" uid="uid://3phx4jo368dt" path="res://assets/worldroot/pet/walk/frame_07.png" id="42_nu61c"]

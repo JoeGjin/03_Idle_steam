@@ -63,7 +63,8 @@ func collect_all_pending_events() -> int:
     return collected_count
 
 
-## 先按当前世界标签权重抽取 Tag，再从对应可收集记忆中抽取互不重复的候选。
+## 第一个候选按当前世界标签权重抽取；后续候选从全部可收集记忆中等概率抽取。
+## 后续候选的主标签必须与第一个候选不同，候选资源互不重复。
 ## 没有纹理或主标签的资源无法完成当前选择流程，因此不会进入候选。
 func get_random_collectable_memories(
     weighted_tags: Dictionary[Tags.Tag, float],
@@ -73,31 +74,40 @@ func get_random_collectable_memories(
     if count <= 0 or collectable_memories.is_empty() or weighted_tags.is_empty():
         return result
 
-    for _index in count:
-        var available_tags: Array[Tags.Tag] = []
-        for tag: Tags.Tag in weighted_tags:
-            if weighted_tags[tag] <= 0.0:
-                continue
-            if not _get_collectable_memories_for_tag(tag, result).is_empty():
-                available_tags.append(tag)
+    var available_tags: Array[Tags.Tag] = []
+    for tag: Tags.Tag in weighted_tags:
+        if weighted_tags[tag] > 0.0 and not _get_collectable_memories_for_tag(tag).is_empty():
+            available_tags.append(tag)
 
-        if available_tags.is_empty():
+    if available_tags.is_empty():
+        return result
+
+    var selected_tag := _pick_weighted_tag(available_tags, weighted_tags)
+    var tag_candidates := _get_collectable_memories_for_tag(selected_tag)
+    var first_memory: MemoryDef = tag_candidates.pick_random()
+    result.append(first_memory)
+    if count == 1:
+        return result
+
+    var remaining_candidates: Array[MemoryDef] = []
+    for memory in collectable_memories:
+        if memory.tags[0] != first_memory.tags[0]:
+            remaining_candidates.append(memory)
+
+    for _index in range(1, count):
+        if remaining_candidates.is_empty():
             break
-
-        var selected_tag := _pick_weighted_tag(available_tags, weighted_tags)
-        var tag_candidates := _get_collectable_memories_for_tag(selected_tag, result)
-        result.append(tag_candidates.pick_random())
+        var chosen_memory: MemoryDef = remaining_candidates.pick_random()
+        result.append(chosen_memory)
+        remaining_candidates.erase(chosen_memory)
 
     return result
 
 
-func _get_collectable_memories_for_tag(
-    tag: Tags.Tag,
-    excluded_memories: Array[MemoryDef]
-) -> Array[MemoryDef]:
+func _get_collectable_memories_for_tag(tag: Tags.Tag) -> Array[MemoryDef]:
     var result: Array[MemoryDef] = []
     for memory in collectable_memories:
-        if tag in memory.tags and not excluded_memories.has(memory):
+        if tag in memory.tags:
             result.append(memory)
     return result
 

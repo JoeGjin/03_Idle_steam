@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://chwb0wr3cbsuw"
-path="res://.godot/imported/component_far_29.png-7a98b5e146d18c2076b62a56a3700050.ctex"
+uid="uid://rt5bkkeq0pmr"
+path="res://.godot/imported/cloud_8.png-c0d42b31776099d452bb582bee22d4a7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/worldroot/component/far/component_far_29.png"
-dest_files=["res://.godot/imported/component_far_29.png-7a98b5e146d18c2076b62a56a3700050.ctex"]
+source_file="res://assets/worldroot/cloud/cloud_8.png"
+dest_files=["res://.godot/imported/cloud_8.png-c0d42b31776099d452bb582bee22d4a7.ctex"]
 
 [params]
 

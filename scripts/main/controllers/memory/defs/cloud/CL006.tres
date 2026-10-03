@@ -1,11 +1,10 @@
 [gd_resource type="Resource" script_class="MemoryDef" format=3 uid="uid://dj14ijmdbhuex"]
 
 [ext_resource type="Script" uid="uid://v1a86tare2si" path="res://scripts/main/controllers/memory/MemoryDef.gd" id="1_wt0x3"]
-[ext_resource type="Texture2D" uid="uid://2feyskaagcqs" path="res://assets/worldroot/component/far/component_far_1.png" id="2_jkki5"]
+[ext_resource type="Texture2D" uid="uid://2feyskaagcqs" path="res://assets/worldroot/cloud/cloud_6.png" id="2_jkki5"]
 
 [resource]
 script = ExtResource("1_wt0x3")
-is_collectable = true
 texture = ExtResource("2_jkki5")
 tags = Array[int]([4, 3])
 pool = 1
