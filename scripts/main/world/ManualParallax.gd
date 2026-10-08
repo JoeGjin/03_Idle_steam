@@ -7,6 +7,7 @@ const MPARA_OBJECT_SCENE: PackedScene = preload("res://scenes/MparaObject.tscn")
 const SPAWN_DISTANCE_EPSILON := 1.0
 const SPAWN_RECHECK_INTERVAL := 0.25
 const SURFACE_ALPHA_THRESHOLD := 0.1
+const MAX_INITIAL_OBJECTS := 256
 
 
 @onready var world_assembler: WorldAssembler = %WorldAssembler
@@ -32,6 +33,7 @@ var _objects: Array[Sprite2D] = []
 var _is_scrolling: bool = true
 var _spawn_timer: Timer
 var _spawn_cooldown: float = 999.0
+var _initial_spawn_pending := false
 var _pending_memory: MemoryDef
 var _fade_tween: Tween
 var _surface_height_maps: Dictionary = {}
@@ -91,6 +93,83 @@ func start_manual_scroll(mode: int = 0, spawn_immediately: bool = true) -> void:
     
     _spawn_timer.start()
 
+
+
+func prepare_initial_scroll() -> void:
+    _pending_memory = null
+    _initial_spawn_pending = false
+    _is_scrolling = false
+    if _fade_tween != null and _fade_tween.is_valid():
+        _fade_tween.kill()
+    _fade_tween = null
+    _free_all_timer()
+    _free_all_children()
+    _initialize_timer()
+
+
+func prefill_visible_range(world_visible_rect: Rect2) -> void:
+    if world_visible_rect.size.x <= 0.0:
+        return
+
+    # Main 传入 WorldView 坐标；转换到本层，避免层原点偏移影响横向填充。
+    var canvas_to_local := get_global_transform_with_canvas().affine_inverse()
+    var next_x: float = (canvas_to_local * world_visible_rect.position).x
+    if next_x >= spawn_position.x:
+        return
+    var next_memory := _request_next_memory(next_x)
+    if next_memory == null:
+        return
+
+    # 第一张最多移出半个宽度，既错开各层起点，也保留左边界附近的可见内容。
+    var first_width := next_memory.texture.get_width() * spawn_scale_factor
+    next_x -= randf_range(0.0, first_width * 0.5)
+    for _index in range(MAX_INITIAL_OBJECTS):
+        if not world_assembler.can_spawn_manual_parallax_memory(self, next_memory, next_x):
+            next_memory = _request_next_memory(next_x)
+        if next_memory == null:
+            return
+
+        var object := _spawn_object(next_memory, next_x)
+        if object == null:
+            return
+        # 使用实例的实际缩放，预填充与后续生成的间距复核保持一致。
+        var spawn_distance := _get_spawn_distance(next_memory, object)
+        if spawn_distance <= 0.0:
+            push_warning("[MANUAL PARALLAX] 生成间距为 0，停止首次填充：%s" % name)
+            return
+        next_x += spawn_distance
+        if next_x >= spawn_position.x:
+            return
+        next_memory = _request_next_memory(next_x)
+        if next_memory == null:
+            return
+
+    push_warning("[MANUAL PARALLAX] 首次填充达到对象数量上限：%s" % name)
+
+
+func start_prefilled_scroll() -> void:
+    _is_scrolling = true
+    var rightmost_object := _get_rightmost_object()
+    if rightmost_object == null:
+        # 可见区域没有合适候选时，仍在正常生成线尝试，不额外空等初始冷却。
+        _on_spawn_timer_timeout()
+        if not is_component_layer():
+            _spawn_timer.start()
+        return
+
+    _update_spawn_timer(rightmost_object.memory_def)
+    # 不再清理或立即生成；已有对象离生成线足够远时，由普通 timeout 接续。
+    _spawn_timer.start(maxf(_calculate_remaining_spawn_wait_time(), 0.001))
+
+
+func start_initial_spawn_delay(delay: float) -> void:
+    _is_scrolling = true
+    _initial_spawn_pending = true
+    _spawn_timer.start(maxf(delay, 0.001))
+
+
+func is_waiting_for_initial_spawn() -> bool:
+    return _initial_spawn_pending
 
 
 func fade_out_children(duration: float) -> void:
@@ -418,15 +497,17 @@ func _get_tag_candidates_from_memories(
 
 
 
-func _spawn_object(memory: MemoryDef = null) -> void:
-    if memory == null:
-        return
+func _spawn_object(memory: MemoryDef = null, spawn_x: float = NAN) -> MparaObject:
+    if memory == null or memory.texture == null:
+        return null
     # 根据 MemoryDef 生成 MparaObject，调用 initialize(memory) 初始化
-    # spawn在 spawn_position 位置
+    var object_spawn := spawn_position
+    if not is_nan(spawn_x):
+        object_spawn.x = spawn_x
     var object := MPARA_OBJECT_SCENE.instantiate() as MparaObject
     if object == null:
         push_error("[MANUAL PARALLAX] 无法实例化 MparaObject 场景")
-        return
+        return null
 
     object.initialize(memory)
     var is_landform := pool in [
@@ -447,7 +528,7 @@ func _spawn_object(memory: MemoryDef = null) -> void:
     var is_component := is_component_layer()
     var is_cloud := pool == MemoryDef.Pool.CLOUD
     var is_poi := pool == MemoryDef.Pool.POI
-    object.position = spawn_position - Vector2(0.0, object_height)
+    object.position = object_spawn - Vector2(0.0, object_height)
 
     if is_landform:
         _get_surface_height_map(memory.texture)
@@ -459,7 +540,7 @@ func _spawn_object(memory: MemoryDef = null) -> void:
             # 左边缘统一生成后，仍以组件的实际中心采样地表高度。
             var component_half_width := memory.texture.get_width() * absf(object.scale.x) * 0.5
             var component_world_x := to_global(
-                spawn_position + Vector2(component_half_width, 0.0)
+                object_spawn + Vector2(component_half_width, 0.0)
             ).x
             var ground_y: Variant = world_assembler.get_component_ground_y(self, component_world_x)
             if ground_y != null:
@@ -473,6 +554,7 @@ func _spawn_object(memory: MemoryDef = null) -> void:
 
     _objects.append(object)
     world_assembler.register_manual_parallax_spawn(self, memory, object)
+    return object
 
 
 
@@ -691,7 +773,13 @@ func _on_spawn_timer_timeout() -> void:
         return
 
     var next_memory := _request_next_memory()
-    _spawn_object(next_memory)
+    var object := _spawn_object(next_memory)
+    if _initial_spawn_pending:
+        if object == null:
+            # 到时没有可用素材则短间隔重试，成功后才接回正常间距周期。
+            _spawn_timer.wait_time = SPAWN_RECHECK_INTERVAL
+            return
+        _initial_spawn_pending = false
     _update_spawn_timer(next_memory)
 
 
@@ -723,8 +811,8 @@ func _on_component_spawn_timer_timeout() -> void:
 
 
 
-func _request_next_memory() -> MemoryDef:
-    return world_assembler.get_manual_parallax_memory(self)
+func _request_next_memory(spawn_x: float = NAN) -> MemoryDef:
+    return world_assembler.get_manual_parallax_memory(self, spawn_x)
 
 
 

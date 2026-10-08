@@ -60,7 +60,10 @@ func _ready() -> void:
     if not all_output.call("is_layout_ready"):
         await Signal(all_output, "layout_ready")
     world_assembler.set_manual_spawn_x(float(all_output.call("get_world_spawn_x")))
-    world_assembler.assemble_world({starting_world_id as Tags.Tag: 1.0})
+    var world_visible_rect: Rect2 = all_output.call("get_world_visual_rect")
+    world_visible_rect.position -= world_output.position
+    world_root.call("initialize_poi_emphasis", world_visible_rect)
+    world_assembler.assemble_world({starting_world_id as Tags.Tag: 1.0}, world_visible_rect)
     character_status.start(1)
 
 
@@ -222,7 +225,7 @@ func _get_control_screen_center(control: Control) -> Vector2:
 
 
 func _get_pet_screen_position() -> Vector2:
-    return world_output.get_screen_transform() * pet.global_position
+    return world_output.get_screen_transform() * pet.get_global_transform_with_canvas().origin
 
 #endregion
 
@@ -284,6 +287,7 @@ func _on_world_assembler_world_changing(
     new_tag_id: int,
     transition_duration: float
 ) -> void:
+    world_root.call("set_poi_emphasis_transitioning", true)
     var message := (
         "[WORLD ASSEMBLER] World changing to Tag: %s, "
         + "transition duration: %.2f seconds"
@@ -297,6 +301,7 @@ func _on_world_assembler_world_changing(
 
 
 func _on_world_assembler_world_changed(new_tag_id: int) -> void:
+    world_root.call("set_poi_emphasis_transitioning", false)
     print(
         "[WORLD ASSEMBLER] World assembled/transitioned to Tag: %s"
         % Tags.Tag.find_key(new_tag_id)

@@ -5,6 +5,9 @@ extends Node
 class_name WorldAssembler
 
 
+const INITIAL_POI_SPAWN_DELAY := 60.0
+
+
 @onready var world_root: Node2D = %WorldRoot
 @onready var memory_controller: MemoryController = %MemoryController
 
@@ -88,7 +91,10 @@ signal world_changed(new_tag_id: int)
 
 
 # 用于第一次建立场景，直接应用参数，不需要过渡动画
-func assemble_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
+func assemble_world(
+    weighted_tags: Dictionary[Tags.Tag, float],
+    world_visible_rect: Rect2
+) -> void:
     if weighted_tags.is_empty():
         push_warning("[WORLD ASSEMBLER] Cannot assemble a world without weighted tags")
         return
@@ -106,7 +112,7 @@ func assemble_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
     _update_def_to_scene(weighted_tags)
     _sky.apply_immediate()
     _ground.apply_immediate()
-    _start_manual_scroll(0) # 启动手动滚动的层
+    _start_initial_manual_scroll(world_visible_rect)
 
     world_changed.emit(main_tag) # 发出世界切换信号，供其他系统（如角色状态机）响应
     is_transitioning = false
@@ -139,16 +145,18 @@ func transition_to_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
     
     else:
         var duration := maxf(transition_duration, 0.0)
+        var keep_initial_poi_delay := _poi.is_waiting_for_initial_spawn()
         world_changing.emit(main_tag, duration) # 发出世界切换信号
         is_transitioning = true
 
         current_tag_id = main_tag # 更新当前世界ID
         _update_def_to_scene(weighted_tags)
 
-        # 静态层、POI 和其余手动视差层同时开始过渡。
+        # 首次 POI 等待沿用启动时的计时器，切换世界只更新它的目标配置。
         _sky.transition_to_target(duration)
         _ground.transition_to_target(duration)
-        _poi.fade_out_children(duration)
+        if not keep_initial_poi_delay:
+            _poi.fade_out_children(duration)
         _start_non_poi_manual_scroll(1, false)
 
         if not is_zero_approx(duration):
@@ -157,7 +165,9 @@ func transition_to_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         # 强制落到目标值，避免 Tween 与计时器同帧结束时留下微小误差。
         _sky.apply_immediate()
         _ground.apply_immediate()
-        _poi.start_manual_scroll(0, false)
+        # 等待期间生成的首个 POI 也保留，避免过渡结束后清掉或重新延迟。
+        if not keep_initial_poi_delay:
+            _poi.start_manual_scroll(0, false)
 
         world_changed.emit(main_tag)
         is_transitioning = false
@@ -243,7 +253,7 @@ func _initialize_manual_parallax_layers() -> void:
     var height_increment: float = initial_height / 5.0 # 将高度均分为5个层级
     var height_levels: Array[float] = [
         0,
-        initial_height - height_increment,
+        initial_height - 0.75 * height_increment,
         initial_height - 1.5 * height_increment,
         initial_height - 2 * height_increment,
         initial_height - 2.75 * height_increment,
@@ -432,7 +442,7 @@ func _apply_global_scroll_speed() -> void:
 
 
 # 每层按自己的 Timer 独立请求；先到的请求先占用实际空间，不再依赖逻辑轮次对齐。
-func get_manual_parallax_memory(layer: ManualParallax) -> MemoryDef:
+func get_manual_parallax_memory(layer: ManualParallax, spawn_x: float = NAN) -> MemoryDef:
     var layer_id := layer.get_instance_id()
     var excluded_memories: Array[MemoryDef] = []
     if _last_memory_by_layer.has(layer_id):
@@ -445,11 +455,11 @@ func get_manual_parallax_memory(layer: ManualParallax) -> MemoryDef:
         excluded_memories
     )
     for memory: MemoryDef in recent_candidates:
-        if can_spawn_manual_parallax_memory(layer, memory):
+        if can_spawn_manual_parallax_memory(layer, memory, spawn_x):
             return memory
 
     for memory: MemoryDef in layer.get_memory_candidates(excluded_memories):
-        if can_spawn_manual_parallax_memory(layer, memory):
+        if can_spawn_manual_parallax_memory(layer, memory, spawn_x):
             return memory
 
     var suppress_warning := layer.pool in [
@@ -468,10 +478,14 @@ func get_manual_parallax_memory(layer: ManualParallax) -> MemoryDef:
 
 
 
-func can_spawn_manual_parallax_memory(layer: ManualParallax, memory: MemoryDef) -> bool:
+func can_spawn_manual_parallax_memory(
+    layer: ManualParallax,
+    memory: MemoryDef,
+    spawn_x: float = NAN
+) -> bool:
     if layer == null or memory == null or memory.texture == null or memory.pool != layer.pool:
         return false
-    return not _is_memory_blocked_by_other_layer(memory, layer)
+    return not _is_memory_blocked_by_other_layer(memory, layer, spawn_x)
 
 
 
@@ -510,7 +524,8 @@ func get_cloud_layer_origin_y(cloud_layer: ManualParallax) -> Variant:
 
 func _is_memory_blocked_by_other_layer(
     memory: MemoryDef,
-    requesting_layer: ManualParallax
+    requesting_layer: ManualParallax,
+    spawn_x: float = NAN
 ) -> bool:
     if memory == null or memory.texture == null:
         return false
@@ -526,7 +541,11 @@ func _is_memory_blocked_by_other_layer(
         * requesting_layer.spawn_scale_factor
         * absf(requesting_layer.global_scale.x)
     )
-    var requesting_spawn_x := requesting_layer.to_global(requesting_layer.spawn_position).x
+    # 首次填充也按本次放置位置检查，普通生成仍默认使用右侧生成线。
+    var local_spawn := requesting_layer.spawn_position
+    if not is_nan(spawn_x):
+        local_spawn.x = spawn_x
+    var requesting_spawn_x := requesting_layer.to_global(local_spawn).x
     var object_refs: Array = _spawned_objects_by_memory[memory]
     var is_blocked := false
     for index: int in range(object_refs.size() - 1, -1, -1):
@@ -557,10 +576,29 @@ func _is_memory_blocked_by_other_layer(
 
 
 
-# 开始手动滚动的Parallax层
-func _start_manual_scroll(mode: int = 0, spawn_immediately: bool = true) -> void:
-    _poi.start_manual_scroll(mode, spawn_immediately)
-    _start_non_poi_manual_scroll(mode, spawn_immediately)
+# 首次构建先准备所有层，再填地形和组件，最后统一接上普通生成计时器。
+func _start_initial_manual_scroll(world_visible_rect: Rect2) -> void:
+    var layers: Array[ManualParallax] = []
+    layers.append_array(_clouds)
+    layers.append_array(_landforms)
+    layers.append_array(_components)
+    # 清理场景内的示例 POI，但不参与可见区域预填充。
+    _poi.prepare_initial_scroll()
+    for layer: ManualParallax in layers:
+        layer.prepare_initial_scroll()
+    _last_memory_by_layer.clear()
+    _spawned_objects_by_memory.clear()
+
+    for landform: ManualParallax in _landforms:
+        landform.prefill_visible_range(world_visible_rect)
+    for cloud: ManualParallax in _clouds:
+        cloud.prefill_visible_range(world_visible_rect)
+    for component: ManualParallax in _components:
+        component.prefill_visible_range(world_visible_rect)
+
+    for layer: ManualParallax in layers:
+        layer.start_prefilled_scroll()
+    _poi.start_initial_spawn_delay(INITIAL_POI_SPAWN_DELAY)
 
 
 
