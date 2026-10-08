@@ -11,6 +11,8 @@ class_name WorldAssembler
 @export var tag_scenes: Dictionary[Tags.Tag, TagSceneDef] = {}
 @export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
 @export_range(0.0, 500.0, 1.0, "suffix:px") var component_ground_sink: float = 0.0
+## Pet 胶囊碰撞体最低点相对 Landform_4 地表的下沉距离。
+@export_range(0.0, 500.0, 1.0, "suffix:px") var pet_ground_sink: float = 0.0
 ## 同组的 Cloud、Component 共用倍率，组号从后往前排列；Landform 保持原始尺寸。
 @export_range(0.01, 2.0, 0.01, "or_greater") var group_1_scale_factor: float = 0.4
 @export_range(0.01, 2.0, 0.01, "or_greater") var group_2_scale_factor: float = 0.5
@@ -170,6 +172,13 @@ func _ready() -> void:
     _apply_global_scroll_speed()
 
 
+func set_manual_spawn_x(spawn_x: float) -> void:
+    # 各手动视差层的横向原点相同，统一让纹理左边缘从窗口右侧生成。
+    _poi.spawn_position.x = spawn_x
+    for layer: ManualParallax in _clouds + _landforms + _components:
+        layer.spawn_position.x = spawn_x
+
+
 func get_current_weighted_tags() -> Dictionary[Tags.Tag, float]:
     var result: Dictionary[Tags.Tag, float] = {}
     for tag: Tags.Tag in current_weighted_tags:
@@ -235,10 +244,10 @@ func _initialize_manual_parallax_layers() -> void:
     var height_levels: Array[float] = [
         0,
         initial_height - height_increment,
+        initial_height - 1.5 * height_increment,
         initial_height - 2 * height_increment,
-        initial_height - 3 * height_increment,
-        initial_height - 4 * height_increment,
-        initial_height - 5 * height_increment
+        initial_height - 2.75 * height_increment,
+        initial_height - 4.5 * height_increment
     ]
 
     _poi.pool = MemoryDef.Pool.POI
@@ -537,12 +546,7 @@ func _is_memory_blocked_by_other_layer(
         # 跨层使用世界坐标宽度，并以较大的实例为准，兼容不同组的缩放。
         var object_width := memory.texture.get_width() * absf(object.global_scale.x)
         var safe_distance := distance_ratio * maxf(requesting_width, object_width)
-        var object_anchor_x := object.global_position.x
-        if source_layer.is_component_layer():
-            object_anchor_x = source_layer.to_global(Vector2(
-                source_layer.get_object_spawn_anchor_x(object), 0.0
-            )).x
-        if absf(requesting_spawn_x - object_anchor_x) < safe_distance:
+        if absf(requesting_spawn_x - object.global_position.x) < safe_distance:
             is_blocked = true
 
     if object_refs.is_empty():

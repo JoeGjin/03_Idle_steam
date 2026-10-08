@@ -56,6 +56,10 @@ func _ready() -> void:
     _connect_signals()
     _sync_pending_collection_ui()
 
+    # 输出布局确定后再设置公共生成线，避免首次生成使用尚未应用的横向偏移。
+    if not all_output.call("is_layout_ready"):
+        await Signal(all_output, "layout_ready")
+    world_assembler.set_manual_spawn_x(float(all_output.call("get_world_spawn_x")))
     world_assembler.assemble_world({starting_world_id as Tags.Tag: 1.0})
     character_status.start(1)
 

@@ -43,6 +43,11 @@ func get_world_visual_rect() -> Rect2:
     return _world_visual_rect
 
 
+func get_world_spawn_x() -> float:
+    # WorldOutput 与 WorldView 保持 1:1，窗口和输出一起缩放，生成线使用未缩放的设计坐标。
+    return design_size.x - world_output.position.x
+
+
 func is_point_in_world(point: Vector2) -> bool:
     if not _layout_ready:
         return false
