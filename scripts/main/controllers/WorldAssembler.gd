@@ -1,6 +1,3 @@
-# 世界组装器，负责将世界环境定义资源转换为实际的场景节点
-# 直接控制图像资源切换，音频资源通过signal通知main，main再调用AudioController进行切换
-
 extends Node
 class_name WorldAssembler
 
@@ -8,11 +5,15 @@ class_name WorldAssembler
 const INITIAL_POI_SPAWN_DELAY := 60.0
 
 
+# 外部依赖
 @onready var world_root: Node2D = %WorldRoot
 @onready var memory_controller: MemoryController = %MemoryController
 
+# 世界定义与过渡配置
 @export var tag_scenes: Dictionary[Tags.Tag, TagSceneDef] = {}
 @export var transition_duration: float = 30.0 # 世界切换的过渡动画时长（秒）
+
+# 高度对齐与生成缩放配置
 @export_range(0.0, 500.0, 1.0, "suffix:px") var component_ground_sink: float = 0.0
 ## Pet 胶囊碰撞体最低点相对 Landform_4 地表的下沉距离。
 @export_range(0.0, 500.0, 1.0, "suffix:px") var pet_ground_sink: float = 0.0
@@ -25,6 +26,7 @@ const INITIAL_POI_SPAWN_DELAY := 60.0
 @export_range(0.01, 2.0, 0.01, "or_greater") var poi_scale_factor: float = 0.5
 ## 除 Landform 外手动视差素材的随机缩放幅度；0.1 表示基础倍率上下浮动 10%，0 表示关闭。
 @export_range(0.0, 1.0, 0.01) var spawn_scale_randomness: float = 0.1
+
 ## 全局滚动速度倍率，同时作用于 Parallax2D 和手动视差层。
 @export_range(0.0, 4.0, 0.05, "or_greater") var global_scroll_speed: float = 1.0:
     set(value):
@@ -32,14 +34,14 @@ const INITIAL_POI_SPAWN_DELAY := 60.0
         if is_node_ready():
             _apply_global_scroll_speed()
 
+# 当前世界状态
 @export var current_tag_id: Tags.Tag = Tags.Tag.MYSTERIOUS # 当前世界的主标签
 @export var is_transitioning: bool = false # 是否正在进行世界切换过渡
 
 var current_weighted_tags: Dictionary[Tags.Tag, float] = {}
 
 
-
-
+# 世界表现节点：视差组按从后往前的顺序排列
 @onready var _sky: WorldSky = %Sky
 @onready var _poi: ManualParallax = %POI
 @onready var _ground: WorldGround = %Ground
@@ -56,7 +58,6 @@ var current_weighted_tags: Dictionary[Tags.Tag, float] = {}
 @onready var _landform_3: ManualParallax = %Landform_3
 @onready var _component_3: ManualParallax = %Component_3
 
-# @onready var _pet: Node2D = %Pet
 
 @onready var _cloud_4: ManualParallax = %Cloud_4
 @onready var _landform_4: ManualParallax = %Landform_4
@@ -66,156 +67,70 @@ var current_weighted_tags: Dictionary[Tags.Tag, float] = {}
 @onready var _landform_5: ManualParallax = %Landform_5
 @onready var _component_5: ManualParallax = %Component_5
 
-# @onready var _world_player: AnimationPlayer = %WorldPlayer
 
-# var unhandled_letter_tags: Array = [] # 存储未处理的标签，供发送时使用
 var banned_texture: String = "" # 单个槽位，记录最近一次未选择的texture名称
 
+# 手动视差层分组：相同索引对应同组的云、地形与组件
 var _clouds: Array[ManualParallax] = []
 var _landforms: Array[ManualParallax] = []
 var _components: Array[ManualParallax] = []
+
+# 未乘全局倍率的基础速度
 var _sky_base_autoscroll: Vector2
 var _ground_base_autoscroll: Vector2
 var _manual_base_scroll_speeds: Dictionary = {}
 
+# Memory 生成记录与最近选择
 var _last_memory_by_layer: Dictionary = {}
 var _spawned_objects_by_memory: Dictionary = {}
 var _recently_chosen_memories: Array[MemoryDef] = []
 
 
-
+# 世界切换通知：由 Main 协调音频与其他系统
 signal world_changing(new_tag_id: int, transition_duration: float) # 定义世界切换信号，参数为新的世界ID和过渡时长
 signal world_changed(new_tag_id: int)
 
 
+# 本脚本将 TagSceneDef 配置应用到世界节点，并协调各手动视差层的生成。
+# ManualParallax 负责层内对象与计时；本脚本负责世界过渡、Memory 选用及跨层占用。
+#
+# 目录（与下方代码分区顺序一致）
+# 1. 初始化与资源加载
+#    加载 TagSceneDef，建立视差层的池、初始位置、分组与生成倍率，记录基础速度。
+#    入口：_ready
+# 2. 世界组装与过渡
+#    首次直接构建世界；同主标签只更新配置，跨主标签执行过渡并保留首次 POI 等待。
+#    入口：assemble_world / transition_to_world / get_current_weighted_tags
+#    通过 world_changing / world_changed 通知 Main 协调其他系统。
+# 3. 世界参数与滚动速度
+#    将主标签的颜色、纹理、速度和加权标签应用到各层；统一应用全局速度倍率。
+#    核心：_update_def_to_scene / _apply_global_scroll_speed
+# 4. 手动视差层启动与布局
+#    统一设置右侧生成线；首次按地形、云、组件顺序预填充，POI 单独延迟。
+#    世界切换时按指定模式重新启动非 POI 层。
+#    入口：set_manual_spawn_x
+#    核心：_start_initial_manual_scroll / _start_non_poi_manual_scroll
+# 5. Memory 选用与跨层占用
+#    最近选择优先，排除本层上次素材，并按世界坐标检查同一 Memory 的跨层间距。
+#    仅登记成功生成的实例，通过弱引用清理失效占用；候选不足时跳过本次生成。
+#    入口：set_recently_chosen_memories / get_manual_parallax_memory
+#          can_spawn_manual_parallax_memory / register_manual_parallax_spawn
+# 6. 地表与云高度查询
+#    按组查找对应地形，为组件查询地表，为云查询地形层原点。
+#    入口：get_component_ground_y / get_cloud_layer_origin_y
+# 7. 调试输入
+#    将数字输入动作转换为单标签的世界切换请求。
+#    入口：_input
 
 
-# 用于第一次建立场景，直接应用参数，不需要过渡动画
-func assemble_world(
-    weighted_tags: Dictionary[Tags.Tag, float],
-    world_visible_rect: Rect2
-) -> void:
-    if weighted_tags.is_empty():
-        push_warning("[WORLD ASSEMBLER] Cannot assemble a world without weighted tags")
-        return
-    
-    var main_tag: Tags.Tag = weighted_tags.keys()[0] # 获取权重最高的标签作为主标签
-
-    if main_tag not in tag_scenes:
-        print("[WORLD ASSEMBLER] Invalid tag: %s" % main_tag)
-        return
-
-    world_changing.emit(main_tag, transition_duration) # 发出世界切换信号
-    is_transitioning = true
-
-    current_tag_id = main_tag # 更新当前世界ID
-    _update_def_to_scene(weighted_tags)
-    _sky.apply_immediate()
-    _ground.apply_immediate()
-    _start_initial_manual_scroll(world_visible_rect)
-
-    world_changed.emit(main_tag) # 发出世界切换信号，供其他系统（如角色状态机）响应
-    is_transitioning = false
-
-
-
-func transition_to_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
-    if is_transitioning:
-        print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
-        return
-
-    if weighted_tags.is_empty():
-        push_warning("[WORLD ASSEMBLER] Cannot transition without weighted tags")
-        return
-
-    var main_tag: Tags.Tag = weighted_tags.keys()[0]
-
-    if main_tag not in tag_scenes:
-        print("[WORLD ASSEMBLER] Invalid tag: %s" % main_tag)
-        return
-    
-    if main_tag == current_tag_id:
-        print("[WORLD ASSEMBLER] Already in the target world: %s" % main_tag)
-        world_changing.emit(main_tag, transition_duration) # 发出世界切换信号
-        is_transitioning = true
-
-        _update_def_to_scene(weighted_tags) # 切换到新世界的参数（仅参数）
-        world_changed.emit(main_tag) # 发出世界切换信号，供其他系统（如角色状态机）响应
-        is_transitioning = false
-    
-    else:
-        var duration := maxf(transition_duration, 0.0)
-        var keep_initial_poi_delay := _poi.is_waiting_for_initial_spawn()
-        world_changing.emit(main_tag, duration) # 发出世界切换信号
-        is_transitioning = true
-
-        current_tag_id = main_tag # 更新当前世界ID
-        _update_def_to_scene(weighted_tags)
-
-        # 首次 POI 等待沿用启动时的计时器，切换世界只更新它的目标配置。
-        _sky.transition_to_target(duration)
-        _ground.transition_to_target(duration)
-        if not keep_initial_poi_delay:
-            _poi.fade_out_children(duration)
-        _start_non_poi_manual_scroll(1, false)
-
-        if not is_zero_approx(duration):
-            await get_tree().create_timer(duration).timeout
-
-        # 强制落到目标值，避免 Tween 与计时器同帧结束时留下微小误差。
-        _sky.apply_immediate()
-        _ground.apply_immediate()
-        # 等待期间生成的首个 POI 也保留，避免过渡结束后清掉或重新延迟。
-        if not keep_initial_poi_delay:
-            _poi.start_manual_scroll(0, false)
-
-        world_changed.emit(main_tag)
-        is_transitioning = false
-
-
+#region 1. 初始化与资源加载
 
 func _ready() -> void:
-    _build_tag_scenes() 
+    _build_tag_scenes()
     _initialize_manual_parallax_layers()
     _sky_base_autoscroll = _sky.autoscroll
     _ground_base_autoscroll = _ground.autoscroll
     _apply_global_scroll_speed()
-
-
-func set_manual_spawn_x(spawn_x: float) -> void:
-    # 各手动视差层的横向原点相同，统一让纹理左边缘从窗口右侧生成。
-    _poi.spawn_position.x = spawn_x
-    for layer: ManualParallax in _clouds + _landforms + _components:
-        layer.spawn_position.x = spawn_x
-
-
-func get_current_weighted_tags() -> Dictionary[Tags.Tag, float]:
-    var result: Dictionary[Tags.Tag, float] = {}
-    for tag: Tags.Tag in current_weighted_tags:
-        result[tag] = current_weighted_tags[tag]
-    return result
-
-
-
-func set_recently_chosen_memories(memories: Array[MemoryDef]) -> void:
-    _recently_chosen_memories.clear()
-    for memory: MemoryDef in memories:
-        if memory == null or _recently_chosen_memories.has(memory):
-            continue
-        _recently_chosen_memories.append(memory)
-        if _recently_chosen_memories.size() >= 3:
-            break
-
-
-
-# 小键盘控制世界切换
-func _input(event): 
-    for i in range(Tags.Tag.size()):
-        if event.is_action_pressed("%d" % i):
-            # 创建一个权重为1.0的字典，表示选择的标签
-            var target_tag: Dictionary[Tags.Tag, float] = {i as Tags.Tag: 1.0} 
-            transition_to_world(target_tag)
-            break
 
 
 # 从 scripts/main/controllers/tagscene/defs 读取所有 TagSceneDef 资源，并将它们存储在 tag_scenes 字典中
@@ -244,10 +159,8 @@ func _build_tag_scenes() -> void:
     directory.list_dir_end()
 
 
-
-# 初始化手动滚动的Parallax层的pool，并加入到对应的数组中
+# 初始化手动视差层的池、位置和生成倍率，并建立对应分组。
 func _initialize_manual_parallax_layers() -> void:
-    # 初始化所有手动滚动的Parallax层
     var viewport_bottom_y := get_viewport().get_visible_rect().size.y
     var initial_height: float = -150.00
     var height_increment: float = initial_height / 5.0 # 将高度均分为5个层级
@@ -335,19 +248,114 @@ func _initialize_manual_parallax_layers() -> void:
         _clouds[i].spawn_scale_factor = group_scale_factors[i]
         _components[i].spawn_scale_factor = group_scale_factors[i]
 
+#endregion
 
-# 将tag_scene的参数应用到场景节点上
-func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void: 
+
+#region 2. 世界组装与过渡
+
+# 用于第一次建立场景，直接应用参数，不需要过渡动画
+func assemble_world(
+    weighted_tags: Dictionary[Tags.Tag, float],
+    world_visible_rect: Rect2
+) -> void:
+    if weighted_tags.is_empty():
+        push_warning("[WORLD ASSEMBLER] Cannot assemble a world without weighted tags")
+        return
+
+    var main_tag: Tags.Tag = weighted_tags.keys()[0] # 获取权重最高的标签作为主标签
+
+    if main_tag not in tag_scenes:
+        print("[WORLD ASSEMBLER] Invalid tag: %s" % main_tag)
+        return
+
+    world_changing.emit(main_tag, transition_duration) # 发出世界切换信号
+    is_transitioning = true
+
+    current_tag_id = main_tag # 更新当前世界ID
+    _update_def_to_scene(weighted_tags)
+    _sky.apply_immediate()
+    _ground.apply_immediate()
+    _start_initial_manual_scroll(world_visible_rect)
+
+    world_changed.emit(main_tag) # 发出世界切换信号，供其他系统（如角色状态机）响应
+    is_transitioning = false
+
+
+func transition_to_world(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
+    if is_transitioning:
+        print("[WORLD ASSEMBLER] Already transitioning, ignoring new transition request")
+        return
+
+    if weighted_tags.is_empty():
+        push_warning("[WORLD ASSEMBLER] Cannot transition without weighted tags")
+        return
+
+    var main_tag: Tags.Tag = weighted_tags.keys()[0]
+
+    if main_tag not in tag_scenes:
+        print("[WORLD ASSEMBLER] Invalid tag: %s" % main_tag)
+        return
+
+    if main_tag == current_tag_id:
+        print("[WORLD ASSEMBLER] Already in the target world: %s" % main_tag)
+        world_changing.emit(main_tag, transition_duration) # 发出世界切换信号
+        is_transitioning = true
+
+        _update_def_to_scene(weighted_tags) # 切换到新世界的参数（仅参数）
+        world_changed.emit(main_tag) # 发出世界切换信号，供其他系统（如角色状态机）响应
+        is_transitioning = false
+
+    else:
+        var duration := maxf(transition_duration, 0.0)
+        var keep_initial_poi_delay := _poi.is_waiting_for_initial_spawn()
+        world_changing.emit(main_tag, duration) # 发出世界切换信号
+        is_transitioning = true
+
+        current_tag_id = main_tag # 更新当前世界ID
+        _update_def_to_scene(weighted_tags)
+
+        # 首次 POI 等待沿用启动时的计时器，切换世界只更新它的目标配置。
+        _sky.transition_to_target(duration)
+        _ground.transition_to_target(duration)
+        if not keep_initial_poi_delay:
+            _poi.fade_out_children(duration)
+        _start_non_poi_manual_scroll(1, false)
+
+        if not is_zero_approx(duration):
+            await get_tree().create_timer(duration).timeout
+
+        # 强制落到目标值，避免 Tween 与计时器同帧结束时留下微小误差。
+        _sky.apply_immediate()
+        _ground.apply_immediate()
+        # 等待期间生成的首个 POI 也保留，避免过渡结束后清掉或重新延迟。
+        if not keep_initial_poi_delay:
+            _poi.start_manual_scroll(0, false)
+
+        world_changed.emit(main_tag)
+        is_transitioning = false
+
+
+func get_current_weighted_tags() -> Dictionary[Tags.Tag, float]:
+    var result: Dictionary[Tags.Tag, float] = {}
+    for tag: Tags.Tag in current_weighted_tags:
+        result[tag] = current_weighted_tags[tag]
+    return result
+
+#endregion
+
+
+#region 3. 世界参数与滚动速度
+
+# 更新各层的目标配置；立即应用或渐变由世界组装与过渡流程决定。
+func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
     # weighted_tags: {MYSTERIOUS: 0.5, PEACEFUL: 0.3, BARREN: 0.2}
-    # mode: 0直接切换(或初始化场景)，1渐变切换
     var main_tag: Tags.Tag = weighted_tags.keys()[0] # 获取权重最高的标签作为主标签
     var main_tag_scene := tag_scenes[main_tag]
 
     current_weighted_tags.clear()
     for tag: Tags.Tag in weighted_tags:
         current_weighted_tags[tag] = weighted_tags[tag]
-    
-    
+
     _sky.main_color = main_tag_scene.sky_main_color
     _sky.invert_amount = main_tag_scene.sky_invert_amount
     _sky.star_texture = main_tag_scene.sky_star_texture
@@ -355,16 +363,13 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
     _sky.effect_texture = main_tag_scene.sky_effect_texture
     _sky.effect_color = main_tag_scene.sky_effect_color
 
-
     _poi.color = main_tag_scene.poi_color
     _set_manual_base_scroll_speed(_poi, main_tag_scene.poi_scroll_speed)
     _poi.weighted_tags = weighted_tags
 
-
     _ground.main_color = main_tag_scene.ground_main_color
     _ground.effect_texture = main_tag_scene.ground_effect_texture
     _ground.effect_color = main_tag_scene.ground_effect_color
-
 
     var clouds_count = _clouds.size()
     for i in clouds_count:
@@ -377,7 +382,6 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
             main_tag_scene.cloud_scroll_speed * speed_ratio
         )
         cloud.weighted_tags = weighted_tags
-
 
     var active_landforms: Array[ManualParallax] = []
     var main_tag_pools: MemoryController.MemoryPools
@@ -410,7 +414,6 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
             main_tag_scene.landform_scroll_speed * speed_ratio
         )
         landform.weighted_tags = weighted_tags
-    
 
     var components_count = _components.size()
     for i in components_count:
@@ -425,11 +428,9 @@ func _update_def_to_scene(weighted_tags: Dictionary[Tags.Tag, float]) -> void:
         component.weighted_tags = weighted_tags
 
 
-
 func _set_manual_base_scroll_speed(layer: ManualParallax, speed: Vector2) -> void:
     _manual_base_scroll_speeds[layer] = speed
     layer.scroll_speed = speed * global_scroll_speed
-
 
 
 func _apply_global_scroll_speed() -> void:
@@ -439,6 +440,64 @@ func _apply_global_scroll_speed() -> void:
         if is_instance_valid(layer):
             layer.scroll_speed = _manual_base_scroll_speeds[layer] * global_scroll_speed
 
+#endregion
+
+
+#region 4. 手动视差层启动与布局
+
+func set_manual_spawn_x(spawn_x: float) -> void:
+    # 各手动视差层的横向原点相同，统一让纹理左边缘从窗口右侧生成。
+    _poi.spawn_position.x = spawn_x
+    for layer: ManualParallax in _clouds + _landforms + _components:
+        layer.spawn_position.x = spawn_x
+
+
+# 首次构建先准备所有层，再依次填充地形、云和组件，最后启动滚动与 POI 延迟。
+func _start_initial_manual_scroll(world_visible_rect: Rect2) -> void:
+    var layers: Array[ManualParallax] = []
+    layers.append_array(_clouds)
+    layers.append_array(_landforms)
+    layers.append_array(_components)
+    # 清理场景内的示例 POI，但不参与可见区域预填充。
+    _poi.prepare_initial_scroll()
+    for layer: ManualParallax in layers:
+        layer.prepare_initial_scroll()
+    _last_memory_by_layer.clear()
+    _spawned_objects_by_memory.clear()
+
+    for landform: ManualParallax in _landforms:
+        landform.prefill_visible_range(world_visible_rect)
+    for cloud: ManualParallax in _clouds:
+        cloud.prefill_visible_range(world_visible_rect)
+    for component: ManualParallax in _components:
+        component.prefill_visible_range(world_visible_rect)
+
+    for layer: ManualParallax in layers:
+        layer.start_prefilled_scroll()
+    _poi.start_initial_spawn_delay(INITIAL_POI_SPAWN_DELAY)
+
+
+func _start_non_poi_manual_scroll(mode: int = 0, spawn_immediately: bool = true) -> void:
+    for cloud in _clouds:
+        cloud.start_manual_scroll(mode, spawn_immediately)
+    for landform in _landforms:
+        landform.start_manual_scroll(mode, spawn_immediately)
+    for component in _components:
+        component.start_manual_scroll(mode, spawn_immediately)
+
+#endregion
+
+
+#region 5. Memory 选用与跨层占用
+
+func set_recently_chosen_memories(memories: Array[MemoryDef]) -> void:
+    _recently_chosen_memories.clear()
+    for memory: MemoryDef in memories:
+        if memory == null or _recently_chosen_memories.has(memory):
+            continue
+        _recently_chosen_memories.append(memory)
+        if _recently_chosen_memories.size() >= 3:
+            break
 
 
 # 每层按自己的 Timer 独立请求；先到的请求先占用实际空间，不再依赖逻辑轮次对齐。
@@ -470,12 +529,11 @@ func get_manual_parallax_memory(layer: ManualParallax, spawn_x: float = NAN) -> 
     ]
     if not suppress_warning:
         var pool_name := String(MemoryDef.Pool.keys()[layer.pool])
-        push_warning(
+        print(
             "[MANUAL PARALLAX] 候选不足，已严格跳过本次生成：layer=%s, pool=%s"
             % [layer.name, pool_name]
         )
     return null
-
 
 
 func can_spawn_manual_parallax_memory(
@@ -486,7 +544,6 @@ func can_spawn_manual_parallax_memory(
     if layer == null or memory == null or memory.texture == null or memory.pool != layer.pool:
         return false
     return not _is_memory_blocked_by_other_layer(memory, layer, spawn_x)
-
 
 
 # 只有实例化成功后才登记，确保层内“上一次”与跨层空间占用都对应实际生成结果。
@@ -502,24 +559,6 @@ func register_manual_parallax_spawn(
     var object_refs: Array = _spawned_objects_by_memory.get(memory, [])
     object_refs.append(weakref(object))
     _spawned_objects_by_memory[memory] = object_refs
-
-
-
-func get_component_ground_y(component_layer: ManualParallax, world_x: float) -> Variant:
-    var layer_index := _components.find(component_layer)
-    if layer_index < 0 or layer_index >= _landforms.size():
-        return null
-    return _landforms[layer_index].get_ground_y(world_x)
-
-
-
-func get_cloud_layer_origin_y(cloud_layer: ManualParallax) -> Variant:
-    # Cloud 与 Landform 按相同顺序初始化，云只对齐对应层的原点。
-    var layer_index := _clouds.find(cloud_layer)
-    if layer_index < 0 or layer_index >= _landforms.size():
-        return null
-    return _landforms[layer_index].to_global(Vector2.ZERO).y
-
 
 
 func _is_memory_blocked_by_other_layer(
@@ -574,122 +613,37 @@ func _is_memory_blocked_by_other_layer(
         _spawned_objects_by_memory[memory] = object_refs
     return is_blocked
 
+#endregion
 
 
-# 首次构建先准备所有层，再填地形和组件，最后统一接上普通生成计时器。
-func _start_initial_manual_scroll(world_visible_rect: Rect2) -> void:
-    var layers: Array[ManualParallax] = []
-    layers.append_array(_clouds)
-    layers.append_array(_landforms)
-    layers.append_array(_components)
-    # 清理场景内的示例 POI，但不参与可见区域预填充。
-    _poi.prepare_initial_scroll()
-    for layer: ManualParallax in layers:
-        layer.prepare_initial_scroll()
-    _last_memory_by_layer.clear()
-    _spawned_objects_by_memory.clear()
+#region 6. 地表与云高度查询
 
-    for landform: ManualParallax in _landforms:
-        landform.prefill_visible_range(world_visible_rect)
-    for cloud: ManualParallax in _clouds:
-        cloud.prefill_visible_range(world_visible_rect)
-    for component: ManualParallax in _components:
-        component.prefill_visible_range(world_visible_rect)
-
-    for layer: ManualParallax in layers:
-        layer.start_prefilled_scroll()
-    _poi.start_initial_spawn_delay(INITIAL_POI_SPAWN_DELAY)
+func get_component_ground_y(component_layer: ManualParallax, world_x: float) -> Variant:
+    var layer_index := _components.find(component_layer)
+    if layer_index < 0 or layer_index >= _landforms.size():
+        return null
+    return _landforms[layer_index].get_ground_y(world_x)
 
 
+func get_cloud_layer_origin_y(cloud_layer: ManualParallax) -> Variant:
+    # Cloud 与 Landform 按相同顺序初始化，云只对齐对应层的原点。
+    var layer_index := _clouds.find(cloud_layer)
+    if layer_index < 0 or layer_index >= _landforms.size():
+        return null
+    return _landforms[layer_index].to_global(Vector2.ZERO).y
 
-func _start_non_poi_manual_scroll(mode: int = 0, spawn_immediately: bool = true) -> void:
-    for cloud in _clouds:
-        cloud.start_manual_scroll(mode, spawn_immediately)
-    for landform in _landforms:
-        landform.start_manual_scroll(mode, spawn_immediately)
-    for component in _components:
-        component.start_manual_scroll(mode, spawn_immediately)
-
-
-
-#region old_code
+#endregion
 
 
+#region 7. 调试输入
 
-
-
-
-
-# func immediate_spawn(texture_name: String) -> void: # string格式为 0_frontxxx_2_1xx
-# 	# 通过name来确定在哪个层生成素材
-# 	var target_layer_name = texture_name.split("_")[1] # 例如 "0_front_2" -> "front"
-# 	var target_sublayer_name = texture_name.split("_")[2] # 例如 "0_front_2" -> "2"
-# 	# get对应的层
-# 	var target_layer: ManualParallax
-# 	match target_layer_name:
-# 		"far":
-# 			match target_sublayer_name:
-# 				"1":
-# 					target_layer = _far_1
-# 				"2":
-# 					target_layer = _far_2
-# 				"0": # 如果是0层，随机选择一个层生成
-# 					if randi() % 2 == 0:
-# 						target_layer = _far_1
-# 					else:
-# 						target_layer = _far_2
-# 		"mid":
-# 			match target_sublayer_name:
-# 				"1":
-# 					target_layer = _mid_1
-# 				"2":
-# 					target_layer = _mid_2
-# 				"0": # 如果是0层，随机选择一个层生成
-# 					if randi() % 2 == 0:
-# 						target_layer = _mid_1
-# 					else:
-# 						target_layer = _mid_2
-# 		"front":
-# 			match target_sublayer_name:
-# 				"1":
-# 					target_layer = _front_1
-# 				"2":
-# 					target_layer = _front_2
-# 				"0": # 如果是0层，随机选择一个层生成
-# 					if randi() % 2 == 0:
-# 						target_layer = _front_1
-# 					else:
-# 						target_layer = _front_2
-# 	# 从assembler层级手动生成一个新的sprite并加入场景, 需要调用对应的世界def中的参数
-# 	var sprite = Sprite2D.new()
-# 	sprite.texture = memory_controller.get_popup_texture_by_name(texture_name) # 通过贴图名称获取Texture2D资源
-# 	var target_world_id: int = texture_name.split("_")[0].to_int() # 例如 "0_front_2" -> 0
-# 	var target_world_def = world_defs[target_world_id] 
-    
-# 	var color_property_name: String = "%s_%s_color" % [target_layer_name, target_sublayer_name]
-# 	sprite.modulate = target_world_def.get(color_property_name)
-# 	var scale_property_name: String = "%s_%s_spawn_scale" % [target_layer_name, target_sublayer_name]
-# 	sprite.scale = target_world_def.get(scale_property_name)
-# 	var position_property_name: String = "%s_%s_spawn_position" % [target_layer_name, target_sublayer_name]
-# 	sprite.position = Vector2(0, target_world_def.get(position_property_name).y)
-    
-# 	match target_sublayer_name:
-# 		"1", "2":
-# 			target_layer._objects.append(sprite)
-# 		"0":
-# 			target_layer._objects_0.append(sprite)
-    
-# 	target_layer.add_child(sprite)
-# 	target_layer.animation_popup(sprite)
-    
-    
-
-
-# func texture_banned(texture_name: String) -> bool:
-# 	# 检查给定的贴图名称是否在当前世界的禁止列表中
-# 	# print("[WORLD ASSEMBLER] Checking if texture '%s' is banned (banned_texture: '%s')" % [texture_name, banned_texture])
-# 	return texture_name == banned_texture
-
-
+# 通过数字输入动作调试世界切换。
+func _input(event):
+    for i in range(Tags.Tag.size()):
+        if event.is_action_pressed("%d" % i):
+            # 创建一个权重为1.0的字典，表示选择的标签
+            var target_tag: Dictionary[Tags.Tag, float] = {i as Tags.Tag: 1.0}
+            transition_to_world(target_tag)
+            break
 
 #endregion

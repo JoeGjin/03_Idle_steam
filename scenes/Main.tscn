@@ -595,8 +595,9 @@ component_ground_sink = 120.0
 pet_ground_sink = 60.0
 group_1_scale_factor = 0.5
 group_2_scale_factor = 0.55
-group_4_scale_factor = 0.65
-group_5_scale_factor = 0.7
+group_3_scale_factor = 0.55
+group_4_scale_factor = 0.6
+group_5_scale_factor = 0.6
 poi_scale_factor = 1.0
 
 [node name="MouseController" type="Node" parent="Controllers" unique_id=105872680]
@@ -623,7 +624,6 @@ script = ExtResource("3_vcsgt")
 [node name="MemoryController" type="Node" parent="Controllers" unique_id=769164480]
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
-collection_interval_seconds = 10.0
 max_pending_collection_count = 3
 debug_show_collected_item = true
 
@@ -1011,7 +1011,7 @@ layer = 15
 [node name="Pet" type="AnimatedSprite2D" parent="WorldRoot/15_Pet" unique_id=390694917]
 unique_name_in_owner = true
 position = Vector2(800, 825)
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.25, 0.25)
 sprite_frames = SubResource("SpriteFrames_1nqs0")
 autoplay = "default"
 frame_progress = 0.8828364

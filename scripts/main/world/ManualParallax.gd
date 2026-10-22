@@ -10,13 +10,15 @@ const SURFACE_ALPHA_THRESHOLD := 0.1
 const MAX_INITIAL_OBJECTS := 256
 
 
+# 外部依赖
 @onready var world_assembler: WorldAssembler = %WorldAssembler
 @onready var memory_controller : MemoryController = %MemoryController
 
+# 层配置：由 Main 与 WorldAssembler 设置
 @export var spawn_position: Vector2 = Vector2.ZERO # x 由 Main 在输出布局完成后统一设置，y 为本层生成高度。
 
 
-var pool: MemoryDef.Pool 
+var pool: MemoryDef.Pool
 var spawn_scale_factor: float = 1.0:
     set(value):
         spawn_scale_factor = maxf(value, 0.01)
@@ -29,32 +31,51 @@ var weighted_tags: Dictionary[Tags.Tag, float]:
         _pending_memory = null
 
 
+# 滚动与对象状态
 var _objects: Array[Sprite2D] = []
 var _is_scrolling: bool = true
+
+# 生成调度状态
 var _spawn_timer: Timer
 var _spawn_cooldown: float = 999.0
 var _initial_spawn_pending := false
 var _pending_memory: MemoryDef
+
+# 淡出与地表缓存
 var _fade_tween: Tween
 var _surface_height_maps: Dictionary = {}
 
 
-#非Parallex2D 手动滚动program开始运行（生成随机texture，移动，到尽头自动释放，间隔时长后重复）
-# 目录
-# 1.外部调用func
-#  1.1 开始滚动
-#  1.2 停止滚动
-#  1.3 继续滚动
-# 2.内部调用func
-#  2.0 queue_free所有子节点
-#  2.1 初始化计时器
-#  2.2 生成随机object并spawn在场景右侧
-#  2.3 移动
-#  2.4 到尽头自动释放
-#  2.5 间隔时长后重复
+# 本脚本负责单个视差层的 Memory 对象生成、滚动、退场与地表查询。
+# MemoryController 提供素材池；WorldAssembler 协调跨层占用和生成登记。
+#
+# 目录（与下方代码分区顺序一致）
+# 1. 滚动控制与世界过渡
+#    开始、暂停、恢复滚动，以及世界切换时的保留与淡出。
+#    入口：start_manual_scroll / stop_manual_scroll / resume_manual_scroll
+#          fade_out_children
+# 2. 首次进入与可见区域预填充
+#    清理初始内容、填满可见区域，再衔接正常滚动；支持 POI 延迟出现。
+#    入口：prepare_initial_scroll / prefill_visible_range / start_prefilled_scroll
+#          start_initial_spawn_delay / is_waiting_for_initial_spawn
+# 3. 生成调度与间距
+#    管理 Timer，根据已生成对象的实际位置复核生成时机。
+#    普通层使用重复计时；组件层使用单次计时，等待时保留候选并复查跨层占用。
+# 4. Memory 候选筛选
+#    按池、主副标签及权重组织候选，支持最近选择的 Memory 优先。
+#    入口：get_memory_candidates / get_recent_memory_candidates
+#    通过 _request_next_memory 请求 WorldAssembler 完成最终选用与跨层检查。
+# 5. 对象生成与高度对齐
+#    判断组件层类型，实例化 MparaObject，设置缩放、颜色、位置并登记生成结果。
+#    按地形、组件、云和 POI 的规则处理高度对齐。
+# 6. 每帧移动与对象清理
+#    移动现有对象，释放越界对象，按过渡要求清理旧内容。
+# 7. 地表高度查询与缓存
+#    从地形纹理透明度建立高度缓存，供组件和宠物查询地表。
+#    入口：get_ground_y
 
 
-
+#region 1. 滚动控制与世界过渡
 
 func start_manual_scroll(mode: int = 0, spawn_immediately: bool = true) -> void:
     _pending_memory = null
@@ -68,9 +89,9 @@ func start_manual_scroll(mode: int = 0, spawn_immediately: bool = true) -> void:
         if is_component_layer():
             _pending_memory = _request_next_memory()
         transition_wait_time = _calculate_transition_spawn_wait_time()
-    
-    _free_all_timer() # 先停止计时器
-    
+
+    _free_all_timer()
+
     match mode:
         0:
             _free_all_children()
@@ -90,10 +111,51 @@ func start_manual_scroll(mode: int = 0, spawn_immediately: bool = true) -> void:
         _update_spawn_timer(next_memory)
     else:
         _spawn_timer.wait_time = maxf(transition_wait_time, 0.001)
-    
+
     _spawn_timer.start()
 
 
+func stop_manual_scroll() -> void:
+    _is_scrolling = false
+    _spawn_timer.stop()
+
+
+func resume_manual_scroll() -> void:
+    if not _is_scrolling:
+        _spawn_timer.start()
+        _is_scrolling = true
+
+
+func fade_out_children(duration: float) -> void:
+    if _fade_tween != null and _fade_tween.is_valid():
+        _fade_tween.kill()
+    _fade_tween = null
+
+    # POI 退场期间不再生成新对象，但已有对象继续向前滚动。
+    _free_all_timer()
+
+    var children_to_fade: Array[MparaObject] = []
+    for child in get_children():
+        if child is MparaObject:
+            children_to_fade.append(child)
+
+    if children_to_fade.is_empty():
+        return
+
+    var safe_duration := maxf(duration, 0.0)
+    if is_zero_approx(safe_duration):
+        for child in children_to_fade:
+            child.modulate.a = 0.0
+        return
+
+    _fade_tween = create_tween().set_parallel(true)
+    for child in children_to_fade:
+        _fade_tween.tween_property(child, "modulate:a", 0.0, safe_duration)
+
+#endregion
+
+
+#region 2. 首次进入与可见区域预填充
 
 func prepare_initial_scroll() -> void:
     _pending_memory = null
@@ -171,89 +233,18 @@ func start_initial_spawn_delay(delay: float) -> void:
 func is_waiting_for_initial_spawn() -> bool:
     return _initial_spawn_pending
 
-
-func fade_out_children(duration: float) -> void:
-    if _fade_tween != null and _fade_tween.is_valid():
-        _fade_tween.kill()
-    _fade_tween = null
-
-    # POI 退场期间不再生成新对象，但已有对象继续向前滚动。
-    _free_all_timer()
-
-    var children_to_fade: Array[MparaObject] = []
-    for child in get_children():
-        if child is MparaObject:
-            children_to_fade.append(child)
-
-    if children_to_fade.is_empty():
-        return
-
-    var safe_duration := maxf(duration, 0.0)
-    if is_zero_approx(safe_duration):
-        for child in children_to_fade:
-            child.modulate.a = 0.0
-        return
-
-    _fade_tween = create_tween().set_parallel(true)
-    for child in children_to_fade:
-        _fade_tween.tween_property(child, "modulate:a", 0.0, safe_duration)
+#endregion
 
 
-
-func stop_manual_scroll() -> void:
-    _is_scrolling = false
-    _spawn_timer.stop()
-
-
-
-func resume_manual_scroll() -> void:
-    if not _is_scrolling:
-        _spawn_timer.start()
-        _is_scrolling = true
-
-
-
-func _process(delta: float) -> void:
-    # 移动所有子节点
-    _move_textures(delta)
-
-
-
-func _move_textures(delta: float) -> void:
-    # 移动所有子节点
-    if _is_scrolling:
-        for object in _objects:
-            _move_and_release(object, delta, _objects)
-
-
-
-func _move_and_release(object: Sprite2D, delta: float, object_list: Array[Sprite2D]) -> void:
-    object.position += scroll_speed * delta
-    # 如果从场景左侧出去，自动释放
-    if object.position.x < -6000:
-        object_list.erase(object)
-        object.queue_free()
-
-
+#region 3. 生成调度与间距
 
 func _initialize_timer() -> void:
-    # 初始化计时器
     _spawn_timer = Timer.new()
     _spawn_timer.wait_time = _spawn_cooldown
     _spawn_timer.one_shot = is_component_layer()
     _spawn_timer.autostart = false
     add_child(_spawn_timer)
     _spawn_timer.connect("timeout", Callable(self, "_on_spawn_timer_timeout"))
-
-
-
-func _free_all_children() -> void:
-    for child in get_children():
-        if child is MparaObject:
-            child.queue_free()
-    _objects.clear()
-    # _objects_0.clear()
-
 
 
 func _free_all_timer() -> void:
@@ -263,14 +254,183 @@ func _free_all_timer() -> void:
             timer.queue_free()
 
 
+func _on_spawn_timer_timeout() -> void:
+    if is_component_layer():
+        _on_component_spawn_timer_timeout()
+        return
 
-func _free_distant_children() -> void:
-    # 只清理左边缘尚未越过生成线的旧对象，保留已进入窗口的内容。
-    for object: Sprite2D in _objects.duplicate():
-        if object.position.x >= spawn_position.x:
-            _objects.erase(object)
-            object.queue_free()
+    # Timer 只负责唤醒；生成前以对象真实位置复核，避免速度变化或计时偏差导致同层重叠。
+    var remaining_wait_time := _calculate_remaining_spawn_wait_time()
+    if remaining_wait_time > 0.0:
+        _spawn_timer.wait_time = maxf(remaining_wait_time, 0.001)
+        return
 
+    var next_memory := _request_next_memory()
+    var object := _spawn_object(next_memory)
+    if _initial_spawn_pending:
+        if object == null:
+            # 到时没有可用素材则短间隔重试，成功后才接回正常间距周期。
+            _spawn_timer.wait_time = SPAWN_RECHECK_INTERVAL
+            return
+        _initial_spawn_pending = false
+    _update_spawn_timer(next_memory)
+
+
+func _on_component_spawn_timer_timeout() -> void:
+    # 等待期间保留候选；真正生成前重查跨层占用，防止其他层抢先使用同一 Memory。
+    if (
+        _pending_memory != null
+        and not world_assembler.can_spawn_manual_parallax_memory(self, _pending_memory)
+    ):
+        _pending_memory = null
+    if _pending_memory == null:
+        _pending_memory = _request_next_memory()
+    if _pending_memory == null:
+        # 候选不足时沿用正常周期，避免每次短复查都重新抽取并输出警告。
+        _spawn_timer.start(maxf(_spawn_cooldown, SPAWN_RECHECK_INTERVAL))
+        return
+
+    var remaining_wait_time := _calculate_remaining_spawn_wait_time()
+    if remaining_wait_time > 0.0:
+        _spawn_timer.start(maxf(remaining_wait_time, 0.001))
+        return
+
+    var next_memory := _pending_memory
+    _spawn_object(next_memory)
+    _pending_memory = null
+    _update_spawn_timer(next_memory)
+    _spawn_timer.start()
+
+
+func _update_spawn_timer(memory: MemoryDef = null) -> void:
+    # 按正常间距安排唤醒，生成前仍以对象的实际位置和宽度复核。
+    if memory == null or memory.texture == null:
+        return
+
+    var horizontal_speed := absf(scroll_speed.x)
+    if is_zero_approx(horizontal_speed):
+        if is_component_layer():
+            _spawn_cooldown = SPAWN_RECHECK_INTERVAL
+            if is_instance_valid(_spawn_timer):
+                _spawn_timer.wait_time = _spawn_cooldown
+            return
+        push_warning("[MANUAL PARALLAX] 水平滚动速度为 0，无法计算生成间隔：%s" % name)
+        return
+
+    var spawn_distance := _get_spawn_distance(memory)
+    _spawn_cooldown = maxf(spawn_distance / horizontal_speed, 0.001)
+    if is_instance_valid(_spawn_timer):
+        _spawn_timer.wait_time = _spawn_cooldown
+
+
+func _calculate_transition_spawn_wait_time() -> float:
+    if is_component_layer() and _pending_memory == null:
+        return SPAWN_RECHECK_INTERVAL
+
+    var horizontal_speed := absf(scroll_speed.x)
+    if is_zero_approx(horizontal_speed):
+        if is_component_layer():
+            return SPAWN_RECHECK_INTERVAL
+        push_warning("[MANUAL PARALLAX] 水平滚动速度为 0，无法计算过渡后的首次生成间隔：%s" % name)
+        return maxf(_spawn_cooldown, 0.001)
+
+    var rightmost_object := _get_rightmost_object()
+    if rightmost_object != null and rightmost_object.memory_def != null:
+        var target_distance := _get_spawn_distance(
+            rightmost_object.memory_def, rightmost_object
+        )
+        if target_distance > 0.0:
+            var movement_direction := signf(scroll_speed.x)
+            var traveled_distance := maxf(
+                (rightmost_object.position.x - spawn_position.x) * movement_direction,
+                0.0
+            )
+            var remaining_distance := maxf(target_distance - traveled_distance, 0.0)
+            return maxf(remaining_distance / horizontal_speed, 0.001)
+
+    # 没有旧组件时，按选定候选与同宽组件之间的正常间距安排首次等待。
+    if is_component_layer():
+        return maxf(
+            _get_spawn_distance(_pending_memory) / horizontal_speed,
+            0.001
+        )
+
+    # 当前层没有旧对象时，用新世界候选的正常间距作为首次等待时间。
+    var candidates := get_memory_candidates()
+    if not candidates.is_empty():
+        var fallback_distance := _get_spawn_distance(candidates.front())
+        if fallback_distance > 0.0:
+            return maxf(fallback_distance / horizontal_speed, 0.001)
+
+    return maxf(_spawn_cooldown, 0.001)
+
+
+func _calculate_remaining_spawn_wait_time() -> float:
+    var rightmost_object := _get_rightmost_object()
+    if rightmost_object == null or rightmost_object.memory_def == null:
+        return 0.0
+
+    var target_distance := _get_spawn_distance(
+        rightmost_object.memory_def, rightmost_object
+    )
+    if target_distance <= 0.0:
+        return 0.0
+
+    var horizontal_speed := absf(scroll_speed.x)
+    if is_zero_approx(horizontal_speed):
+        # 滚动暂停时短间隔复查，避免在原生成点继续叠加对象。
+        return SPAWN_RECHECK_INTERVAL
+
+    var movement_direction := signf(scroll_speed.x)
+    var traveled_distance := maxf(
+        (rightmost_object.position.x - spawn_position.x) * movement_direction,
+        0.0
+    )
+    var remaining_distance := target_distance - traveled_distance
+    var distance_epsilon := 0.0 if is_component_layer() else SPAWN_DISTANCE_EPSILON
+    if remaining_distance <= distance_epsilon:
+        return 0.0
+    return remaining_distance / horizontal_speed
+
+
+func _get_spawn_distance(
+    memory: MemoryDef,
+    object: MparaObject = null
+) -> float:
+    if memory == null or memory.texture == null:
+        return 0.0
+    # 已生成对象使用自身实际倍率，候选对象使用本层的生成倍率。
+    var scale_factor := absf(object.scale.x) if object != null else spawn_scale_factor
+    var previous_width := memory.texture.get_width() * scale_factor
+    # 向左滚动时，左边缘间距只取决于前一个对象宽度；组件至少相接，避免重叠。
+    var minimum_ratio := 1.0 if is_component_layer() else 0.0
+    return maxf(memory.spawn_distance_ratio, minimum_ratio) * previous_width
+
+
+func _get_rightmost_object() -> MparaObject:
+    var rightmost_object: MparaObject = null
+    for object: Sprite2D in _objects:
+        var mpara_object := object as MparaObject
+        if (
+            mpara_object == null
+            or not is_instance_valid(mpara_object)
+            or mpara_object.is_queued_for_deletion()
+        ):
+            continue
+        if (
+            rightmost_object == null
+            or mpara_object.position.x > rightmost_object.position.x
+        ):
+            rightmost_object = mpara_object
+    return rightmost_object
+
+#endregion
+
+
+#region 4. Memory 候选筛选
+
+func _request_next_memory(spawn_x: float = NAN) -> MemoryDef:
+    return world_assembler.get_manual_parallax_memory(self, spawn_x)
 
 
 func get_memory_candidates(excluded_memories: Array[MemoryDef] = []) -> Array[MemoryDef]:
@@ -304,7 +464,6 @@ func get_memory_candidates(excluded_memories: Array[MemoryDef] = []) -> Array[Me
                 candidates.append(memory)
 
     return candidates
-
 
 
 func get_recent_memory_candidates(
@@ -355,7 +514,6 @@ func get_recent_memory_candidates(
     return candidates
 
 
-
 func _uses_main_tag_only() -> bool:
     return pool in [
         MemoryDef.Pool.CLOUD,
@@ -363,7 +521,6 @@ func _uses_main_tag_only() -> bool:
         MemoryDef.Pool.LANDFORM_MID,
         MemoryDef.Pool.LANDFORM_FRONT,
     ]
-
 
 
 func _get_main_tag_candidates(
@@ -390,7 +547,6 @@ func _get_main_tag_candidates(
     return candidates
 
 
-
 func _get_weighted_tag_order(available_tags: Array[Tags.Tag]) -> Array[Tags.Tag]:
     var remaining_tags := available_tags.duplicate()
     var ordered_tags: Array[Tags.Tag] = []
@@ -414,7 +570,6 @@ func _get_weighted_tag_order(available_tags: Array[Tags.Tag]) -> Array[Tags.Tag]
     return ordered_tags
 
 
-
 func _get_tag_candidates(
     selected_tag: Tags.Tag,
     main_tag: Tags.Tag,
@@ -428,7 +583,6 @@ func _get_tag_candidates(
         selected_list.memories,
         excluded_memories
     )
-
 
 
 func _get_tag_candidates_from_memories(
@@ -495,12 +649,22 @@ func _get_tag_candidates_from_memories(
 
     return candidates
 
+#endregion
+
+
+#region 5. 对象生成与高度对齐
+
+func is_component_layer() -> bool:
+    return pool in [
+        MemoryDef.Pool.COMPONENT_FAR,
+        MemoryDef.Pool.COMPONENT_MID,
+        MemoryDef.Pool.COMPONENT_FRONT,
+    ]
 
 
 func _spawn_object(memory: MemoryDef = null, spawn_x: float = NAN) -> MparaObject:
     if memory == null or memory.texture == null:
         return null
-    # 根据 MemoryDef 生成 MparaObject，调用 initialize(memory) 初始化
     var object_spawn := spawn_position
     if not is_nan(spawn_x):
         object_spawn.x = spawn_x
@@ -556,7 +720,47 @@ func _spawn_object(memory: MemoryDef = null, spawn_x: float = NAN) -> MparaObjec
     world_assembler.register_manual_parallax_spawn(self, memory, object)
     return object
 
+#endregion
 
+
+#region 6. 每帧移动与对象清理
+
+func _process(delta: float) -> void:
+    _move_textures(delta)
+
+
+func _move_textures(delta: float) -> void:
+    if _is_scrolling:
+        for object in _objects:
+            _move_and_release(object, delta, _objects)
+
+
+func _move_and_release(object: Sprite2D, delta: float, object_list: Array[Sprite2D]) -> void:
+    object.position += scroll_speed * delta
+    # 如果从场景左侧出去，自动释放
+    if object.position.x < -6000:
+        object_list.erase(object)
+        object.queue_free()
+
+
+func _free_all_children() -> void:
+    for child in get_children():
+        if child is MparaObject:
+            child.queue_free()
+    _objects.clear()
+
+
+func _free_distant_children() -> void:
+    # 只清理左边缘尚未越过生成线的旧对象，保留已进入窗口的内容。
+    for object: Sprite2D in _objects.duplicate():
+        if object.position.x >= spawn_position.x:
+            _objects.erase(object)
+            object.queue_free()
+
+#endregion
+
+
+#region 7. 地表高度查询与缓存
 
 func get_ground_y(world_x: float) -> Variant:
     if pool not in [
@@ -597,7 +801,6 @@ func get_ground_y(world_x: float) -> Variant:
     return null
 
 
-
 func _get_surface_height_map(texture: Texture2D) -> PackedInt32Array:
     var texture_id := texture.get_instance_id()
     if _surface_height_maps.has(texture_id):
@@ -619,205 +822,5 @@ func _get_surface_height_map(texture: Texture2D) -> PackedInt32Array:
 
     _surface_height_maps[texture_id] = height_map
     return height_map
-
-
-
-func _calculate_transition_spawn_wait_time() -> float:
-    if is_component_layer() and _pending_memory == null:
-        return SPAWN_RECHECK_INTERVAL
-
-    var horizontal_speed := absf(scroll_speed.x)
-    if is_zero_approx(horizontal_speed):
-        if is_component_layer():
-            return SPAWN_RECHECK_INTERVAL
-        push_warning("[MANUAL PARALLAX] 水平滚动速度为 0，无法计算过渡后的首次生成间隔：%s" % name)
-        return maxf(_spawn_cooldown, 0.001)
-
-    var rightmost_object := _get_rightmost_object()
-    if rightmost_object != null and rightmost_object.memory_def != null:
-        var target_distance := _get_spawn_distance(
-            rightmost_object.memory_def, rightmost_object
-        )
-        if target_distance > 0.0:
-            var movement_direction := signf(scroll_speed.x)
-            var traveled_distance := maxf(
-                (rightmost_object.position.x - spawn_position.x) * movement_direction,
-                0.0
-            )
-            var remaining_distance := maxf(target_distance - traveled_distance, 0.0)
-            return maxf(remaining_distance / horizontal_speed, 0.001)
-
-    # 没有旧组件时，按选定候选与同宽组件之间的正常间距安排首次等待。
-    if is_component_layer():
-        return maxf(
-            _get_spawn_distance(_pending_memory) / horizontal_speed,
-            0.001
-        )
-
-    # 当前层没有旧对象时，用新世界候选的正常间距作为首次等待时间。
-    var candidates := get_memory_candidates()
-    if not candidates.is_empty():
-        var fallback_distance := _get_spawn_distance(candidates.front())
-        if fallback_distance > 0.0:
-            return maxf(fallback_distance / horizontal_speed, 0.001)
-
-    return maxf(_spawn_cooldown, 0.001)
-
-
-
-func _get_rightmost_object() -> MparaObject:
-    var rightmost_object: MparaObject = null
-    for object: Sprite2D in _objects:
-        var mpara_object := object as MparaObject
-        if (
-            mpara_object == null
-            or not is_instance_valid(mpara_object)
-            or mpara_object.is_queued_for_deletion()
-        ):
-            continue
-        if (
-            rightmost_object == null
-            or mpara_object.position.x > rightmost_object.position.x
-        ):
-            rightmost_object = mpara_object
-    return rightmost_object
-
-
-
-func is_component_layer() -> bool:
-    return pool in [
-        MemoryDef.Pool.COMPONENT_FAR,
-        MemoryDef.Pool.COMPONENT_MID,
-        MemoryDef.Pool.COMPONENT_FRONT,
-    ]
-
-
-
-func _get_spawn_distance(
-    memory: MemoryDef,
-    object: MparaObject = null
-) -> float:
-    if memory == null or memory.texture == null:
-        return 0.0
-    # 已生成对象使用自身实际倍率，候选对象使用本层的生成倍率。
-    var scale_factor := absf(object.scale.x) if object != null else spawn_scale_factor
-    var previous_width := memory.texture.get_width() * scale_factor
-    # 向左滚动时，左边缘间距只取决于前一个对象宽度；组件至少相接，避免重叠。
-    var minimum_ratio := 1.0 if is_component_layer() else 0.0
-    return maxf(memory.spawn_distance_ratio, minimum_ratio) * previous_width
-
-
-
-func _update_spawn_timer(memory: MemoryDef = null) -> void:
-    # 按正常间距安排唤醒，生成前仍以对象的实际位置和宽度复核。
-    if memory == null or memory.texture == null:
-        return
-
-    var horizontal_speed := absf(scroll_speed.x)
-    if is_zero_approx(horizontal_speed):
-        if is_component_layer():
-            _spawn_cooldown = SPAWN_RECHECK_INTERVAL
-            if is_instance_valid(_spawn_timer):
-                _spawn_timer.wait_time = _spawn_cooldown
-            return
-        push_warning("[MANUAL PARALLAX] 水平滚动速度为 0，无法计算生成间隔：%s" % name)
-        return
-
-    var spawn_distance := _get_spawn_distance(memory)
-    _spawn_cooldown = maxf(spawn_distance / horizontal_speed, 0.001)
-    if is_instance_valid(_spawn_timer):
-        _spawn_timer.wait_time = _spawn_cooldown
-
-
-
-
-func _calculate_remaining_spawn_wait_time() -> float:
-    var rightmost_object := _get_rightmost_object()
-    if rightmost_object == null or rightmost_object.memory_def == null:
-        return 0.0
-
-    var target_distance := _get_spawn_distance(
-        rightmost_object.memory_def, rightmost_object
-    )
-    if target_distance <= 0.0:
-        return 0.0
-
-    var horizontal_speed := absf(scroll_speed.x)
-    if is_zero_approx(horizontal_speed):
-        # 滚动暂停时短间隔复查，避免在原生成点继续叠加对象。
-        return SPAWN_RECHECK_INTERVAL
-
-    var movement_direction := signf(scroll_speed.x)
-    var traveled_distance := maxf(
-        (rightmost_object.position.x - spawn_position.x) * movement_direction,
-        0.0
-    )
-    var remaining_distance := target_distance - traveled_distance
-    var distance_epsilon := 0.0 if is_component_layer() else SPAWN_DISTANCE_EPSILON
-    if remaining_distance <= distance_epsilon:
-        return 0.0
-    return remaining_distance / horizontal_speed
-
-
-
-
-func _on_spawn_timer_timeout() -> void:
-    if is_component_layer():
-        _on_component_spawn_timer_timeout()
-        return
-
-    # Timer 只负责唤醒；生成前以对象真实位置复核，避免速度变化或计时偏差导致同层重叠。
-    var remaining_wait_time := _calculate_remaining_spawn_wait_time()
-    if remaining_wait_time > 0.0:
-        _spawn_timer.wait_time = maxf(remaining_wait_time, 0.001)
-        return
-
-    var next_memory := _request_next_memory()
-    var object := _spawn_object(next_memory)
-    if _initial_spawn_pending:
-        if object == null:
-            # 到时没有可用素材则短间隔重试，成功后才接回正常间距周期。
-            _spawn_timer.wait_time = SPAWN_RECHECK_INTERVAL
-            return
-        _initial_spawn_pending = false
-    _update_spawn_timer(next_memory)
-
-
-
-func _on_component_spawn_timer_timeout() -> void:
-    # 等待期间保留候选；真正生成前重查跨层占用，防止其他层抢先使用同一 Memory。
-    if (
-        _pending_memory != null
-        and not world_assembler.can_spawn_manual_parallax_memory(self, _pending_memory)
-    ):
-        _pending_memory = null
-    if _pending_memory == null:
-        _pending_memory = _request_next_memory()
-    if _pending_memory == null:
-        # 候选不足时沿用正常周期，避免每次短复查都重新抽取并输出警告。
-        _spawn_timer.start(maxf(_spawn_cooldown, SPAWN_RECHECK_INTERVAL))
-        return
-
-    var remaining_wait_time := _calculate_remaining_spawn_wait_time()
-    if remaining_wait_time > 0.0:
-        _spawn_timer.start(maxf(remaining_wait_time, 0.001))
-        return
-
-    var next_memory := _pending_memory
-    _spawn_object(next_memory)
-    _pending_memory = null
-    _update_spawn_timer(next_memory)
-    _spawn_timer.start()
-
-
-
-func _request_next_memory(spawn_x: float = NAN) -> MemoryDef:
-    return world_assembler.get_manual_parallax_memory(self, spawn_x)
-
-
-
-
-#region old_code
-
 
 #endregion
