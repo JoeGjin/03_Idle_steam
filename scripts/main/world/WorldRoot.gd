@@ -1,10 +1,15 @@
 extends Node2D
 
+
 ## 向景深分组同步 POI 清晰化倍率；各组自行计算实际模糊强度。
 signal blur_weight_changed(weight: float)
 
+
+# WorldPlayer 中用于按强调强度采样的动画。
 const POI_EMPHASIS_ANIMATION := &"PoiEmphasis"
 
+
+# 强调开关、保持区间与响应速度。
 @export_group("POI 镜头控制")
 @export var poi_emphasis_enabled := true:
 	set(value):
@@ -15,6 +20,8 @@ const POI_EMPHASIS_ANIMATION := &"PoiEmphasis"
 @export_range(0.0, 900.0, 10.0, "suffix:px") var poi_hold_half_width := 400.0
 ## 越大越快跟随目标强度；用于消除 POI 更替和世界切换时的突变。
 @export_range(0.1, 20.0, 0.1) var poi_emphasis_response := 5.0
+
+# 缩放锚点、整体强度与各景深组的差异配置。
 ## 相对可见范围的缩放锚点，允许超出 0～1；支持在 Remote Inspector 中实时调整。
 @export var poi_zoom_anchor_ratio := Vector2(0.5, 0.925):
 	set(value):
@@ -40,9 +47,12 @@ const POI_EMPHASIS_ANIMATION := &"PoiEmphasis"
 	set(value):
 		poi_offset_depth_bias = value
 		_refresh_poi_emphasis_configuration()
+
+# Remote Inspector 中的镜头预览。
 ## 运行主场景后，在 Remote Inspector 中打开，可不等待 POI 测试镜头。
 @export var poi_emphasis_preview := false
 @export_range(0.0, 1.0, 0.01) var poi_preview_strength := 1.0
+
 
 # WorldPlayer 的动画轨道驱动这些属性，不在 Inspector 中暴露。
 var poi_blur_weight := 1.0:
@@ -64,20 +74,29 @@ var poi_group_4_offset := Vector2.ZERO
 var poi_group_5_scale := 1.0
 var poi_group_5_offset := Vector2.ZERO
 
+
+# 动画、POI、宠物与其参照地形层。
 @onready var _world_player: AnimationPlayer = $WorldPlayer
 @onready var _poi: ManualParallax = %POI
 @onready var _landform_4: ManualParallax = %Landform_4
 @onready var _pet: AnimatedSprite2D = %Pet
 @onready var _pet_layer: CanvasLayer = $"15_Pet"
 
+
+# 初始化状态、世界过渡状态与平滑后的强调强度。
 var _poi_emphasis_ready := false
 var _world_transitioning := false
 var _poi_strength := 0.0
+
+# 未施加镜头变换的世界可见范围与缩放锚点。
 var _world_visible_rect := Rect2()
 var _poi_zoom_anchor := Vector2.ZERO
+
 # 原始动画只读，调参始终从它计算；WorldPlayer 只使用初始化时创建的副本。
 var _poi_base_animation: Animation
 var _poi_animation: Animation
+
+# 镜头图层、组号、内容节点及初始化时记录的变换与生成线。
 var _camera_layers: Array[CanvasLayer] = []
 var _layer_groups: Dictionary[CanvasLayer, int] = {}
 var _layer_contents: Dictionary[CanvasLayer, ManualParallax] = {}
@@ -85,6 +104,34 @@ var _layer_base_transforms: Dictionary[CanvasLayer, Transform2D] = {}
 var _layer_base_spawn_x: Dictionary[CanvasLayer, float] = {}
 var _pet_base_transform := Transform2D.IDENTITY
 
+
+# 本脚本定位世界根节点，并协调 POI 出现时的镜头强调与景深清晰化。
+# Main 提供可见范围和世界过渡状态；DepthBand 通过 blur_weight_changed 同步清晰化倍率。
+#
+# 目录（与下方代码分区顺序一致）
+# 1. 生命周期、镜头初始化与外部控制
+#    _ready 设置世界位置与处理顺序；Main 在输出布局完成后调用 initialize_poi_emphasis。
+#    检查可见范围和动画，记录各层及宠物的基准变换，将 WorldPlayer 设为手动采样。
+#    入口：_ready / initialize_poi_emphasis / set_poi_emphasis_transitioning
+# 2. 镜头参数实时刷新
+#    Inspector 参数变化时重建目标关键帧或更新缩放锚点，沿用当前强调强度应用镜头。
+#    初始化完成前跳过配置刷新；关闭强调时恢复基准表现。
+#    核心：_refresh_poi_emphasis_configuration / _refresh_poi_zoom_anchor
+# 3. 动画副本与关键帧配置
+#    校验 PoiEmphasis 的属性轨道与两个关键帧，复制动画库和动画，保留原始动画只读。
+#    从原始终点计算各组缩放、位移及清晰化目标，写入运行时动画副本。
+#    核心：_initialize_poi_animation / _configure_poi_emphasis_animation
+# 4. 每帧强调强度计算与动画采样
+#    按有效 POI 在可见范围中的位置计算强度，重叠时取最大值；预览可直接指定强度。
+#    世界过渡期间目标强度归零；平滑跟随目标后，将强度映射为动画时间轴位置。
+#    核心：_process / _get_poi_target_strength / _sample_poi_emphasis
+# 5. 图层镜头应用与复位
+#    对 POI 和五组视差层应用 CanvasLayer 显示变换，并修正拉远后的右侧生成线。
+#    Pet 跟随第 4 组的显示变换，贴地仍使用原始世界坐标；复位时恢复各项基准。
+#    核心：_apply_poi_camera / _reset_poi_emphasis
+
+
+#region 生命周期、镜头初始化与外部控制
 
 func _ready() -> void:
 	global_position = get_viewport().get_visible_rect().size * 0.5
@@ -120,6 +167,23 @@ func initialize_poi_emphasis(visible_rect: Rect2) -> void:
 	_reset_poi_emphasis()
 
 
+func set_poi_emphasis_transitioning(active: bool) -> void:
+	_world_transitioning = active
+
+
+func _capture_camera_layer(content: ManualParallax, group_index: int) -> void:
+	var layer := content.get_parent() as CanvasLayer
+	_camera_layers.append(layer)
+	_layer_groups[layer] = group_index
+	_layer_contents[layer] = content
+	_layer_base_transforms[layer] = layer.transform
+	_layer_base_spawn_x[layer] = content.spawn_position.x
+
+#endregion
+
+
+#region 镜头参数实时刷新
+
 func _refresh_poi_emphasis_configuration() -> void:
 	# 场景加载时 setter 也可能被调用，等可见范围和图层基准完成初始化后再刷新。
 	if not _poi_emphasis_ready:
@@ -142,6 +206,10 @@ func _refresh_poi_zoom_anchor() -> void:
 	if _poi_emphasis_ready and poi_emphasis_enabled:
 		_apply_poi_camera()
 
+#endregion
+
+
+#region 动画副本与关键帧配置
 
 func _initialize_poi_animation() -> bool:
 	if _poi_animation != null:
@@ -172,11 +240,6 @@ func _initialize_poi_animation() -> bool:
 	_world_player.remove_animation_library(&"")
 	_world_player.add_animation_library(&"", library)
 	return true
-
-
-func _get_poi_base_value(property: String) -> Variant:
-	var track := _poi_base_animation.find_track(NodePath(".:" + property), Animation.TYPE_VALUE)
-	return _poi_base_animation.track_get_key_value(track, 1)
 
 
 func _configure_poi_emphasis_animation() -> bool:
@@ -214,6 +277,11 @@ func _configure_poi_emphasis_animation() -> bool:
 	return true
 
 
+func _get_poi_base_value(property: String) -> Variant:
+	var track := _poi_base_animation.find_track(NodePath(".:" + property), Animation.TYPE_VALUE)
+	return _poi_base_animation.track_get_key_value(track, 1)
+
+
 func _set_poi_camera_keys(
 	animation: Animation, property: String, normal_value: Variant, target_value: Variant
 ) -> bool:
@@ -232,10 +300,10 @@ func _find_poi_camera_track(animation: Animation, property: String) -> int:
 		return -1
 	return track
 
+#endregion
 
-func set_poi_emphasis_transitioning(active: bool) -> void:
-	_world_transitioning = active
 
+#region 每帧强调强度计算与动画采样
 
 func _process(delta: float) -> void:
 	if not _poi_emphasis_ready or not poi_emphasis_enabled:
@@ -254,15 +322,6 @@ func _process(delta: float) -> void:
 		_poi_strength = target_strength
 	_sample_poi_emphasis(_poi_strength)
 	_apply_poi_camera()
-
-
-func _capture_camera_layer(content: ManualParallax, group_index: int) -> void:
-	var layer := content.get_parent() as CanvasLayer
-	_camera_layers.append(layer)
-	_layer_groups[layer] = group_index
-	_layer_contents[layer] = content
-	_layer_base_transforms[layer] = layer.transform
-	_layer_base_spawn_x[layer] = content.spawn_position.x
 
 
 func _get_poi_target_strength() -> float:
@@ -309,6 +368,10 @@ func _sample_poi_emphasis(strength: float) -> void:
 		_world_player.play(POI_EMPHASIS_ANIMATION)
 	_world_player.seek(clampf(strength, 0.0, 1.0) * _poi_animation.length, true, true)
 
+#endregion
+
+
+#region 图层镜头应用与复位
 
 func _apply_poi_camera() -> void:
 	var scales: Array[float] = [
@@ -353,3 +416,5 @@ func _reset_poi_emphasis() -> void:
 		layer.transform = _layer_base_transforms[layer]
 		_layer_contents[layer].spawn_position.x = _layer_base_spawn_x[layer]
 	_pet_layer.transform = _pet_base_transform
+
+#endregion

@@ -6,6 +6,7 @@ extends Node
 const DEBUG_DESIGN_BOUNDS_NAME := "DebugDesignBounds"
 
 
+# 启动与显示配置
 ## 主原生窗口相对 AllOutput.design_size 的初始显示倍率。
 ## 只改变桌宠窗口及其 UI 的显示大小，不改变 WorldView 的 1920×1080 渲染分辨率。
 @export_range(0.1, 3.0, 0.05, "or_greater") var draw_scale: float = 1.0
@@ -15,7 +16,7 @@ const DEBUG_DESIGN_BOUNDS_NAME := "DebugDesignBounds"
 @export var debug_show_design_bounds := false
 
 
-# Controllers
+# 控制器与自动世界切换计时器
 @onready var global_key_hook: Node = %GlobalKeyHook
 @onready var mouse_controller: MouseController = %MouseController
 @onready var character_status: CharacterStatus = %CharacterStatus
@@ -25,13 +26,12 @@ const DEBUG_DESIGN_BOUNDS_NAME := "DebugDesignBounds"
 @onready var audio_controller: AudioController = %AudioController
 @onready var change_scene_timer: Timer = $Controllers/CharacterStatus/ChangeScene
 
-# World
+# 世界表现与深度渲染
 @onready var world_root: Node2D = %WorldRoot
 @onready var pet: AnimatedSprite2D = %Pet
-@onready var debug_world: Node2D = %DebugWorld
 @onready var depth_rendering: Node = %DepthRendering
 
-# UI and output
+# UI、窗口输出与收集反馈
 @onready var ui_window: Window = %UIWindow
 @onready var ui_root: Control = %UIRoot
 @onready var world_output: TextureRect = %WorldOutput
@@ -43,9 +43,41 @@ const DEBUG_DESIGN_BOUNDS_NAME := "DebugDesignBounds"
 @onready var memory_choice_window: MemoryChoiceWindow = %MemoryChoiceWindow
 
 
+# Memory 记录：槽位按从新到旧排列，最多保留 9 个标签与 3 个最近选择
 var memory_slots: Array[Tags.Tag] = []
 var recent_chosen_memories: Array[MemoryDef] = []
+
+# 收集与二选一流程的重入保护
 var _collection_flow_active := false
+
+
+# 本脚本协调初始化、收集选择、Memory 槽位和世界变化，具体处理交给各模块。
+#
+# 目录（与下方代码分区顺序一致）
+# 1. 生命周期与初始化
+#    将世界放入 WorldView，初始化深度渲染、窗口倍率、信号连接和收集 UI。
+#    等待输出布局完成后设置生成线、初始化 POI 强调，再组装世界并启动角色状态。
+#    入口：_ready
+# 2. UI 与收集反馈
+#    打开收集窗口、同步待收集数量，协调烟花反馈与逐轮 Memory 二选一。
+#    选择期间暂停自动世界切换计时，整批完成后统一更新 Memory 槽位。
+#    入口：_on_collection_requested / _on_collected_item_requested
+#          _on_memory_controller_pending_collection_count_changed
+# 3. Memory 槽位与世界权重
+#    更新最近标签与 Memory，通知世界生成和悬浮按钮，并按槽位占比计算标签权重。
+#    权重相同时优先最近出现的标签；重启自动切换计时并请求 WorldAssembler 更新世界。
+#    核心：_update_memory_slots / _calculate_memory_slot_weights
+# 4. 输入回调
+#    后台按键触发角色点击缩放动画与敲击音效；鼠标和宠物悬停回调当前为预留入口。
+#    入口：_on_global_key_hook_any_key_pressed
+# 5. 角色状态与世界切换
+#    接收角色状态变化（当前为预留逻辑），协调世界切换期间的 POI 强调和环境音。
+#    世界切换完成后重启计时器；计时到期时按标签顺序请求下一个世界。
+#    入口：_on_character_status_state_changed / _on_world_assembler_world_changing
+#          _on_world_assembler_world_changed / _on_change_scene_timeout
+# 6. Debug 窗口描边
+#    按开关为主窗口、已有子窗口及后续新增窗口添加不拦截鼠标的调试边框。
+#    入口：_setup_debug_design_bounds
 
 
 #region 生命周期与初始化
@@ -72,8 +104,6 @@ func _scene_into_subviewport() -> void:
     var subviewport: SubViewport = %WorldView
     if world_root.get_parent() != subviewport:
         world_root.reparent(subviewport)
-    if debug_world.get_parent() != subviewport:
-        debug_world.reparent(subviewport)
     for band in depth_rendering.get_children():
         band.call("initialize", subviewport, world_root)
 
@@ -99,47 +129,6 @@ func _connect_signals() -> void:
     memory_controller.pending_collection_count_changed.connect(
         _on_memory_controller_pending_collection_count_changed
     )
-
-#endregion
-
-
-#region Debug 窗口描边
-
-func _setup_debug_design_bounds() -> void:
-    if not debug_show_design_bounds:
-        return
-
-    var scene_tree := get_tree()
-    if not scene_tree.node_added.is_connected(_on_scene_tree_node_added):
-        scene_tree.node_added.connect(_on_scene_tree_node_added)
-
-    call_deferred("_add_debug_design_bounds", scene_tree.root)
-    for node in scene_tree.root.find_children("*", "Window", true, false):
-        call_deferred("_add_debug_design_bounds", node)
-
-
-func _on_scene_tree_node_added(node: Node) -> void:
-    if debug_show_design_bounds and node is Window:
-        call_deferred("_add_debug_design_bounds", node)
-
-
-func _add_debug_design_bounds(window: Window) -> void:
-    if not is_instance_valid(window) or window.has_node(DEBUG_DESIGN_BOUNDS_NAME):
-        return
-
-    var border := Panel.new()
-    border.name = DEBUG_DESIGN_BOUNDS_NAME
-    border.mouse_filter = Control.MOUSE_FILTER_IGNORE
-    border.z_index = 4096
-
-    var border_style := StyleBoxFlat.new()
-    border_style.bg_color = Color.TRANSPARENT
-    border_style.border_color = Color(1.0, 0.2, 0.75, 0.95)
-    border_style.set_border_width_all(4)
-    border.add_theme_stylebox_override("panel", border_style)
-
-    window.add_child(border)
-    border.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 #endregion
 
@@ -233,6 +222,99 @@ func _get_pet_screen_position() -> Vector2:
 #endregion
 
 
+#region Memory 槽位与世界权重
+
+func _update_memory_slots(
+    chosen_tags: Array[Tags.Tag],
+    chosen_memories: Array[MemoryDef]
+) -> void:
+    # 一整批选择完成后统一更新槽位、最近 Memory 与世界权重，再请求 WorldAssembler 切换世界。
+    for chosen_tag in chosen_tags:
+        memory_slots.push_front(chosen_tag)
+    while memory_slots.size() > 9:
+        memory_slots.pop_back()
+
+    for chosen_memory: MemoryDef in chosen_memories:
+        recent_chosen_memories.push_front(chosen_memory)
+    while recent_chosen_memories.size() > 3:
+        recent_chosen_memories.pop_back()
+    world_assembler.set_recently_chosen_memories(recent_chosen_memories)
+    float_button_manager.call("set_recent_memories", recent_chosen_memories)
+
+    if not chosen_memories.is_empty():
+        var recent_memory_names: Array[String] = []
+        for memory: MemoryDef in recent_chosen_memories:
+            var memory_name := memory.resource_name
+            if memory_name.is_empty() and not memory.resource_path.is_empty():
+                memory_name = memory.resource_path.get_file().get_basename()
+            recent_memory_names.append(memory_name)
+        print("[RECENT MEMORIES] Updated recent memories: %s" % [recent_memory_names])
+
+    var slot_names: Array[String] = []
+    for tag in memory_slots:
+        slot_names.append(String(Tags.Tag.find_key(tag)))
+
+    var weighted_tags := _calculate_memory_slot_weights()
+    var weighted_tag_names: Dictionary[String, float] = {}
+    for tag: Tags.Tag in weighted_tags:
+        weighted_tag_names[String(Tags.Tag.find_key(tag))] = weighted_tags[tag]
+
+    print(
+        "[MEMORY SLOTS] Updated memory slots: %s, weighted tags: %s"
+        % [slot_names, weighted_tag_names]
+    )
+
+    # 二选一批次完成并准备触发世界过渡时，从头计算下次自动切换时间。
+    change_scene_timer.start()
+    if not weighted_tags.is_empty():
+        world_assembler.transition_to_world(weighted_tags)
+
+
+func _calculate_memory_slot_weights() -> Dictionary[Tags.Tag, float]:
+    var tag_counts: Dictionary[Tags.Tag, int] = {}
+    var first_slot_indices: Dictionary[Tags.Tag, int] = {}
+    var sorted_tags: Array[Tags.Tag] = []
+
+    # memory_slots 从新到旧排列；相同权重时，最近出现的 Tag 排在前面。
+    for slot_index: int in range(memory_slots.size()):
+        var tag := memory_slots[slot_index]
+        if not tag_counts.has(tag):
+            tag_counts[tag] = 0
+            first_slot_indices[tag] = slot_index
+            sorted_tags.append(tag)
+        tag_counts[tag] += 1
+
+    for index: int in range(sorted_tags.size()):
+        var best_index := index
+        for candidate_index: int in range(index + 1, sorted_tags.size()):
+            var candidate_tag := sorted_tags[candidate_index]
+            var best_tag := sorted_tags[best_index]
+            var candidate_is_higher := tag_counts[candidate_tag] > tag_counts[best_tag]
+            var candidate_is_more_recent := (
+                tag_counts[candidate_tag] == tag_counts[best_tag]
+                and first_slot_indices[candidate_tag] < first_slot_indices[best_tag]
+            )
+            if candidate_is_higher or candidate_is_more_recent:
+                best_index = candidate_index
+
+        if best_index != index:
+            var current_tag := sorted_tags[index]
+            sorted_tags[index] = sorted_tags[best_index]
+            sorted_tags[best_index] = current_tag
+
+    var weighted_tags: Dictionary[Tags.Tag, float] = {}
+    var slot_count := memory_slots.size()
+    if slot_count <= 0:
+        return weighted_tags
+
+    for tag: Tags.Tag in sorted_tags:
+        weighted_tags[tag] = float(tag_counts[tag]) / float(slot_count)
+
+    return weighted_tags
+
+#endregion
+
+
 #region 输入回调
 
 func _on_mouse_controller_drag_started() -> void:
@@ -321,95 +403,42 @@ func _on_change_scene_timeout() -> void:
 #endregion
 
 
-#region Memory
+#region Debug 窗口描边
 
-func _update_memory_slots(
-    chosen_tags: Array[Tags.Tag],
-    chosen_memories: Array[MemoryDef]
-) -> void:
-    # 一整批选择完成后统一更新；后续世界变化信号也从这里发出。
-    for chosen_tag in chosen_tags:
-        memory_slots.push_front(chosen_tag)
-    while memory_slots.size() > 9:
-        memory_slots.pop_back()
+func _setup_debug_design_bounds() -> void:
+    if not debug_show_design_bounds:
+        return
 
-    for chosen_memory: MemoryDef in chosen_memories:
-        recent_chosen_memories.push_front(chosen_memory)
-    while recent_chosen_memories.size() > 3:
-        recent_chosen_memories.pop_back()
-    world_assembler.set_recently_chosen_memories(recent_chosen_memories)
-    float_button_manager.call("set_recent_memories", recent_chosen_memories)
+    var scene_tree := get_tree()
+    if not scene_tree.node_added.is_connected(_on_scene_tree_node_added):
+        scene_tree.node_added.connect(_on_scene_tree_node_added)
 
-    if not chosen_memories.is_empty():
-        var recent_memory_names: Array[String] = []
-        for memory: MemoryDef in recent_chosen_memories:
-            var memory_name := memory.resource_name
-            if memory_name.is_empty() and not memory.resource_path.is_empty():
-                memory_name = memory.resource_path.get_file().get_basename()
-            recent_memory_names.append(memory_name)
-        print("[RECENT MEMORIES] Updated recent memories: %s" % [recent_memory_names])
-
-    var slot_names: Array[String] = []
-    for tag in memory_slots:
-        slot_names.append(String(Tags.Tag.find_key(tag)))
-
-    var weighted_tags := _calculate_memory_slot_weights()
-    var weighted_tag_names: Dictionary[String, float] = {}
-    for tag: Tags.Tag in weighted_tags:
-        weighted_tag_names[String(Tags.Tag.find_key(tag))] = weighted_tags[tag]
-
-    print(
-        "[MEMORY SLOTS] Updated memory slots: %s, weighted tags: %s"
-        % [slot_names, weighted_tag_names]
-    )
-
-    # 二选一批次完成并准备触发世界过渡时，从头计算下次自动切换时间。
-    change_scene_timer.start()
-    if not weighted_tags.is_empty():
-        world_assembler.transition_to_world(weighted_tags)
+    call_deferred("_add_debug_design_bounds", scene_tree.root)
+    for node in scene_tree.root.find_children("*", "Window", true, false):
+        call_deferred("_add_debug_design_bounds", node)
 
 
+func _on_scene_tree_node_added(node: Node) -> void:
+    if debug_show_design_bounds and node is Window:
+        call_deferred("_add_debug_design_bounds", node)
 
-func _calculate_memory_slot_weights() -> Dictionary[Tags.Tag, float]:
-    var tag_counts: Dictionary[Tags.Tag, int] = {}
-    var first_slot_indices: Dictionary[Tags.Tag, int] = {}
-    var sorted_tags: Array[Tags.Tag] = []
 
-    # memory_slots 从新到旧排列；相同权重时，最近出现的 Tag 排在前面。
-    for slot_index: int in range(memory_slots.size()):
-        var tag := memory_slots[slot_index]
-        if not tag_counts.has(tag):
-            tag_counts[tag] = 0
-            first_slot_indices[tag] = slot_index
-            sorted_tags.append(tag)
-        tag_counts[tag] += 1
+func _add_debug_design_bounds(window: Window) -> void:
+    if not is_instance_valid(window) or window.has_node(DEBUG_DESIGN_BOUNDS_NAME):
+        return
 
-    for index: int in range(sorted_tags.size()):
-        var best_index := index
-        for candidate_index: int in range(index + 1, sorted_tags.size()):
-            var candidate_tag := sorted_tags[candidate_index]
-            var best_tag := sorted_tags[best_index]
-            var candidate_is_higher := tag_counts[candidate_tag] > tag_counts[best_tag]
-            var candidate_is_more_recent := (
-                tag_counts[candidate_tag] == tag_counts[best_tag]
-                and first_slot_indices[candidate_tag] < first_slot_indices[best_tag]
-            )
-            if candidate_is_higher or candidate_is_more_recent:
-                best_index = candidate_index
+    var border := Panel.new()
+    border.name = DEBUG_DESIGN_BOUNDS_NAME
+    border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    border.z_index = 4096
 
-        if best_index != index:
-            var current_tag := sorted_tags[index]
-            sorted_tags[index] = sorted_tags[best_index]
-            sorted_tags[best_index] = current_tag
+    var border_style := StyleBoxFlat.new()
+    border_style.bg_color = Color.TRANSPARENT
+    border_style.border_color = Color(1.0, 0.2, 0.75, 0.95)
+    border_style.set_border_width_all(4)
+    border.add_theme_stylebox_override("panel", border_style)
 
-    var weighted_tags: Dictionary[Tags.Tag, float] = {}
-    var slot_count := memory_slots.size()
-    if slot_count <= 0:
-        return weighted_tags
-
-    for tag: Tags.Tag in sorted_tags:
-        weighted_tags[tag] = float(tag_counts[tag]) / float(slot_count)
-
-    return weighted_tags
+    window.add_child(border)
+    border.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 #endregion

@@ -2,9 +2,11 @@ extends Window
 class_name MemoryChoiceWindow
 
 
+# 单轮等待期间收到有效点击后发出，供 play_choice 内部继续执行。
 signal choice_pressed(index: int)
 
 
+# 选择按钮、顶部展示区和窗口输入区域的布局参数。
 @export_group("Layout")
 @export var choice_size := Vector2(240.0, 240.0)
 @export_range(0.0, 400.0, 1.0, "suffix:px") var choice_gap := 96.0
@@ -14,6 +16,7 @@ signal choice_pressed(index: int)
 @export_range(-600.0, 600.0, 1.0, "suffix:px") var initial_vertical_offset := 0.0
 @export_range(0.0, 100.0, 1.0, "suffix:px") var input_region_padding := 20.0
 
+# 入场、选中强调、停留、飞行和未选项退场的时长。
 @export_group("Animation")
 @export_range(0.0, 2.0, 0.01, "suffix:s") var fade_in_duration := 0.32
 @export_range(0.0, 2.0, 0.01, "suffix:s") var selected_grow_duration := 0.55
@@ -22,24 +25,59 @@ signal choice_pressed(index: int)
 @export_range(0.0, 2.0, 0.01, "suffix:s") var rejected_fade_duration := 0.25
 
 
+# 左右两个候选按钮，按索引 0 和 1 连接选择回调。
 @onready var choice_left: TextureButton = %ChoiceLeft
 @onready var choice_right: TextureButton = %ChoiceRight
 
 
+# 跟随窗口与批次开始时记录的屏幕位置基准。
 var _follow_window: Window
 var _follow_window_start_position := Vector2i.ZERO
 var _choice_window_start_position := Vector2i.ZERO
+
+# 单轮选择状态，仅在等待点击期间接受一次选择。
 var _awaiting_choice := false
 var _selected_index := -1
+
+# 当前飞行按钮及二次贝塞尔曲线的起点、控制点和终点，均为选择窗口局部坐标。
 var _flight_button: TextureButton
 var _flight_start := Vector2.ZERO
 var _flight_control := Vector2.ZERO
 var _flight_end := Vector2.ZERO
 
 
+# 本脚本呈现 Memory 二选一窗口，协调入场、点击选择、退场飞行和主窗口跟随。
+# Main 提供候选 Memory 与宠物屏幕位置，并在每轮返回后汇总整批选择结果。
+#
+# 目录（与下方代码分区顺序一致）
+# 1. 生命周期与窗口跟随
+#    连接左右按钮，预热后隐藏窗口；显示期间按跟随窗口的屏幕位移同步位置。
+#    入口：_ready / _process
+# 2. 选择批次与单轮流程
+#    begin_choices 设置窗口范围与跟随基准；play_choice 入场后等待一次有效点击。
+#    _on_choice_pressed 记录索引并唤醒等待，单轮动画完成后返回对应 MemoryDef。
+#    finish_choices 结束跟随、复位按钮、清空输入多边形并隐藏窗口。
+#    入口：begin_choices / play_choice / finish_choices
+# 3. 候选按钮准备、布局与复位
+#    设置纹理、尺寸、中心缩放轴和入场状态，将两个按钮在顶部展示区居中排列。
+#    复位时禁用并隐藏按钮，清除纹理并恢复颜色与缩放。
+#    核心：_prepare_button / _layout_buttons / _reset_button
+# 4. 选中反馈与飞行动画
+#    选中项放大，未选项缩小淡出；短暂停留后，选中项沿曲线飞向宠物并缩小淡出。
+#    飞行位置使用选择窗口局部坐标，窗口随主窗口平移时终点一起移动。
+#    核心：_play_selection_animation / _set_flight_progress
+# 5. 窗口鼠标输入区域
+#    按按钮实际或指定缩放计算可见矩形，扩展留白并合并为窗口输入多边形。
+#    在展示、选中和飞行阶段更新区域，飞行期间随按钮位置与缩放更新。
+#    核心：_set_input_region_for_buttons
+
+
+#region 生命周期与窗口跟随
+
 func _ready() -> void:
     choice_left.pressed.connect(_on_choice_pressed.bind(0))
     choice_right.pressed.connect(_on_choice_pressed.bind(1))
+    # 沿用先显示再隐藏的原生窗口初始化顺序。
     show()
     hide()
     set_process(false)
@@ -54,6 +92,10 @@ func _process(_delta: float) -> void:
     if position != target_position:
         position = target_position
 
+#endregion
+
+
+#region 选择批次与单轮流程
 
 func begin_choices(follow_window: Window) -> void:
     _follow_window = follow_window
@@ -79,7 +121,7 @@ func play_choice(
     right_memory: MemoryDef,
     pet_screen_position: Vector2
 ) -> MemoryDef:
-    # 使用相对主窗口的坐标，用户在选择期间拖动窗口也不会改变飞行终点。
+    # 将宠物屏幕位置转换为选择窗口局部坐标，窗口随主窗口平移时终点一起移动。
     var pet_window_position := pet_screen_position - Vector2(position)
     _prepare_button(choice_left, left_memory.texture)
     _prepare_button(choice_right, right_memory.texture)
@@ -120,6 +162,20 @@ func finish_choices() -> void:
     hide()
 
 
+func _on_choice_pressed(index: int) -> void:
+    if not _awaiting_choice:
+        return
+
+    # 先关闭接收入口，再发出信号，避免同一轮重复确认。
+    _awaiting_choice = false
+    _selected_index = index
+    choice_pressed.emit(index)
+
+#endregion
+
+
+#region 候选按钮准备、布局与复位
+
 func _prepare_button(button: TextureButton, texture: Texture2D) -> void:
     button.texture_normal = texture
     button.size = choice_size
@@ -138,6 +194,18 @@ func _layout_buttons() -> void:
     choice_left.position = Vector2(pair_left, top)
     choice_right.position = Vector2(pair_left + choice_size.x + choice_gap, top)
 
+
+func _reset_button(button: TextureButton) -> void:
+    button.disabled = true
+    button.modulate = Color.WHITE
+    button.scale = Vector2.ONE
+    button.texture_normal = null
+    button.hide()
+
+#endregion
+
+
+#region 选中反馈与飞行动画
 
 func _play_selection_animation(
     selected: TextureButton,
@@ -201,6 +269,10 @@ func _set_flight_progress(progress: float) -> void:
     )
     _set_input_region_for_buttons([_flight_button])
 
+#endregion
+
+
+#region 窗口鼠标输入区域
 
 func _set_input_region_for_buttons(
     buttons: Array,
@@ -233,19 +305,4 @@ func _set_input_region_for_buttons(
         Vector2(region.position.x, region.end.y),
     ])
 
-
-func _reset_button(button: TextureButton) -> void:
-    button.disabled = true
-    button.modulate = Color.WHITE
-    button.scale = Vector2.ONE
-    button.texture_normal = null
-    button.hide()
-
-
-func _on_choice_pressed(index: int) -> void:
-    if not _awaiting_choice:
-        return
-
-    _awaiting_choice = false
-    _selected_index = index
-    choice_pressed.emit(index)
+#endregion

@@ -1,22 +1,35 @@
-# 从WorldAssembler 得到各 vars的值，apply到子节点上
+# 将 WorldAssembler 提供的目标配置应用到地面表现，并负责颜色与纹理过渡。
 
 
 extends Parallax2D
 class_name WorldGround
 
 
-
+# 地面主体与效果贴图节点。
 @onready var main: Sprite2D = $Main
 @onready var effect: Sprite2D = $Effect
 
 
+# WorldAssembler 写入的目标配置，随后由公开入口应用。
 var main_color: Color
 var effect_texture: Texture2D
 var effect_color: Color
 
+# 本轮过渡拥有的 Tween，新请求先终止旧过渡。
 var _transition_tweens: Array[Tween] = []
 
 
+# 目录（与下方代码分区顺序一致）
+# 1. 目标配置应用与过渡入口
+#    立即应用主体颜色、效果纹理与颜色，或按指定时长渐变；非正时长直接应用。
+#    入口：apply_immediate / transition_to_target，由 WorldAssembler 调用。
+# 2. 颜色、纹理过渡与 Tween 清理
+#    纹理相同时只过渡颜色；换图时 RGB 全程变化，Alpha 分两段淡出、换图、淡入。
+#    新请求终止本脚本记录的旧 Tween，后续过渡从当前表现继续。
+#    核心：_transition_color / _transition_texture / _kill_transition_tweens
+
+
+#region 目标配置应用与过渡入口
 
 func apply_immediate() -> void:
     _kill_transition_tweens()
@@ -24,7 +37,6 @@ func apply_immediate() -> void:
     main.modulate = main_color
     effect.texture = effect_texture
     effect.modulate = effect_color
-
 
 
 func transition_to_target(duration: float) -> void:
@@ -38,7 +50,10 @@ func transition_to_target(duration: float) -> void:
     _transition_color(main, main_color, safe_duration)
     _transition_texture(effect, effect_texture, effect_color, safe_duration)
 
+#endregion
 
+
+#region 颜色、纹理过渡与 Tween 清理
 
 func _transition_color(target: CanvasItem, target_color: Color, duration: float) -> void:
     if target.modulate.is_equal_approx(target_color):
@@ -47,7 +62,6 @@ func _transition_color(target: CanvasItem, target_color: Color, duration: float)
     var tween := create_tween()
     tween.tween_property(target, "modulate", target_color, duration)
     _transition_tweens.append(tween)
-
 
 
 func _transition_texture(
@@ -78,9 +92,10 @@ func _transition_texture(
     _transition_tweens.append(texture_tween)
 
 
-
 func _kill_transition_tweens() -> void:
     for tween in _transition_tweens:
         if tween != null and tween.is_valid():
             tween.kill()
     _transition_tweens.clear()
+
+#endregion

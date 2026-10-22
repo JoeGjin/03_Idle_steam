@@ -1,6 +1,7 @@
 extends Node
 
 
+# 源图层、独立模糊强度和合成输出配置。
 ## 按原绘制顺序中连续的一段分组，保留 CanvasLayer 与内容节点的父子关系。
 @export var source_layers: Array[CanvasLayer] = []
 @export var enabled := true:
@@ -28,6 +29,7 @@ extends Node
             _update_blur()
 
 
+# 组内渲染视口、后处理节点和最终合成输出。
 @onready var _view: SubViewport = $View
 @onready var _post_process_layer: CanvasLayer = $View/PostProcess
 @onready var _blur: ColorRect = $View/PostProcess/Blur
@@ -35,11 +37,32 @@ extends Node
 @onready var _output: TextureRect = $Composite/Output
 
 
+# 主世界视口、独立材质、POI 清晰化倍率和初始化状态。
 var _world_view: SubViewport
 var _blur_material: ShaderMaterial
 var _poi_blur_weight := 1.0
 var _initialized := false
 
+
+# 本脚本把一组连续源图层渲染到独立视口，经模糊处理后合成回 WorldView。
+# 保留源图层的父子关系和镜头变换；Main 初始化分组，WorldRoot 提供 POI 清晰化倍率。
+#
+# 目录（与下方代码分区顺序一致）
+# 1. 初始化与尺寸同步
+#    检查源图层，隔离组内画布、复制模糊材质，并连接 WorldView 尺寸与 POI 倍率变化。
+#    与 WorldView 保持相同设计尺寸，设置后处理和合成层级。
+#    入口：initialize；核心：_sync_size
+# 2. 渲染路径与启用状态
+#    启用时源图层进入组内视口并显示合成结果；关闭时直接回到 WorldView。
+#    合成层保持固定变换，源图层继续使用各自已有的 POI 镜头变换。
+#    核心：_apply_enabled
+# 3. POI 清晰化与模糊参数
+#    根据是否跟随 POI，将 blur_lod 乘以清晰化倍率后写入 Shader。
+#    有效 LOD 为 0 时隐藏后处理，保留组内原图输出。
+#    入口：_on_blur_weight_changed；核心：_update_blur
+
+
+#region 初始化与尺寸同步
 
 # Main 在 WorldRoot 进入 WorldView 后调用，避免 reparent 改变视口归属。
 func initialize(world_view: SubViewport, world_root: Node) -> void:
@@ -85,6 +108,10 @@ func _sync_size() -> void:
     _output.position = Vector2.ZERO
     _output.size = source_size
 
+#endregion
+
+
+#region 渲染路径与启用状态
 
 func _apply_enabled() -> void:
     for layer: CanvasLayer in source_layers:
@@ -96,6 +123,10 @@ func _apply_enabled() -> void:
         SubViewport.UPDATE_ALWAYS if enabled else SubViewport.UPDATE_DISABLED
     )
 
+#endregion
+
+
+#region POI 清晰化与模糊参数
 
 func _on_blur_weight_changed(weight: float) -> void:
     _poi_blur_weight = clampf(weight, 0.0, 1.0)
@@ -110,3 +141,5 @@ func _update_blur() -> void:
     _blur_material.set_shader_parameter("lod", effective_lod)
     # LOD 为 0 时直接输出本组原图，也省去屏幕拷贝和 mipmap 生成。
     _post_process_layer.visible = effective_lod > 0.0
+
+#endregion
