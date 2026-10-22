@@ -1,16 +1,9 @@
 extends Node2D
 
-## 向 Blur 层同步经过 POI 动画倍率计算的实际 LOD。
-signal lod_changed(value: float)
+## 向景深分组同步 POI 清晰化倍率；各组自行计算实际模糊强度。
+signal blur_weight_changed(weight: float)
 
 const POI_EMPHASIS_ANIMATION := &"PoiEmphasis"
-
-@export_range(0.0, 10.0, 0.1) var lod: float = 0.5: # 基础模糊程度
-	set(value):
-		if lod == value:
-			return
-		lod = value
-		lod_changed.emit(get_effective_lod())
 
 @export_group("POI 镜头控制")
 @export var poi_emphasis_enabled := true:
@@ -52,12 +45,12 @@ const POI_EMPHASIS_ANIMATION := &"PoiEmphasis"
 @export_range(0.0, 1.0, 0.01) var poi_preview_strength := 1.0
 
 # WorldPlayer 的动画轨道驱动这些属性，不在 Inspector 中暴露。
-var poi_lod_weight := 1.0:
+var poi_blur_weight := 1.0:
 	set(value):
-		if poi_lod_weight == value:
+		if poi_blur_weight == value:
 			return
-		poi_lod_weight = value
-		lod_changed.emit(get_effective_lod())
+		poi_blur_weight = value
+		blur_weight_changed.emit(clampf(poi_blur_weight, 0.0, 1.0))
 var poi_camera_scale := 1.0
 var poi_camera_offset := Vector2.ZERO
 var poi_group_1_scale := 1.0
@@ -90,8 +83,6 @@ var _layer_groups: Dictionary[CanvasLayer, int] = {}
 var _layer_contents: Dictionary[CanvasLayer, ManualParallax] = {}
 var _layer_base_transforms: Dictionary[CanvasLayer, Transform2D] = {}
 var _layer_base_spawn_x: Dictionary[CanvasLayer, float] = {}
-var _blur_base_positions: Dictionary[Control, Vector2] = {}
-var _blur_base_scales: Dictionary[Control, Vector2] = {}
 var _pet_base_transform := Transform2D.IDENTITY
 
 
@@ -100,10 +91,6 @@ func _ready() -> void:
 	# 在 POI 移动和 Pet 贴地完成后更新显示变换。
 	process_priority = maxi(_poi.process_priority, _pet.process_priority) + 1
 	show()
-
-
-func get_effective_lod() -> float:
-	return lod * clampf(poi_lod_weight, 0.0, 1.0)
 
 
 func initialize_poi_emphasis(visible_rect: Rect2) -> void:
@@ -160,7 +147,7 @@ func _initialize_poi_animation() -> bool:
 	if _poi_animation != null:
 		return true
 	_poi_base_animation = _world_player.get_animation(POI_EMPHASIS_ANIMATION)
-	var properties: Array[String] = ["poi_lod_weight"]
+	var properties: Array[String] = ["poi_blur_weight"]
 	for group_index: int in range(6):
 		var prefix := "poi_camera" if group_index == 0 else "poi_group_%d" % group_index
 		properties.append(prefix + "_scale")
@@ -221,8 +208,8 @@ func _configure_poi_emphasis_animation() -> bool:
 		if not _set_poi_camera_keys(_poi_animation, property_prefix + "_offset", Vector2.ZERO, camera_offset):
 			return false
 
-	# 倍率随同一镜头进度从 1 降到 0，离开保持区间时反向采样恢复基础 LOD。
-	if not _set_poi_camera_keys(_poi_animation, "poi_lod_weight", 1.0, 0.0):
+	# 倍率随同一镜头进度从 1 降到 0，离开保持区间时反向采样恢复各组模糊。
+	if not _set_poi_camera_keys(_poi_animation, "poi_blur_weight", 1.0, 0.0):
 		return false
 	return true
 
@@ -276,10 +263,6 @@ func _capture_camera_layer(content: ManualParallax, group_index: int) -> void:
 	_layer_contents[layer] = content
 	_layer_base_transforms[layer] = layer.transform
 	_layer_base_spawn_x[layer] = content.spawn_position.x
-	var blur := layer.get_node_or_null("Blur") as Control
-	if blur != null:
-		_blur_base_positions[blur] = blur.position
-		_blur_base_scales[blur] = blur.scale
 
 
 func _get_poi_target_strength() -> float:
@@ -355,12 +338,6 @@ func _apply_poi_camera() -> void:
 			_layer_base_spawn_x[layer], content.to_local(spawn_in_canvas).x
 		)
 
-		# Blur 是全屏后处理，逆向补偿镜头，保持它原来的屏幕覆盖范围。
-		var blur := layer.get_node_or_null("Blur") as Control
-		if blur != null:
-			var original_origin: Vector2 = _layer_base_transforms[layer] * _blur_base_positions[blur]
-			blur.position = layer.transform.affine_inverse() * original_origin
-			blur.scale = _blur_base_scales[blur] / camera_scale
 	# Pet 与 group 4 共用镜头变换，贴地仍由 Pet.gd 在原始世界坐标中处理。
 	var group_4_layer := _landform_4.get_parent() as CanvasLayer
 	var group_4_base: Transform2D = _layer_base_transforms[group_4_layer]
@@ -375,8 +352,4 @@ func _reset_poi_emphasis() -> void:
 	for layer: CanvasLayer in _camera_layers:
 		layer.transform = _layer_base_transforms[layer]
 		_layer_contents[layer].spawn_position.x = _layer_base_spawn_x[layer]
-		var blur := layer.get_node_or_null("Blur") as Control
-		if blur != null:
-			blur.position = _blur_base_positions[blur]
-			blur.scale = _blur_base_scales[blur]
 	_pet_layer.transform = _pet_base_transform

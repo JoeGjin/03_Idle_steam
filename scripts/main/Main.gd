@@ -29,6 +29,7 @@ const DEBUG_DESIGN_BOUNDS_NAME := "DebugDesignBounds"
 @onready var world_root: Node2D = %WorldRoot
 @onready var pet: AnimatedSprite2D = %Pet
 @onready var debug_world: Node2D = %DebugWorld
+@onready var depth_rendering: Node = %DepthRendering
 
 # UI and output
 @onready var ui_window: Window = %UIWindow
@@ -73,6 +74,8 @@ func _scene_into_subviewport() -> void:
         world_root.reparent(subviewport)
     if debug_world.get_parent() != subviewport:
         debug_world.reparent(subviewport)
+    for band in depth_rendering.get_children():
+        band.call("initialize", subviewport, world_root)
 
 
 func _draw_scale_setup() -> void:

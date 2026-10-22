@@ -98,7 +98,8 @@ void fragment() {
     // mask_enable=0 => 不遮盖；=1 => 正常遮盖
     mask = mix(1.0, mask, clamp(mask_enable, 0.0, 1.0));
 
-    // 透明 WorldView 的 RGB 已预乘 Alpha；遮罩需同步衰减 RGB 和 Alpha，
-    // 配合预乘混合，避免半透明边缘被再次乘 Alpha 而变暗。
-    COLOR = vec4(col.rgb * mask, col.a * mask);
+    // RGB 保留预乘颜色和 HDR 亮度；先约束覆盖度，再用遮罩同步衰减 RGB 与 Alpha。
+    // 此出口也覆盖 DepthBand 禁用时的直接绘制路径，避免后方 UI 被负系数混合。
+    float alpha = clamp(col.a, 0.0, 1.0);
+    COLOR = vec4(col.rgb * mask, alpha * mask);
 }
