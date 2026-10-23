@@ -16,10 +16,9 @@ enum RevealState {
 }
 
 
-# 索引对应 _floating_controls：Setting、Collection、Zooming、Minimode、RecentMemoryBar。
+# 索引对应 _floating_controls：Setting、Collection、Zooming、Minimode。
 const ZOOMING_INDEX := 2
 const COLLECTION_INDEX := 1
-const RECENT_MEMORY_BAR_INDEX := 4
 # 待领取按钮在最低收集次数时的缩放比例。
 const COLLECTED_ITEM_MIN_SCALE_RATIO := 0.6
 
@@ -32,42 +31,27 @@ const COLLECTED_ITEM_MIN_SCALE_RATIO := 0.6
 @export var minimode_button: Button
 @export var collected_item_button: Button
 
-# 最近 Memory 展示栏：关闭显示不影响数据更新。
-@export var recent_memory_bar: Panel
-## 暂时关闭最近记忆栏的显示，记忆数据仍正常更新。
-@export var disable_recent_memory_bar := false:
-	set(value):
-		disable_recent_memory_bar = value
-		if not _ready_for_input:
-			return
-		if value:
-			_set_button_state(RECENT_MEMORY_BAR_INDEX, RevealState.HIDDEN)
-		recent_memory_bar.visible = not value and _has_recent_memories and not _memory_choice_active
-@export var recent_memory_texture_1: TextureRect
-@export var recent_memory_texture_2: TextureRect
-@export var recent_memory_texture_3: TextureRect
-
 @export_group("Reveal State")
 ## 相对椭圆边缘向外的距离；负值会让按钮收进 WorldOutput 后方。
 @export_range(-240.0, 240.0, 1.0, "suffix:px") var hidden_offset := -90.0
 @export_range(-240.0, 240.0, 1.0, "suffix:px") var peek_offset := -42.0
 @export_range(-240.0, 240.0, 1.0, "suffix:px") var open_offset := 70.0
-## RecentMemoryBar 相对世界底部锚点的额外垂直偏移；正值向下，负值向上。
-@export_range(-400.0, 400.0, 1.0, "suffix:px") var recent_memory_bar_vertical_offset := 0.0
 
 @export_group("Button Size")
 ## 统一缩放四角按钮与 CollectedItem，包括文字和样式。
 @export_range(0.25, 3.0, 0.05, "or_greater") var button_size_scale := 1.0
-@export_range(0.25, 3.0, 0.05, "or_greater") var recent_memory_bar_size_scale := 1.0
+
+@export_group("Memory Popup")
+## 二选一弹窗相对游戏显示倍率的额外大小倍率，包含卡片、间距与动画；下次打开时生效。
+@export_range(0.25, 3.0, 0.05, "or_greater") var memory_popup_size_scale := 1.0
 
 @export_group("Animation")
 @export var move_duration := 0.22
 @export var leave_delay := 0.2
 
-# 四角按钮、参与三态显隐的控件组，以及最近 Memory 的纹理槽位。
+# 四角按钮与参与三态显隐的控件组。
 var _corner_buttons: Array[Button] = []
 var _floating_controls: Array[Control] = []
-var _recent_memory_textures: Array[TextureRect] = []
 
 # 各控件对应的展开方向，与 _floating_controls 保持相同索引。
 var _directions: Array[Vector2] = [
@@ -75,7 +59,6 @@ var _directions: Array[Vector2] = [
 	Vector2(1.0, -1.0).normalized(),
 	Vector2(1.0, 1.0).normalized(),
 	Vector2(-1.0, 1.0).normalized(),
-	Vector2.DOWN,
 ]
 
 # 设计坐标中的边缘锚点、当前显隐状态和移动 Tween。
@@ -88,24 +71,24 @@ var _outside_time := 0.0
 var _ready_for_input := false
 var _collection_attention_time := 0.0
 
-# 独立收集按钮动画、二选一锁定状态和最近 Memory 的内容状态。
+# 独立收集按钮动画、二选一与 mini 模式锁定状态。
 var _collected_item_tween: Tween
 var _memory_choice_active := false
-var _has_recent_memories := false
+var _mini_mode_active := false
 
 
-# 本脚本管理世界周围的悬浮控件、待领取按钮和最近 Memory 展示，并转发按钮请求。
+# 本脚本管理世界周围的悬浮控件与待领取按钮，并转发按钮请求。
 # AllOutput 提供设计坐标与世界范围；Main 驱动收集反馈和二选一锁定；Zooming 提供拖拽状态。
 #
 # 目录（与下方代码分区顺序一致）
 # 1. 生命周期与按钮布局
 #    校验引用、建立控件分组并连接信号，等待 AllOutput 布局完成后初始化锚点、尺寸与位置。
-#    四角按钮和最近记忆栏共用三态布局；CollectedItem 在世界上沿单独定位。
+#    四角按钮共用三态布局；CollectedItem 在世界上沿单独定位。
 #    核心：_ready / _validate_targets / _setup_button_layout / _get_target_position
 # 2. 每帧显隐决策与移动动画
-#    二选一期间跳过更新；优先处理收集聚焦，再处理缩放拖拽，最后处理世界区域与按钮悬停。
+#    二选一或 mini 模式锁定期间跳过更新；优先处理收集聚焦，再处理缩放拖拽，最后处理世界区域与按钮悬停。
 #    鼠标离开后按 leave_delay 收起；PEEK 由 Manager 判断命中，展开按钮才接收自身输入。
-#    状态变化时替换对应移动 Tween，最近记忆栏同时受显示开关和内容状态约束。
+#    状态变化时替换对应移动 Tween。
 #    核心：_process / _set_all_states / _set_button_state
 # 3. 待领取按钮显隐与数量反馈
 #    按累计次数更新文本和缩放，通过独立 Tween 控制出现、数量变化与隐藏。
@@ -114,10 +97,11 @@ var _has_recent_memories := false
 # 4. 收集聚焦与特效目标查询
 #    限时展开 Collection，并提供完全展开位置的屏幕中心，供收集烟花确定收束点。
 #    入口：focus_collection / get_collection_open_screen_center
-# 5. 最近 Memory 展示与二选一锁定
-#    更新三个纹理槽位及空槽显隐；禁用展示栏时仍保留数据更新。
-#    二选一期间停止悬浮移动并隐藏悬浮组，禁用按钮；结束后恢复允许显示的控件。
-#    入口：set_recent_memories / set_memory_choice_active
+# 5. 二选一大小与模式锁定
+#    提供叠加主窗口显示倍率与 memory_popup_size_scale 后的二选一弹窗倍率。
+#    二选一期间停止悬浮移动并隐藏悬浮组，禁用按钮；结束后恢复四角按钮。
+#    mini 模式冻结当前位置并锁住输入，透明度交给转换动画，待领取数量仍可更新。
+#    入口：get_memory_popup_scale / set_memory_choice_active / set_mini_mode_active
 # 6. 鼠标坐标、悬停与缩放拖拽检测
 #    将全局鼠标转换为 AllOutput 设计坐标，按控件缩放后的矩形检测悬停，并查询 Zooming 状态。
 #    核心：_get_all_output_mouse_position / _find_hovered_button / _is_zooming_dragging
@@ -138,19 +122,12 @@ func _ready() -> void:
 	]
 	for button: Button in _corner_buttons:
 		_floating_controls.append(button)
-	_floating_controls.append(recent_memory_bar)
-	_recent_memory_textures = [
-		recent_memory_texture_1,
-		recent_memory_texture_2,
-		recent_memory_texture_3,
-	]
 
 	setting_button.pressed.connect(setting_requested.emit)
 	collection_button.pressed.connect(collection_requested.emit)
 	minimode_button.pressed.connect(minimode_requested.emit)
 	collected_item_button.pressed.connect(collected_item_requested.emit)
 	collected_item_button.hide()
-	recent_memory_bar.hide()
 
 	while all_output.has_method("is_layout_ready") and not all_output.call("is_layout_ready"):
 		await get_tree().process_frame
@@ -176,17 +153,6 @@ func _validate_targets() -> bool:
 			push_error("[FloatButtons] 按钮节点未完整设置")
 			return false
 
-	var recent_memory_nodes := [
-		recent_memory_bar,
-		recent_memory_texture_1,
-		recent_memory_texture_2,
-		recent_memory_texture_3,
-	]
-	for node in recent_memory_nodes:
-		if node == null:
-			push_error("[FloatButtons] Recent Memory Bar 节点未完整设置")
-			return false
-
 	return true
 
 
@@ -202,20 +168,13 @@ func _setup_button_layout() -> void:
 	for index in _floating_controls.size():
 		var direction := _directions[index]
 		var anchor := center + radius * direction
-		if index == RECENT_MEMORY_BAR_INDEX:
-			anchor.y += recent_memory_bar_vertical_offset
 		_anchors.append(anchor)
 		_states.append(RevealState.HIDDEN)
 		_move_tweens.append(null)
 
 		var control := _floating_controls[index]
 		control.pivot_offset = control.size * 0.5
-		var control_scale := (
-			recent_memory_bar_size_scale
-			if index == RECENT_MEMORY_BAR_INDEX
-			else button_size_scale
-		)
-		control.scale = Vector2.ONE * control_scale
+		control.scale = Vector2.ONE * button_size_scale
 		control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		control.position = _get_target_position(index, RevealState.HIDDEN)
 
@@ -247,7 +206,7 @@ func _get_target_position(index: int, state: int) -> Vector2:
 func _process(delta: float) -> void:
 	if not _ready_for_input:
 		return
-	if _memory_choice_active:
+	if _memory_choice_active or _mini_mode_active:
 		return
 
 	if _collection_attention_time > 0.0:
@@ -257,10 +216,6 @@ func _process(delta: float) -> void:
 				index,
 				RevealState.OPEN if index == COLLECTION_INDEX else RevealState.PEEK
 			)
-		_set_button_state(
-			RECENT_MEMORY_BAR_INDEX,
-			RevealState.PEEK if _has_recent_memories else RevealState.HIDDEN
-		)
 		if _collection_attention_time > 0.0:
 			return
 
@@ -270,12 +225,7 @@ func _process(delta: float) -> void:
 		_outside_time = 0.0
 		for index in _floating_controls.size():
 			var target_state := RevealState.OPEN if index == ZOOMING_INDEX else RevealState.PEEK
-			if index == RECENT_MEMORY_BAR_INDEX and not _has_recent_memories:
-				target_state = RevealState.HIDDEN
-			_set_button_state(
-				index,
-				target_state
-			)
+			_set_button_state(index, target_state)
 		return
 
 	var mouse_position := _get_all_output_mouse_position()
@@ -291,8 +241,6 @@ func _process(delta: float) -> void:
 		_outside_time = 0.0
 		for index in _floating_controls.size():
 			var target_state := RevealState.OPEN if index == hovered_index else RevealState.PEEK
-			if index == RECENT_MEMORY_BAR_INDEX and not _has_recent_memories:
-				target_state = RevealState.HIDDEN
 			_set_button_state(index, target_state)
 		return
 
@@ -303,17 +251,10 @@ func _process(delta: float) -> void:
 
 func _set_all_states(state: int) -> void:
 	for index in _floating_controls.size():
-		var target_state := state
-		if index == RECENT_MEMORY_BAR_INDEX and not _has_recent_memories:
-			target_state = RevealState.HIDDEN
-		_set_button_state(index, target_state)
+		_set_button_state(index, state)
 
 
 func _set_button_state(index: int, state: int) -> void:
-	if index == RECENT_MEMORY_BAR_INDEX and disable_recent_memory_bar:
-		state = RevealState.HIDDEN
-		recent_memory_bar.hide()
-
 	if index == ZOOMING_INDEX and _is_zooming_dragging():
 		state = RevealState.OPEN
 
@@ -322,7 +263,7 @@ func _set_button_state(index: int, state: int) -> void:
 	# PEEK 时只由 Manager 检测外露区域，避免按钮在 WorldOutput 内部抢占输入。
 	control.mouse_filter = (
 		Control.MOUSE_FILTER_STOP
-		if state == RevealState.OPEN and index != RECENT_MEMORY_BAR_INDEX
+		if state == RevealState.OPEN
 		else Control.MOUSE_FILTER_IGNORE
 	)
 
@@ -428,27 +369,11 @@ func get_collection_open_screen_center() -> Vector2:
 #endregion
 
 
-#region 最近 Memory 展示与二选一锁定
+#region 二选一大小与模式锁定
 
-func set_recent_memories(memories: Array[MemoryDef]) -> void:
-	_has_recent_memories = false
-	for index in _recent_memory_textures.size():
-		var memory: MemoryDef
-		if index < memories.size():
-			memory = memories[index]
-
-		var has_texture := memory != null and memory.texture != null
-		var texture_rect := _recent_memory_textures[index]
-		texture_rect.texture = memory.texture if has_texture else null
-		var memory_panel := texture_rect.get_parent() as CanvasItem
-		memory_panel.visible = has_texture
-		_has_recent_memories = _has_recent_memories or has_texture
-
-	if not disable_recent_memory_bar and _has_recent_memories and not _memory_choice_active:
-		recent_memory_bar.show()
-	else:
-		_set_button_state(RECENT_MEMORY_BAR_INDEX, RevealState.HIDDEN)
-		recent_memory_bar.hide()
+## Main 在打开二选一时查询，保留主窗口缩放并叠加独立的弹窗大小配置。
+func get_memory_popup_scale() -> float:
+	return all_output.scale.x * maxf(memory_popup_size_scale, 0.01)
 
 
 ## 二选一期间隐藏所有浮动控件，并锁住可能重新出现的 CollectedItem。
@@ -459,7 +384,7 @@ func set_memory_choice_active(active: bool) -> void:
 	_memory_choice_active = active
 	_collection_attention_time = 0.0
 	_outside_time = 0.0
-	collected_item_button.disabled = active
+	collected_item_button.disabled = active or _mini_mode_active
 
 	for index in _floating_controls.size():
 		var control := _floating_controls[index]
@@ -471,11 +396,44 @@ func set_memory_choice_active(active: bool) -> void:
 		control.position = _get_target_position(index, RevealState.HIDDEN)
 		control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		if control is BaseButton:
-			(control as BaseButton).disabled = active
+			(control as BaseButton).disabled = active or _mini_mode_active
 		if active:
 			control.hide()
-		elif index != RECENT_MEMORY_BAR_INDEX or (not disable_recent_memory_bar and _has_recent_memories):
+		else:
 			control.show()
+
+
+## 冻结按钮位置；父层渐隐期间不再移动或接收输入，数量反馈可以继续更新。
+func set_mini_mode_active(active: bool) -> void:
+	if _mini_mode_active == active:
+		return
+
+	_mini_mode_active = active
+	_collection_attention_time = 0.0
+	_outside_time = 0.0
+	var input_locked := _mini_mode_active or _memory_choice_active
+	collected_item_button.disabled = input_locked
+	collected_item_button.mouse_filter = (
+		Control.MOUSE_FILTER_IGNORE if input_locked else Control.MOUSE_FILTER_STOP
+	)
+
+	for index in _floating_controls.size():
+		var old_tween: Tween = _move_tweens[index]
+		if old_tween != null and old_tween.is_valid():
+			old_tween.kill()
+		_move_tweens[index] = null
+
+		var button := _corner_buttons[index]
+		button.disabled = input_locked
+		# 入场可能打断移动；解除锁定后重新决策，避免相同状态跳过未完成的移动。
+		if not input_locked:
+			_states[index] = -1
+		button.mouse_filter = (
+			Control.MOUSE_FILTER_STOP
+			if not input_locked and _states[index] == RevealState.OPEN
+			else Control.MOUSE_FILTER_IGNORE
+		)
+		button.release_focus()
 
 #endregion
 
@@ -491,11 +449,7 @@ func _get_all_output_mouse_position() -> Vector2:
 
 func _find_hovered_button(mouse_position: Vector2) -> int:
 	for index in _floating_controls.size():
-		if index == RECENT_MEMORY_BAR_INDEX and disable_recent_memory_bar:
-			continue
 		if _states[index] == RevealState.HIDDEN:
-			continue
-		if index == RECENT_MEMORY_BAR_INDEX and not _has_recent_memories:
 			continue
 
 		var control := _floating_controls[index]

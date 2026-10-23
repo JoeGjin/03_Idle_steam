@@ -34,31 +34,40 @@
 [ext_resource type="Script" uid="uid://cp7hocx6yaeww" path="res://scripts/main/ui/PostcardShowing.gd" id="33_csfbn"]
 [ext_resource type="Texture2D" uid="uid://qw8ihojqk8nh" path="res://assets/uiroot/postcard/0.JPG" id="34_1xgkc"]
 [ext_resource type="Texture2D" uid="uid://m2k0myepg1ad" path="res://assets/uiroot/postcard/1.JPG" id="35_x1gp3"]
-[ext_resource type="Texture2D" uid="uid://tw714yrnrq8f" path="res://assets/worldroot/pet/walk/frame_01.png" id="36_vshs7"]
+[ext_resource type="Texture2D" uid="uid://bsbvygxdnlgm" path="res://assets/worldroot/pet/walk/frame_01.png" id="36_vshs7"]
 [ext_resource type="Texture2D" uid="uid://8uhykrmowd0k" path="res://assets/uiroot/postcard/2.JPG" id="36_x1gp3"]
-[ext_resource type="Texture2D" uid="uid://dbjfnojqk1vek" path="res://assets/worldroot/pet/walk/frame_02.png" id="37_2ki8c"]
+[ext_resource type="Texture2D" uid="uid://da2kt3cbyafb6" path="res://assets/worldroot/pet/walk/frame_02.png" id="37_2ki8c"]
 [ext_resource type="Texture2D" uid="uid://cj3sajlc6aso6" path="res://assets/worldroot/stage/ground/ground_main.png" id="37_a3hxr"]
 [ext_resource type="Texture2D" uid="uid://dk1mdcvt5k2to" path="res://assets/worldroot/poi/poi_6.png" id="37_e2bht"]
 [ext_resource type="Script" uid="uid://dh2yhhqwv7oy6" path="res://scripts/main/world/Ground.gd" id="37_qd1pt"]
-[ext_resource type="Texture2D" uid="uid://d0j08xdnfer36" path="res://assets/worldroot/pet/walk/frame_03.png" id="38_0owt5"]
-[ext_resource type="Texture2D" uid="uid://ca022vsesuwke" path="res://assets/worldroot/pet/walk/frame_04.png" id="39_o1tg2"]
+[ext_resource type="Texture2D" uid="uid://b7qw8o165kivo" path="res://assets/worldroot/pet/walk/frame_03.png" id="38_0owt5"]
+[ext_resource type="Texture2D" uid="uid://n77c7f0pwjuf" path="res://assets/worldroot/pet/walk/frame_04.png" id="39_o1tg2"]
 [ext_resource type="PackedScene" uid="uid://brvu78a7s017f" path="res://scenes/MparaObject.tscn" id="39_vwcyu"]
-[ext_resource type="Texture2D" uid="uid://caldjd64rysxo" path="res://assets/worldroot/pet/walk/frame_05.png" id="40_hyu0y"]
+[ext_resource type="Texture2D" uid="uid://3ci36paah370" path="res://assets/worldroot/pet/walk/frame_05.png" id="40_hyu0y"]
 [ext_resource type="Texture2D" uid="uid://biq35xdgqp574" path="res://assets/worldroot/cloud/cloud_13.png" id="41_1x1rp"]
 [ext_resource type="Texture2D" uid="uid://yyhyprpv5k8d" path="res://assets/worldroot/landform/far/landform_far_1.png" id="41_8t8ul"]
-[ext_resource type="Texture2D" uid="uid://n4jqj40sd7hn" path="res://assets/worldroot/pet/walk/frame_06.png" id="41_lfilp"]
-[ext_resource type="Texture2D" uid="uid://3phx4jo368dt" path="res://assets/worldroot/pet/walk/frame_07.png" id="42_nu61c"]
-[ext_resource type="Texture2D" uid="uid://cppatn62r4age" path="res://assets/worldroot/pet/walk/frame_08.png" id="43_e2bht"]
-[ext_resource type="Texture2D" uid="uid://cycgxqgowkynn" path="res://assets/worldroot/pet/walk/frame_09.png" id="44_a3hxr"]
-[ext_resource type="Texture2D" uid="uid://cdsn2nxidun20" path="res://assets/worldroot/pet/walk/frame_10.png" id="45_gcaob"]
-[ext_resource type="Texture2D" uid="uid://bxc8jlkc4nqek" path="res://assets/worldroot/pet/walk/frame_11.png" id="46_aqa1v"]
-[ext_resource type="Texture2D" uid="uid://bcgq74htkcq1t" path="res://assets/worldroot/pet/walk/frame_12.png" id="47_8t8ul"]
-[ext_resource type="Texture2D" uid="uid://6505cjl3jjpv" path="res://assets/worldroot/pet/walk/frame_13.png" id="48_1x1rp"]
-[ext_resource type="Texture2D" uid="uid://2223ma4k10fu" path="res://assets/worldroot/pet/walk/frame_14.png" id="49_ylqph"]
-[ext_resource type="Texture2D" uid="uid://ifyhe0ie372h" path="res://assets/worldroot/pet/walk/frame_15.png" id="50_fcv70"]
-[ext_resource type="Texture2D" uid="uid://bu22ebydy0gb3" path="res://assets/worldroot/pet/walk/frame_16.png" id="51_mou0d"]
-[ext_resource type="Texture2D" uid="uid://wk6bylej7dhi" path="res://assets/worldroot/pet/walk/frame_17.png" id="52_ugmlg"]
-[ext_resource type="Texture2D" uid="uid://c8jfbv6mfvb35" path="res://assets/worldroot/pet/walk/frame_18.png" id="53_qd1pt"]
+[ext_resource type="Texture2D" uid="uid://d0aq235gj2vd8" path="res://assets/worldroot/pet/walk/frame_06.png" id="41_lfilp"]
+[ext_resource type="Texture2D" uid="uid://dqtfsfytllqpi" path="res://assets/worldroot/pet/walk/frame_07.png" id="42_nu61c"]
+[ext_resource type="Texture2D" uid="uid://cjau543dhn5c0" path="res://assets/worldroot/pet/walk/frame_08.png" id="43_e2bht"]
+[ext_resource type="Texture2D" uid="uid://cgk8qk5pwc3j3" path="res://assets/worldroot/pet/walk/frame_09.png" id="44_a3hxr"]
+[ext_resource type="Texture2D" uid="uid://bui47wmoxhbby" path="res://assets/worldroot/pet/walk/frame_10.png" id="45_gcaob"]
+[ext_resource type="Texture2D" uid="uid://bsstt3rwlyalf" path="res://assets/worldroot/pet/walk/frame_11.png" id="46_aqa1v"]
+[ext_resource type="Texture2D" uid="uid://dfmsiy0vcum27" path="res://assets/worldroot/pet/walk/frame_12.png" id="47_8t8ul"]
+[ext_resource type="Texture2D" uid="uid://dp0wjrq34so05" path="res://assets/worldroot/pet/walk/frame_13.png" id="48_1x1rp"]
+[ext_resource type="Texture2D" uid="uid://ew0ioj3uac0i" path="res://assets/worldroot/pet/walk/frame_19.png" id="49_vwcyu"]
+[ext_resource type="Texture2D" uid="uid://bk6fjilo0lj1o" path="res://assets/worldroot/pet/walk/frame_14.png" id="49_ylqph"]
+[ext_resource type="Texture2D" uid="uid://der1w3g0h7j8s" path="res://assets/worldroot/pet/walk/frame_15.png" id="50_fcv70"]
+[ext_resource type="Texture2D" uid="uid://35iq8fhh2uod" path="res://assets/worldroot/pet/walk/frame_20.png" id="50_rsknx"]
+[ext_resource type="Texture2D" uid="uid://f3aylp0bf4hj" path="res://assets/worldroot/pet/walk/frame_21.png" id="51_gia1l"]
+[ext_resource type="Texture2D" uid="uid://g5ixccl7wa5y" path="res://assets/worldroot/pet/walk/frame_16.png" id="51_mou0d"]
+[ext_resource type="Texture2D" uid="uid://cqnnepep8j2pl" path="res://assets/worldroot/pet/walk/frame_22.png" id="52_aw8hi"]
+[ext_resource type="Texture2D" uid="uid://h2pnac84qjyd" path="res://assets/worldroot/pet/walk/frame_17.png" id="52_ugmlg"]
+[ext_resource type="Texture2D" uid="uid://ppvd8eqqrjht" path="res://assets/worldroot/pet/walk/frame_23.png" id="53_cm7k6"]
+[ext_resource type="Texture2D" uid="uid://b6d605uey8wso" path="res://assets/worldroot/pet/walk/frame_18.png" id="53_qd1pt"]
+[ext_resource type="Texture2D" uid="uid://dn0crpad2iupt" path="res://assets/worldroot/pet/walk/frame_24.png" id="54_csfbn"]
+[ext_resource type="Texture2D" uid="uid://cjkqadahub2ac" path="res://assets/worldroot/pet/walk/frame_25.png" id="55_sj5fg"]
+[ext_resource type="Texture2D" uid="uid://dex8o3b80winb" path="res://assets/worldroot/pet/walk/frame_26.png" id="56_1xgkc"]
+[ext_resource type="Texture2D" uid="uid://b7jnbgapmwq54" path="res://assets/worldroot/pet/walk/frame_27.png" id="57_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://m8lin72q3vjx" path="res://assets/worldroot/landform/front/landform_front_4.png" id="61_1x1rp"]
 [ext_resource type="Script" uid="uid://dcyb4abjdhqk2" path="res://scripts/main/output/AllOutput.gd" id="73_ugmlg"]
 [ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/Zooming.gd" id="75_qd1pt"]
@@ -67,6 +76,18 @@
 [ext_resource type="Script" uid="uid://b01oxeqkx7fka" path="res://scripts/main/output/MemoryChoiceWindow.gd" id="78_memory_choice"]
 [ext_resource type="PackedScene" path="res://scenes/DepthBand.tscn" id="79_depth_band"]
 [ext_resource type="Shader" uid="uid://dsbn60rfqxy3v" path="res://shaders/SkyAdditive.gdshader" id="80_sky_additive"]
+[ext_resource type="Script" uid="uid://4bnp3sspl5ah" path="res://scripts/main/output/MiniModeController.gd" id="81_mini_mode"]
+[ext_resource type="Texture2D" uid="uid://d1rcsemgd2nl1" path="res://assets/worldroot/pet/sleep/frame_11.png" id="82_sleep_11"]
+[ext_resource type="Texture2D" uid="uid://cw0gjk61wkbms" path="res://assets/worldroot/pet/sleep/frame_12.png" id="83_sleep_12"]
+[ext_resource type="Texture2D" uid="uid://blyqj83enkp6o" path="res://assets/worldroot/pet/sleep/frame_13.png" id="84_sleep_13"]
+
+[sub_resource type="Environment" id="Environment_8t8ul"]
+background_mode = 3
+background_canvas_max_layer = 30
+glow_enabled = true
+glow_intensity = 2.0
+glow_bloom = 0.02
+glow_hdr_scale = 1.5
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_aqa1v"]
 shader = ExtResource("32_gcaob")
@@ -131,10 +152,37 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": ExtResource("53_qd1pt")
+}, {
+"duration": 1.0,
+"texture": ExtResource("49_vwcyu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("50_rsknx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("51_gia1l")
+}, {
+"duration": 1.0,
+"texture": ExtResource("52_aw8hi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("53_cm7k6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("54_csfbn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("55_sj5fg")
+}, {
+"duration": 1.0,
+"texture": ExtResource("56_1xgkc")
+}, {
+"duration": 1.0,
+"texture": ExtResource("57_x1gp3")
 }],
 "loop": true,
 "name": &"default",
-"speed": 12.0
+"speed": 18.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_gsxep"]
@@ -466,13 +514,115 @@ _data = {
 &"RESET": SubResource("Animation_poi_emphasis_reset")
 }
 
-[sub_resource type="Environment" id="Environment_8t8ul"]
-background_mode = 3
-background_canvas_max_layer = 30
-glow_enabled = true
-glow_intensity = 2.0
-glow_bloom = 0.02
-glow_hdr_scale = 1.5
+[sub_resource type="Animation" id="Animation_mini_reset"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BackFloatLayer:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("FrontFloatLayer:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MiniModeController:world_open_ratio")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MiniModeLayer/MiniPetRoot/MiniPet:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_to_mini"]
+resource_name = "to_mini"
+length = 0.85
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BackFloatLayer:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.85),
+"transitions": PackedFloat32Array(-2, 1, 1),
+"update": 0,
+"values": [1.0, 0.0, 0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("FrontFloatLayer:modulate:a")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.85),
+"transitions": PackedFloat32Array(-2, 1, 1),
+"update": 0,
+"values": [1.0, 0.0, 0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MiniModeController:world_open_ratio")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.55, 0.85),
+"transitions": PackedFloat32Array(1, -2, 1, 1),
+"update": 0,
+"values": [1.0, 1.0, 0.0, 0.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("MiniModeLayer/MiniPetRoot/MiniPet:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.55, 0.85),
+"transitions": PackedFloat32Array(1, -2, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mini_mode"]
+_data = {
+&"RESET": SubResource("Animation_mini_reset"),
+&"to_mini": SubResource("Animation_to_mini")
+}
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_corner_button"]
 bg_color = Color(0.321569, 0.145098, 0.807843, 0.92)
@@ -498,32 +648,13 @@ corner_radius_top_right = 60
 corner_radius_bottom_right = 60
 corner_radius_bottom_left = 60
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_recent_memory_bar"]
-bg_color = Color(0.12549, 0.0745098, 0.270588, 0.94)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.67451, 0.529412, 1, 1)
-corner_radius_top_left = 28
-corner_radius_top_right = 28
-corner_radius_bottom_right = 28
-corner_radius_bottom_left = 28
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_recent_memory_slot"]
-bg_color = Color(1, 1, 1, 0.18)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-corner_radius_bottom_right = 20
-corner_radius_bottom_left = 20
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pdwbg"]
 shader = ExtResource("29_8b871")
 shader_parameter/mask_enable = 1.0
-shader_parameter/center_u = 0.50000002375
-shader_parameter/center_v = 0.50000002375
+shader_parameter/center_u = 0.5
+shader_parameter/center_v = 0.5
 shader_parameter/radius_u = 0.326000015485
-shader_parameter/radius_v = 0.4690000222775
+shader_parameter/radius_v = 0.4850000230375
 shader_parameter/feather_px = 16.80000025034016
 shader_parameter/smoke_enable = 0.50999998860048
 shader_parameter/smoke_band_px = 123.70000184327844
@@ -558,6 +689,25 @@ corner_radius_top_left = 75
 corner_radius_top_right = 75
 corner_radius_bottom_right = 75
 corner_radius_bottom_left = 75
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mini_sleep"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("82_sleep_11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("83_sleep_12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("84_sleep_13")
+}],
+"loop": true,
+"name": &"sleep",
+"speed": 2.0
+}]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mini_wake"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_cvmbd"]
 
@@ -608,7 +758,7 @@ script = ExtResource("5_bb450")
 state_defs = Array[ExtResource("6_1iba3")]([ExtResource("7_yxlcp"), ExtResource("8_ebg2g"), ExtResource("9_gsxep"), ExtResource("10_v0vrg"), ExtResource("11_dg70y"), ExtResource("12_pnhog"), ExtResource("13_2c4at"), ExtResource("14_g6wdg")])
 
 [node name="ChangeScene" type="Timer" parent="Controllers/CharacterStatus" unique_id=898119425]
-wait_time = 600.0
+wait_time = 300.0
 autostart = true
 
 [node name="CharacterAnimator" type="Node" parent="Controllers" unique_id=1546089583]
@@ -618,6 +768,7 @@ script = ExtResource("3_vcsgt")
 [node name="MemoryController" type="Node" parent="Controllers" unique_id=769164480]
 unique_name_in_owner = true
 script = ExtResource("18_pnhog")
+collection_interval_seconds = 45.0
 max_pending_collection_count = 3
 debug_show_collected_item = true
 
@@ -635,233 +786,6 @@ bus = &"Ambient"
 stream = ExtResource("21_aw8hi")
 bus = &"SFX"
 
-[node name="WorldRoot" type="Node2D" parent="." unique_id=384608177]
-unique_name_in_owner = true
-script = ExtResource("6_lhr70")
-poi_emphasis_response = 1.0
-poi_dramatic_amount = 1.5
-poi_zoom_depth_bias = 0.30000000000000004
-
-[node name="01_Sky" type="CanvasLayer" parent="WorldRoot" unique_id=100414531]
-
-[node name="Sky" type="Parallax2D" parent="WorldRoot/01_Sky" unique_id=747805663]
-unique_name_in_owner = true
-scroll_offset = Vector2(0, 540)
-repeat_size = Vector2(4920, 0)
-autoscroll = Vector2(-20, 0)
-script = ExtResource("31_ugmlg")
-
-[node name="Main" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=1813847154]
-modulate = Color(1.8659585, 1.3661274, 1.40897, 1)
-material = SubResource("ShaderMaterial_aqa1v")
-texture = ExtResource("32_a3hxr")
-
-[node name="Star" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=553459747]
-
-[node name="Effect" type="Sprite2D" parent="WorldRoot/01_Sky/Sky" unique_id=905714890]
-modulate = Color(0.96096605, 0.34554842, 0, 1)
-material = SubResource("ShaderMaterial_sky_additive")
-
-[node name="02_POI" type="CanvasLayer" parent="WorldRoot" unique_id=499590116]
-layer = 2
-
-[node name="POI" type="Node2D" parent="WorldRoot/02_POI" unique_id=293010691]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="MparaObject2" parent="WorldRoot/02_POI/POI" unique_id=1196637194 instance=ExtResource("39_vwcyu")]
-position = Vector2(1993, -2)
-texture = ExtResource("37_e2bht")
-
-[node name="03_Ground" type="CanvasLayer" parent="WorldRoot" unique_id=1262239274]
-layer = 3
-
-[node name="Ground" type="Parallax2D" parent="WorldRoot/03_Ground" unique_id=1013858590]
-unique_name_in_owner = true
-scroll_offset = Vector2(0, 540)
-repeat_size = Vector2(4920, 0)
-autoscroll = Vector2(-80, 0)
-script = ExtResource("37_qd1pt")
-
-[node name="Main" type="Sprite2D" parent="WorldRoot/03_Ground/Ground" unique_id=1425775975]
-modulate = Color(3.306574, 3.343691, 3.3536718, 1)
-texture = ExtResource("37_a3hxr")
-
-[node name="Effect" type="Sprite2D" parent="WorldRoot/03_Ground/Ground" unique_id=569461966]
-
-[node name="04_Cloud_1" type="CanvasLayer" parent="WorldRoot" unique_id=2118232127]
-layer = 4
-
-[node name="Cloud_1" type="Node2D" parent="WorldRoot/04_Cloud_1" unique_id=236166638]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="MparaObject4" parent="WorldRoot/04_Cloud_1/Cloud_1" unique_id=463968827 instance=ExtResource("39_vwcyu")]
-modulate = Color(1.1774893, 1.0641116, 1.088759, 0.3529412)
-position = Vector2(630, 91)
-texture = ExtResource("41_1x1rp")
-
-[node name="05_Landform_1" type="CanvasLayer" parent="WorldRoot" unique_id=947855395]
-layer = 5
-
-[node name="Landform_1" type="Node2D" parent="WorldRoot/05_Landform_1" unique_id=1069212001]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="MparaObject3" parent="WorldRoot/05_Landform_1/Landform_1" unique_id=1673114578 instance=ExtResource("39_vwcyu")]
-modulate = Color(4.6968017, 4.7154346, 4.9576597, 1)
-position = Vector2(-1535, 375)
-texture = ExtResource("41_8t8ul")
-
-[node name="06_Component_1" type="CanvasLayer" parent="WorldRoot" unique_id=87896012]
-layer = 6
-
-[node name="Component_1" type="Node2D" parent="WorldRoot/06_Component_1" unique_id=183900339]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="07_Cloud_2" type="CanvasLayer" parent="WorldRoot" unique_id=1986757641]
-layer = 7
-
-[node name="Cloud_2" type="Node2D" parent="WorldRoot/07_Cloud_2" unique_id=473401516]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="08_Landform_2" type="CanvasLayer" parent="WorldRoot" unique_id=1569384005]
-layer = 8
-
-[node name="Landform_2" type="Node2D" parent="WorldRoot/08_Landform_2" unique_id=2059314531]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="09_Component_2" type="CanvasLayer" parent="WorldRoot" unique_id=1694294774]
-layer = 9
-
-[node name="Component_2" type="Node2D" parent="WorldRoot/09_Component_2" unique_id=1513370776]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="10_Cloud_3" type="CanvasLayer" parent="WorldRoot" unique_id=414208172]
-layer = 10
-
-[node name="Cloud_3" type="Node2D" parent="WorldRoot/10_Cloud_3" unique_id=984731150]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="11_Landform_3" type="CanvasLayer" parent="WorldRoot" unique_id=137937696]
-layer = 11
-
-[node name="Landform_3" type="Node2D" parent="WorldRoot/11_Landform_3" unique_id=1041735200]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="12_Component_3" type="CanvasLayer" parent="WorldRoot" unique_id=1375529131]
-layer = 12
-
-[node name="Component_3" type="Node2D" parent="WorldRoot/12_Component_3" unique_id=513690386]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="13_Cloud_4" type="CanvasLayer" parent="WorldRoot" unique_id=247601466]
-layer = 13
-
-[node name="Cloud_4" type="Node2D" parent="WorldRoot/13_Cloud_4" unique_id=2075061201]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="14_Landform_4" type="CanvasLayer" parent="WorldRoot" unique_id=2048764701]
-layer = 14
-
-[node name="Landform_4" type="Node2D" parent="WorldRoot/14_Landform_4" unique_id=101058712]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="15_Pet" type="CanvasLayer" parent="WorldRoot" unique_id=367772465]
-layer = 15
-
-[node name="Pet" type="AnimatedSprite2D" parent="WorldRoot/15_Pet" unique_id=390694917]
-unique_name_in_owner = true
-position = Vector2(800, 825)
-scale = Vector2(0.25, 0.25)
-sprite_frames = SubResource("SpriteFrames_1nqs0")
-autoplay = "default"
-frame_progress = 0.8828364
-script = ExtResource("30_v0vrg")
-vertical_follow_speed = 60.0
-
-[node name="body" type="Area2D" parent="WorldRoot/15_Pet/Pet" unique_id=815688141]
-visible = false
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldRoot/15_Pet/Pet/body" unique_id=952050975]
-position = Vector2(0, -160)
-shape = SubResource("CapsuleShape2D_gsxep")
-
-[node name="16_Component_4" type="CanvasLayer" parent="WorldRoot" unique_id=177813838]
-layer = 16
-
-[node name="Component_4" type="Node2D" parent="WorldRoot/16_Component_4" unique_id=731749032]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="24_Cloud_5" type="CanvasLayer" parent="WorldRoot" unique_id=1416639677]
-layer = 24
-
-[node name="Cloud_5" type="Node2D" parent="WorldRoot/24_Cloud_5" unique_id=1498339407]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="25_Landform_5" type="CanvasLayer" parent="WorldRoot" unique_id=1640668445]
-layer = 25
-
-[node name="Landform_5" type="Node2D" parent="WorldRoot/25_Landform_5" unique_id=1665323148]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="MparaObject4" parent="WorldRoot/25_Landform_5/Landform_5" unique_id=756551596 instance=ExtResource("39_vwcyu")]
-modulate = Color(3.0014687, 3.0143096, 3.168401, 1)
-position = Vector2(-1000, 933)
-texture = ExtResource("61_1x1rp")
-
-[node name="26_Component_5" type="CanvasLayer" parent="WorldRoot" unique_id=620013528]
-layer = 26
-
-[node name="Component_5" type="Node2D" parent="WorldRoot/26_Component_5" unique_id=1203351086]
-unique_name_in_owner = true
-script = ExtResource("33_8b871")
-
-[node name="WorldPlayer" type="AnimationPlayer" parent="WorldRoot" unique_id=1986727739]
-unique_name_in_owner = true
-callback_mode_process = 2
-libraries/ = SubResource("AnimationLibrary_xa025")
-
-[node name="DepthRendering" type="Node" parent="WorldRoot" unique_id=262317986]
-unique_name_in_owner = true
-
-[node name="BackdropBand" parent="WorldRoot/DepthRendering" unique_id=1948023089 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
-source_layers = [NodePath("../../01_Sky"), NodePath("../../02_POI"), NodePath("../../03_Ground")]
-blur_lod = 3.5
-composite_layer = 3
-
-[node name="BackgroundBand1" parent="WorldRoot/DepthRendering" unique_id=1371478436 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
-source_layers = [NodePath("../../04_Cloud_1"), NodePath("../../05_Landform_1"), NodePath("../../06_Component_1")]
-blur_lod = 3.0
-composite_layer = 6
-
-[node name="BackgroundBand2" parent="WorldRoot/DepthRendering" unique_id=1686969997 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
-source_layers = [NodePath("../../07_Cloud_2"), NodePath("../../08_Landform_2"), NodePath("../../09_Component_2")]
-blur_lod = 2.0
-composite_layer = 9
-
-[node name="BackgroundBand3" parent="WorldRoot/DepthRendering" unique_id=243426959 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
-source_layers = [NodePath("../../10_Cloud_3"), NodePath("../../11_Landform_3"), NodePath("../../12_Component_3")]
-blur_lod = 1.0
-composite_layer = 12
-
-[node name="ForegroundBand" parent="WorldRoot/DepthRendering" unique_id=1928815136 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
-source_layers = [NodePath("../../24_Cloud_5"), NodePath("../../25_Landform_5"), NodePath("../../26_Component_5")]
-blur_lod = 3.0
-composite_layer = 26
-
 [node name="WorldView" type="SubViewport" parent="." unique_id=742230146]
 unique_name_in_owner = true
 own_world_3d = true
@@ -871,6 +795,234 @@ size = Vector2i(1920, 1080)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="WorldView" unique_id=1366653140]
 environment = SubResource("Environment_8t8ul")
+
+[node name="WorldRoot" type="Node2D" parent="WorldView" unique_id=384608177]
+unique_name_in_owner = true
+script = ExtResource("6_lhr70")
+poi_emphasis_response = 1.0
+poi_dramatic_amount = 1.5
+poi_zoom_depth_bias = 0.30000000000000004
+
+[node name="01_Sky" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=100414531]
+
+[node name="Sky" type="Parallax2D" parent="WorldView/WorldRoot/01_Sky" unique_id=747805663]
+unique_name_in_owner = true
+scroll_offset = Vector2(0, 540)
+repeat_size = Vector2(4920, 0)
+autoscroll = Vector2(-20, 0)
+script = ExtResource("31_ugmlg")
+
+[node name="Main" type="Sprite2D" parent="WorldView/WorldRoot/01_Sky/Sky" unique_id=1813847154]
+modulate = Color(1.8659585, 1.3661274, 1.40897, 1)
+material = SubResource("ShaderMaterial_aqa1v")
+texture = ExtResource("32_a3hxr")
+
+[node name="Star" type="Sprite2D" parent="WorldView/WorldRoot/01_Sky/Sky" unique_id=553459747]
+
+[node name="Effect" type="Sprite2D" parent="WorldView/WorldRoot/01_Sky/Sky" unique_id=905714890]
+modulate = Color(0.96096605, 0.34554842, 0, 1)
+material = SubResource("ShaderMaterial_sky_additive")
+
+[node name="02_POI" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=499590116]
+layer = 2
+
+[node name="POI" type="Node2D" parent="WorldView/WorldRoot/02_POI" unique_id=293010691]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="MparaObject2" parent="WorldView/WorldRoot/02_POI/POI" unique_id=1196637194 instance=ExtResource("39_vwcyu")]
+position = Vector2(1993, -2)
+texture = ExtResource("37_e2bht")
+
+[node name="03_Ground" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1262239274]
+layer = 3
+
+[node name="Ground" type="Parallax2D" parent="WorldView/WorldRoot/03_Ground" unique_id=1013858590]
+unique_name_in_owner = true
+scroll_offset = Vector2(0, 540)
+repeat_size = Vector2(4920, 0)
+autoscroll = Vector2(-80, 0)
+script = ExtResource("37_qd1pt")
+
+[node name="Main" type="Sprite2D" parent="WorldView/WorldRoot/03_Ground/Ground" unique_id=1425775975]
+modulate = Color(3.306574, 3.343691, 3.3536718, 1)
+texture = ExtResource("37_a3hxr")
+
+[node name="Effect" type="Sprite2D" parent="WorldView/WorldRoot/03_Ground/Ground" unique_id=569461966]
+
+[node name="04_Cloud_1" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=2118232127]
+layer = 4
+
+[node name="Cloud_1" type="Node2D" parent="WorldView/WorldRoot/04_Cloud_1" unique_id=236166638]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="MparaObject4" parent="WorldView/WorldRoot/04_Cloud_1/Cloud_1" unique_id=463968827 instance=ExtResource("39_vwcyu")]
+modulate = Color(1.1774893, 1.0641116, 1.088759, 0.3529412)
+position = Vector2(630, 91)
+texture = ExtResource("41_1x1rp")
+
+[node name="05_Landform_1" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=947855395]
+layer = 5
+
+[node name="Landform_1" type="Node2D" parent="WorldView/WorldRoot/05_Landform_1" unique_id=1069212001]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="MparaObject3" parent="WorldView/WorldRoot/05_Landform_1/Landform_1" unique_id=1673114578 instance=ExtResource("39_vwcyu")]
+modulate = Color(4.6968017, 4.7154346, 4.9576597, 1)
+position = Vector2(-1535, 375)
+texture = ExtResource("41_8t8ul")
+
+[node name="06_Component_1" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=87896012]
+layer = 6
+
+[node name="Component_1" type="Node2D" parent="WorldView/WorldRoot/06_Component_1" unique_id=183900339]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="07_Cloud_2" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1986757641]
+layer = 7
+
+[node name="Cloud_2" type="Node2D" parent="WorldView/WorldRoot/07_Cloud_2" unique_id=473401516]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="08_Landform_2" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1569384005]
+layer = 8
+
+[node name="Landform_2" type="Node2D" parent="WorldView/WorldRoot/08_Landform_2" unique_id=2059314531]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="09_Component_2" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1694294774]
+layer = 9
+
+[node name="Component_2" type="Node2D" parent="WorldView/WorldRoot/09_Component_2" unique_id=1513370776]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="10_Cloud_3" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=414208172]
+layer = 10
+
+[node name="Cloud_3" type="Node2D" parent="WorldView/WorldRoot/10_Cloud_3" unique_id=984731150]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="11_Landform_3" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=137937696]
+layer = 11
+
+[node name="Landform_3" type="Node2D" parent="WorldView/WorldRoot/11_Landform_3" unique_id=1041735200]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="12_Component_3" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1375529131]
+layer = 12
+
+[node name="Component_3" type="Node2D" parent="WorldView/WorldRoot/12_Component_3" unique_id=513690386]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="13_Cloud_4" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=247601466]
+layer = 13
+
+[node name="Cloud_4" type="Node2D" parent="WorldView/WorldRoot/13_Cloud_4" unique_id=2075061201]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="14_Landform_4" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=2048764701]
+layer = 14
+
+[node name="Landform_4" type="Node2D" parent="WorldView/WorldRoot/14_Landform_4" unique_id=101058712]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="15_Pet" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=367772465]
+layer = 15
+
+[node name="Pet" type="AnimatedSprite2D" parent="WorldView/WorldRoot/15_Pet" unique_id=390694917]
+unique_name_in_owner = true
+position = Vector2(800, 825)
+scale = Vector2(0.3, 0.3)
+sprite_frames = SubResource("SpriteFrames_1nqs0")
+autoplay = "default"
+frame = 24
+frame_progress = 0.9842802
+script = ExtResource("30_v0vrg")
+vertical_follow_speed = 60.0
+
+[node name="body" type="Area2D" parent="WorldView/WorldRoot/15_Pet/Pet" unique_id=815688141]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WorldView/WorldRoot/15_Pet/Pet/body" unique_id=952050975]
+position = Vector2(0, -160)
+shape = SubResource("CapsuleShape2D_gsxep")
+
+[node name="16_Component_4" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=177813838]
+layer = 16
+
+[node name="Component_4" type="Node2D" parent="WorldView/WorldRoot/16_Component_4" unique_id=731749032]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="24_Cloud_5" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1416639677]
+layer = 24
+
+[node name="Cloud_5" type="Node2D" parent="WorldView/WorldRoot/24_Cloud_5" unique_id=1498339407]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="25_Landform_5" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=1640668445]
+layer = 25
+
+[node name="Landform_5" type="Node2D" parent="WorldView/WorldRoot/25_Landform_5" unique_id=1665323148]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="MparaObject4" parent="WorldView/WorldRoot/25_Landform_5/Landform_5" unique_id=756551596 instance=ExtResource("39_vwcyu")]
+modulate = Color(3.0014687, 3.0143096, 3.168401, 1)
+position = Vector2(-1000, 933)
+texture = ExtResource("61_1x1rp")
+
+[node name="26_Component_5" type="CanvasLayer" parent="WorldView/WorldRoot" unique_id=620013528]
+layer = 26
+
+[node name="Component_5" type="Node2D" parent="WorldView/WorldRoot/26_Component_5" unique_id=1203351086]
+unique_name_in_owner = true
+script = ExtResource("33_8b871")
+
+[node name="WorldPlayer" type="AnimationPlayer" parent="WorldView/WorldRoot" unique_id=1986727739]
+unique_name_in_owner = true
+callback_mode_process = 2
+libraries/ = SubResource("AnimationLibrary_xa025")
+
+[node name="DepthRendering" type="Node" parent="WorldView/WorldRoot" unique_id=262317986]
+unique_name_in_owner = true
+
+[node name="BackdropBand" parent="WorldView/WorldRoot/DepthRendering" unique_id=1948023089 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
+source_layers = [NodePath("../../01_Sky"), NodePath("../../02_POI"), NodePath("../../03_Ground")]
+blur_lod = 3.5
+composite_layer = 3
+
+[node name="BackgroundBand1" parent="WorldView/WorldRoot/DepthRendering" unique_id=1371478436 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
+source_layers = [NodePath("../../04_Cloud_1"), NodePath("../../05_Landform_1"), NodePath("../../06_Component_1")]
+blur_lod = 3.0
+composite_layer = 6
+
+[node name="BackgroundBand2" parent="WorldView/WorldRoot/DepthRendering" unique_id=1686969997 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
+source_layers = [NodePath("../../07_Cloud_2"), NodePath("../../08_Landform_2"), NodePath("../../09_Component_2")]
+blur_lod = 2.0
+composite_layer = 9
+
+[node name="BackgroundBand3" parent="WorldView/WorldRoot/DepthRendering" unique_id=243426959 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
+source_layers = [NodePath("../../10_Cloud_3"), NodePath("../../11_Landform_3"), NodePath("../../12_Component_3")]
+blur_lod = 1.0
+composite_layer = 12
+
+[node name="ForegroundBand" parent="WorldView/WorldRoot/DepthRendering" unique_id=1928815136 node_paths=PackedStringArray("source_layers") instance=ExtResource("79_depth_band")]
+source_layers = [NodePath("../../24_Cloud_5"), NodePath("../../25_Landform_5"), NodePath("../../26_Component_5")]
+blur_lod = 3.0
+composite_layer = 26
 
 [node name="AllOutput" type="Control" parent="." unique_id=1999081273]
 layout_mode = 3
@@ -884,7 +1036,7 @@ script = ExtResource("73_ugmlg")
 design_size = Vector2(1600, 1400)
 world_vertical_offset = 30.0
 
-[node name="FloatButtonManager" type="Node" parent="AllOutput" unique_id=1694637791 node_paths=PackedStringArray("all_output", "setting_button", "collection_button", "zooming_button", "minimode_button", "collected_item_button", "recent_memory_bar", "recent_memory_texture_1", "recent_memory_texture_2", "recent_memory_texture_3")]
+[node name="FloatButtonManager" type="Node" parent="AllOutput" unique_id=1694637791 node_paths=PackedStringArray("all_output", "setting_button", "collection_button", "zooming_button", "minimode_button", "collected_item_button")]
 unique_name_in_owner = true
 script = ExtResource("76_rsknx")
 all_output = NodePath("..")
@@ -893,16 +1045,20 @@ collection_button = NodePath("../BackFloatLayer/Collection")
 zooming_button = NodePath("../BackFloatLayer/Zooming")
 minimode_button = NodePath("../BackFloatLayer/Minimode")
 collected_item_button = NodePath("../FrontFloatLayer/CollectedItem")
-recent_memory_bar = NodePath("../BackFloatLayer/RecentMemoryBar")
-disable_recent_memory_bar = true
-recent_memory_texture_1 = NodePath("../BackFloatLayer/RecentMemoryBar/Memory1/Texture1")
-recent_memory_texture_2 = NodePath("../BackFloatLayer/RecentMemoryBar/Memory2/Texture2")
-recent_memory_texture_3 = NodePath("../BackFloatLayer/RecentMemoryBar/Memory3/Texture3")
 hidden_offset = -180.0
 peek_offset = -40.0
 open_offset = 60.0
-recent_memory_bar_vertical_offset = -30.0
 button_size_scale = 2.0
+memory_popup_size_scale = 2.0
+
+[node name="MiniModeController" type="Node" parent="AllOutput" unique_id=1659431197]
+unique_name_in_owner = true
+script = ExtResource("81_mini_mode")
+mini_pet_size_scale = 0.3
+
+[node name="TransitionPlayer" type="AnimationPlayer" parent="AllOutput/MiniModeController" unique_id=1782790897]
+root_node = NodePath("../..")
+libraries/ = SubResource("AnimationLibrary_mini_mode")
 
 [node name="BackFloatLayer" type="Control" parent="AllOutput" unique_id=237574175]
 layout_mode = 1
@@ -924,6 +1080,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_corner_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_corner_button")
 text = "Setting"
 
 [node name="Collection" type="Button" parent="AllOutput/BackFloatLayer" unique_id=63780363]
@@ -937,6 +1094,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_corner_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_corner_button")
 text = "Collection"
 
 [node name="Zooming" type="Button" parent="AllOutput/BackFloatLayer" unique_id=1861630997 node_paths=PackedStringArray("all_output")]
@@ -950,6 +1108,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_corner_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_corner_button")
 text = "Zooming"
 script = ExtResource("75_qd1pt")
 all_output = NodePath("../..")
@@ -965,77 +1124,8 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_corner_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_corner_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_corner_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_corner_button")
 text = "Minimode"
-
-[node name="RecentMemoryBar" type="Panel" parent="AllOutput/BackFloatLayer" unique_id=1260786484]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(660, 190)
-layout_mode = 0
-offset_right = 660.0
-offset_bottom = 190.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_recent_memory_bar")
-
-[node name="Memory1" type="Panel" parent="AllOutput/BackFloatLayer/RecentMemoryBar" unique_id=759637427]
-layout_mode = 0
-offset_left = 87.0
-offset_top = 20.0
-offset_right = 237.0
-offset_bottom = 170.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_recent_memory_slot")
-
-[node name="Texture1" type="TextureRect" parent="AllOutput/BackFloatLayer/RecentMemoryBar/Memory1" unique_id=1753645417]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Memory2" type="Panel" parent="AllOutput/BackFloatLayer/RecentMemoryBar" unique_id=672477964]
-layout_mode = 0
-offset_left = 255.0
-offset_top = 20.0
-offset_right = 405.0
-offset_bottom = 170.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_recent_memory_slot")
-
-[node name="Texture2" type="TextureRect" parent="AllOutput/BackFloatLayer/RecentMemoryBar/Memory2" unique_id=580133314]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 5
-
-[node name="Memory3" type="Panel" parent="AllOutput/BackFloatLayer/RecentMemoryBar" unique_id=1562253178]
-layout_mode = 0
-offset_left = 423.0
-offset_top = 20.0
-offset_right = 573.0
-offset_bottom = 170.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_recent_memory_slot")
-
-[node name="Texture3" type="TextureRect" parent="AllOutput/BackFloatLayer/RecentMemoryBar/Memory3" unique_id=1622680799]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-expand_mode = 1
-stretch_mode = 5
 
 [node name="WorldOutput" type="TextureRect" parent="AllOutput" unique_id=119086223]
 unique_name_in_owner = true
@@ -1068,7 +1158,51 @@ theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_collected_button")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_collected_button_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_collected_button_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_collected_button")
 text = "Memory"
+
+[node name="MiniModeLayer" type="Control" parent="AllOutput" unique_id=11656628]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ModeInputBlocker" type="Control" parent="AllOutput/MiniModeLayer" unique_id=39927974]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MiniPetRoot" type="Node2D" parent="AllOutput/MiniModeLayer" unique_id=1498837298]
+position = Vector2(800, 730)
+scale = Vector2(0.25, 0.25)
+
+[node name="MiniPet" type="AnimatedSprite2D" parent="AllOutput/MiniModeLayer/MiniPetRoot" unique_id=2079672714]
+scale = Vector2(1e-05, 1e-05)
+sprite_frames = SubResource("SpriteFrames_mini_sleep")
+animation = &"sleep"
+
+[node name="WakeButton" type="Button" parent="AllOutput/MiniModeLayer/MiniPetRoot/MiniPet" unique_id=1009000041]
+offset_left = -737.0
+offset_top = -579.0
+offset_right = 696.0
+offset_bottom = 529.0
+focus_mode = 0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_mini_wake")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_mini_wake")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_mini_wake")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_mini_wake")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_mini_wake")
+disabled = true
+flat = true
 
 [node name="UIWindow" type="Window" parent="." unique_id=1159274380]
 unique_name_in_owner = true
@@ -1314,6 +1448,6 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_memory_choice_background")
 
 [connection signal="timeout" from="Controllers/CharacterStatus/ChangeScene" to="." method="_on_change_scene_timeout"]
-[connection signal="mouse_entered" from="WorldRoot/15_Pet/Pet/body" to="WorldRoot/15_Pet/Pet" method="_on_body_mouse_entered"]
-[connection signal="mouse_exited" from="WorldRoot/15_Pet/Pet/body" to="WorldRoot/15_Pet/Pet" method="_on_body_mouse_exited"]
+[connection signal="mouse_entered" from="WorldView/WorldRoot/15_Pet/Pet/body" to="WorldView/WorldRoot/15_Pet/Pet" method="_on_body_mouse_entered"]
+[connection signal="mouse_exited" from="WorldView/WorldRoot/15_Pet/Pet/body" to="WorldView/WorldRoot/15_Pet/Pet" method="_on_body_mouse_exited"]
 [connection signal="postcard_showed" from="UIWindow/UIRoot/PostcardShowing" to="UIWindow/UIRoot" method="_on_postcard_showing_postcard_showed"]

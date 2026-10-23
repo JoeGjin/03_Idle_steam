@@ -26,7 +26,7 @@ var _effect_window_start_position := Vector2i.ZERO
 #
 # 目录（与下方代码分区顺序一致）
 # 1. 生命周期与主窗口跟随
-#    启动时先显示再隐藏以预热原生窗口；播放期间按主窗口的屏幕位移同步特效窗口位置。
+#    启动时保持窗口隐藏；播放期间按主窗口的屏幕位移同步特效窗口位置。
 #    入口：_ready / _process
 # 2. 收集烟花入口
 #    根据收集次数计算窗口留白，将屏幕起终点转换为特效窗口局部坐标，再创建并播放烟花。
@@ -44,8 +44,7 @@ var _effect_window_start_position := Vector2i.ZERO
 #region 生命周期与主窗口跟随
 
 func _ready() -> void:
-    # 预先创建透明原生窗口，避免第一次播放特效时出现初始化黑帧。
-    show()
+    # 启动时保持隐藏，避免预热原生窗口时闪出空白矩形。
     hide()
     set_process(false)
 

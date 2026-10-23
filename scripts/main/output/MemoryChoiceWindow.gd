@@ -6,7 +6,7 @@ class_name MemoryChoiceWindow
 signal choice_pressed(index: int)
 
 
-# 选择按钮、顶部展示区和窗口输入区域的布局参数。
+# 选择按钮、顶部展示区和窗口输入区域的布局参数，统一使用未缩放的设计坐标。
 @export_group("Layout")
 @export var choice_size := Vector2(240.0, 240.0)
 @export_range(0.0, 400.0, 1.0, "suffix:px") var choice_gap := 96.0
@@ -25,7 +25,8 @@ signal choice_pressed(index: int)
 @export_range(0.0, 2.0, 0.01, "suffix:s") var rejected_fade_duration := 0.25
 
 
-# 左右两个候选按钮，按索引 0 和 1 连接选择回调。
+# 承载统一显示倍率的布局根节点，以及按索引 0 和 1 连接选择回调的左右按钮。
+@onready var choice_root: Control = $ChoiceRoot
 @onready var choice_left: TextureButton = %ChoiceLeft
 @onready var choice_right: TextureButton = %ChoiceRight
 
@@ -35,11 +36,14 @@ var _follow_window: Window
 var _follow_window_start_position := Vector2i.ZERO
 var _choice_window_start_position := Vector2i.ZERO
 
+# 本批次沿用主窗口的实际显示倍率，布局和动画保持设计坐标，窗口范围与输入区域使用屏幕像素。
+var _display_scale := 1.0
+
 # 单轮选择状态，仅在等待点击期间接受一次选择。
 var _awaiting_choice := false
 var _selected_index := -1
 
-# 当前飞行按钮及二次贝塞尔曲线的起点、控制点和终点，均为选择窗口局部坐标。
+# 当前飞行按钮及二次贝塞尔曲线的起点、控制点和终点，均为 ChoiceRoot 设计坐标。
 var _flight_button: TextureButton
 var _flight_start := Vector2.ZERO
 var _flight_control := Vector2.ZERO
@@ -47,14 +51,14 @@ var _flight_end := Vector2.ZERO
 
 
 # 本脚本呈现 Memory 二选一窗口，协调入场、点击选择、退场飞行和主窗口跟随。
-# Main 提供候选 Memory 与宠物屏幕位置，并在每轮返回后汇总整批选择结果。
+# Main 提供当前显示倍率、候选 Memory 与宠物屏幕位置，并在每轮返回后汇总整批选择结果。
 #
 # 目录（与下方代码分区顺序一致）
 # 1. 生命周期与窗口跟随
-#    连接左右按钮，预热后隐藏窗口；显示期间按跟随窗口的屏幕位移同步位置。
+#    连接左右按钮，保持窗口隐藏；显示期间按跟随窗口的屏幕位移同步位置。
 #    入口：_ready / _process
 # 2. 选择批次与单轮流程
-#    begin_choices 设置窗口范围与跟随基准；play_choice 入场后等待一次有效点击。
+#    begin_choices 按当前显示倍率设置窗口范围、布局缩放与跟随基准；play_choice 入场后等待一次有效点击。
 #    _on_choice_pressed 记录索引并唤醒等待，单轮动画完成后返回对应 MemoryDef。
 #    finish_choices 结束跟随、复位按钮、清空输入多边形并隐藏窗口。
 #    入口：begin_choices / play_choice / finish_choices
@@ -64,10 +68,10 @@ var _flight_end := Vector2.ZERO
 #    核心：_prepare_button / _layout_buttons / _reset_button
 # 4. 选中反馈与飞行动画
 #    选中项放大，未选项缩小淡出；短暂停留后，选中项沿曲线飞向宠物并缩小淡出。
-#    飞行位置使用选择窗口局部坐标，窗口随主窗口平移时终点一起移动。
+#    宠物屏幕位置换算为 ChoiceRoot 设计坐标，窗口随主窗口平移时终点一起移动。
 #    核心：_play_selection_animation / _set_flight_progress
 # 5. 窗口鼠标输入区域
-#    按按钮实际或指定缩放计算可见矩形，扩展留白并合并为窗口输入多边形。
+#    按按钮实际或指定缩放计算可见矩形，扩展留白并合并后按显示倍率换算为窗口输入多边形。
 #    在展示、选中和飞行阶段更新区域，飞行期间随按钮位置与缩放更新。
 #    核心：_set_input_region_for_buttons
 
@@ -75,10 +79,11 @@ var _flight_end := Vector2.ZERO
 #region 生命周期与窗口跟随
 
 func _ready() -> void:
+    # 布局根节点使用设计尺寸，避免全矩形锚点在原生窗口改变大小时覆盖设计尺寸。
+    choice_root.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
     choice_left.pressed.connect(_on_choice_pressed.bind(0))
     choice_right.pressed.connect(_on_choice_pressed.bind(1))
-    # 沿用先显示再隐藏的原生窗口初始化顺序。
-    show()
+    # 启动时保持隐藏，避免预热原生窗口时闪出空白矩形。
     hide()
     set_process(false)
 
@@ -97,18 +102,21 @@ func _process(_delta: float) -> void:
 
 #region 选择批次与单轮流程
 
-func begin_choices(follow_window: Window) -> void:
+func begin_choices(follow_window: Window, display_scale: float) -> void:
     _follow_window = follow_window
-    var top_extension := roundi(choice_area_height + scene_gap)
+    _display_scale = maxf(display_scale, 0.01)
+    var top_extension := ceili((choice_area_height + scene_gap) * _display_scale)
     position = (
         follow_window.position
         - Vector2i(0, top_extension)
-        + Vector2i(0, roundi(initial_vertical_offset))
+        + Vector2i(0, roundi(initial_vertical_offset * _display_scale))
     )
     size = Vector2i(
         follow_window.size.x,
         follow_window.size.y + top_extension
     )
+    choice_root.scale = Vector2.ONE * _display_scale
+    choice_root.size = Vector2(size) / _display_scale
     _follow_window_start_position = follow_window.position
     _choice_window_start_position = position
     _reset_button(choice_left)
@@ -121,8 +129,8 @@ func play_choice(
     right_memory: MemoryDef,
     pet_screen_position: Vector2
 ) -> MemoryDef:
-    # 将宠物屏幕位置转换为选择窗口局部坐标，窗口随主窗口平移时终点一起移动。
-    var pet_window_position := pet_screen_position - Vector2(position)
+    # 先去掉窗口屏幕偏移，再除以显示倍率，与 ChoiceRoot 内的布局、缩放动画使用同一坐标系。
+    var pet_local_position := (pet_screen_position - Vector2(position)) / _display_scale
     _prepare_button(choice_left, left_memory.texture)
     _prepare_button(choice_right, right_memory.texture)
     _layout_buttons()
@@ -147,7 +155,7 @@ func play_choice(
 
     var selected := choice_left if selected_index == 0 else choice_right
     var rejected := choice_right if selected_index == 0 else choice_left
-    await _play_selection_animation(selected, rejected, pet_window_position)
+    await _play_selection_animation(selected, rejected, pet_local_position)
 
     return left_memory if selected_index == 0 else right_memory
 
@@ -187,7 +195,7 @@ func _prepare_button(button: TextureButton, texture: Texture2D) -> void:
 
 
 func _layout_buttons() -> void:
-    var content_size := Vector2(size)
+    var content_size := choice_root.size
     var pair_width := choice_size.x * 2.0 + choice_gap
     var pair_left := (content_size.x - pair_width) * 0.5
     var top := maxf(0.0, (choice_area_height - choice_size.y) * 0.5)
@@ -210,7 +218,7 @@ func _reset_button(button: TextureButton) -> void:
 func _play_selection_animation(
     selected: TextureButton,
     rejected: TextureButton,
-    pet_window_position: Vector2
+    pet_local_position: Vector2
 ) -> void:
     var emphasis := create_tween().set_parallel(true)
     emphasis.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
@@ -242,7 +250,7 @@ func _play_selection_animation(
 
     _flight_button = selected
     _flight_start = selected.position
-    _flight_end = pet_window_position - selected.size * 0.5
+    _flight_end = pet_local_position - selected.size * 0.5
     var flight_midpoint := _flight_start.lerp(_flight_end, 0.5)
     var arc_height := maxf(120.0, absf(_flight_end.x - _flight_start.x) * 0.28)
     _flight_control = flight_midpoint + Vector2(0.0, -arc_height)
@@ -298,6 +306,8 @@ func _set_input_region_for_buttons(
         mouse_passthrough_polygon = PackedVector2Array()
         return
 
+    # 原生窗口输入多边形使用窗口像素，设计坐标只在此处统一乘一次显示倍率。
+    region = Rect2(region.position * _display_scale, region.size * _display_scale)
     mouse_passthrough_polygon = PackedVector2Array([
         region.position,
         Vector2(region.end.x, region.position.y),

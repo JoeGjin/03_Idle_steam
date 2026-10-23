@@ -37,6 +37,7 @@ const DEBUG_DESIGN_BOUNDS_NAME := "DebugDesignBounds"
 @onready var world_output: TextureRect = %WorldOutput
 @onready var all_output: Control = $AllOutput
 @onready var float_button_manager: Node = %FloatButtonManager
+@onready var mini_mode_controller: Node = %MiniModeController
 @onready var collection_button: Button = %Collection
 @onready var collected_item_button: Button = %CollectedItem
 @onready var transient_fx_window: TransientFxWindow = %TransientFxWindow
@@ -60,16 +61,21 @@ var _collection_flow_active := false
 #    入口：_ready
 # 2. UI 与收集反馈
 #    打开收集窗口、同步待收集数量，协调烟花反馈与逐轮 Memory 二选一。
+#    二选一窗口通过 FloatButtonManager 获取叠加弹窗大小参数后的显示倍率。
+#    接入 mini 模式请求与按钮锁定，避免模式转换和收集流程同时进行。
+#    进入 mini 时暂停全局键盘监听，退出动画完成后按原有总开关恢复。
 #    选择期间暂停自动世界切换计时，整批完成后统一更新 Memory 槽位。
 #    入口：_on_collection_requested / _on_collected_item_requested
-#          _on_memory_controller_pending_collection_count_changed
+#          _on_memory_controller_pending_collection_count_changed / _on_minimode_requested
+#          _on_mini_mode_interaction_lock_changed
 # 3. Memory 槽位与世界权重
 #    更新最近标签与 Memory，通知世界生成和悬浮按钮，并按槽位占比计算标签权重。
 #    权重相同时优先最近出现的标签；重启自动切换计时并请求 WorldAssembler 更新世界。
 #    核心：_update_memory_slots / _calculate_memory_slot_weights
 # 4. 输入回调
-#    后台按键触发角色点击缩放动画与敲击音效；鼠标和宠物悬停回调当前为预留入口。
-#    入口：_on_global_key_hook_any_key_pressed
+#    后台按键触发角色点击缩放动画与敲击音效；单击请求退出 mini，控制器仅在 MINI 状态接受。
+#    拖动与宠物悬停回调当前为预留入口。
+#    入口：_on_global_key_hook_any_key_pressed / _on_mouse_controller_left_clicked
 # 5. 角色状态与世界切换
 #    接收角色状态变化（当前为预留逻辑），协调世界切换期间的 POI 强调和环境音。
 #    世界切换完成后重启计时器；计时到期时按标签顺序请求下一个世界。
@@ -126,6 +132,8 @@ func _connect_signals() -> void:
     world_assembler.world_changed.connect(_on_world_assembler_world_changed)
     float_button_manager.connect("collection_requested", _on_collection_requested)
     float_button_manager.connect("collected_item_requested", _on_collected_item_requested)
+    float_button_manager.connect("minimode_requested", _on_minimode_requested)
+    mini_mode_controller.connect("interaction_lock_changed", _on_mini_mode_interaction_lock_changed)
     memory_controller.pending_collection_count_changed.connect(
         _on_memory_controller_pending_collection_count_changed
     )
@@ -140,11 +148,28 @@ func _on_exit_pressed() -> void:
 
 
 func _on_collection_requested() -> void:
+    if not mini_mode_controller.call("is_normal_mode"):
+        return
     ui_window.call("open_uiwindow")
 
 
+func _on_minimode_requested() -> void:
+    if _collection_flow_active or ui_window.visible:
+        return
+    mini_mode_controller.call("enter_mini_mode")
+
+
+func _on_mini_mode_interaction_lock_changed(locked: bool) -> void:
+    global_key_hook.call("set_suspended", locked)
+    float_button_manager.call("set_mini_mode_active", locked)
+
+
 func _on_collected_item_requested() -> void:
-    if _collection_flow_active or memory_controller.pending_collection_count <= 0:
+    if (
+        _collection_flow_active
+        or not mini_mode_controller.call("is_normal_mode")
+        or memory_controller.pending_collection_count <= 0
+    ):
         return
 
     _collection_flow_active = true
@@ -165,7 +190,8 @@ func _on_collected_item_requested() -> void:
 
     change_scene_timer.stop()
     float_button_manager.call("set_memory_choice_active", true)
-    memory_choice_window.begin_choices(get_tree().root)
+    var popup_scale: float = float_button_manager.call("get_memory_popup_scale")
+    memory_choice_window.begin_choices(get_tree().root, popup_scale)
     var choice_weighted_tags := world_assembler.get_current_weighted_tags()
     var chosen_tags: Array[Tags.Tag] = []
     var chosen_memories: Array[MemoryDef] = []
@@ -239,7 +265,6 @@ func _update_memory_slots(
     while recent_chosen_memories.size() > 3:
         recent_chosen_memories.pop_back()
     world_assembler.set_recently_chosen_memories(recent_chosen_memories)
-    float_button_manager.call("set_recent_memories", recent_chosen_memories)
 
     if not chosen_memories.is_empty():
         var recent_memory_names: Array[String] = []
@@ -326,7 +351,7 @@ func _on_mouse_controller_drag_ended() -> void:
 
 
 func _on_mouse_controller_left_clicked() -> void:
-    pass
+    mini_mode_controller.call("exit_mini_mode")
 
 
 func _on_mouse_controller_right_clicked() -> void:
