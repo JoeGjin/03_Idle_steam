@@ -69,7 +69,12 @@
 [ext_resource type="Texture2D" uid="uid://dex8o3b80winb" path="res://assets/worldroot/pet/walk/frame_26.png" id="56_1xgkc"]
 [ext_resource type="Texture2D" uid="uid://b7jnbgapmwq54" path="res://assets/worldroot/pet/walk/frame_27.png" id="57_x1gp3"]
 [ext_resource type="Texture2D" uid="uid://m8lin72q3vjx" path="res://assets/worldroot/landform/front/landform_front_4.png" id="61_1x1rp"]
+[ext_resource type="Texture2D" uid="uid://bleojeppqywl5" path="res://assets/uiroot/handbook/handbook_cover.png" id="71_csfbn"]
+[ext_resource type="Texture2D" uid="uid://dacb5xbpghcp0" path="res://assets/uiroot/handbook/handbook_rope.png" id="71_sj5fg"]
+[ext_resource type="Texture2D" path="res://assets/uiroot/handbook/handbook_setting.png" id="73_1xgkc"]
 [ext_resource type="Script" uid="uid://dcyb4abjdhqk2" path="res://scripts/main/output/AllOutput.gd" id="73_ugmlg"]
+[ext_resource type="Texture2D" uid="uid://bk74yqg8i6fyn" path="res://assets/uiroot/handbook/handbook_page_2.png" id="74_le2d2"]
+[ext_resource type="Texture2D" uid="uid://ck80l1mvkqjwb" path="res://assets/uiroot/handbook/handbook_page_3.png" id="75_gexia"]
 [ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/Zooming.gd" id="75_qd1pt"]
 [ext_resource type="Script" uid="uid://1hk5kvupggqx" path="res://scripts/main/output/FloatButtonManager.gd" id="76_rsknx"]
 [ext_resource type="Script" uid="uid://dw33fgxmmlb83" path="res://scripts/main/output/TransientFxWindow.gd" id="77_transient_fx"]
@@ -1025,6 +1030,7 @@ blur_lod = 3.0
 composite_layer = 26
 
 [node name="AllOutput" type="Control" parent="." unique_id=1999081273]
+visible = false
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -1211,7 +1217,6 @@ oversampling_override = 1.0
 mode = 2
 initial_position = 2
 size = Vector2i(1920, 1080)
-visible = false
 transient = true
 exclusive = true
 borderless = true
@@ -1240,8 +1245,99 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.5)
 metadata/_edit_lock_ = true
 
+[node name="HandBook" type="Control" parent="UIWindow/UIRoot" unique_id=1536474514]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 960.0
+offset_bottom = 540.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 540)
+
+[node name="LayerCover" type="Control" parent="UIWindow/UIRoot/HandBook" unique_id=449505193]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Rope" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerCover" unique_id=581532643]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("71_sj5fg")
+expand_mode = 1
+
+[node name="Cover" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerCover" unique_id=201389479]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("71_csfbn")
+expand_mode = 1
+
+[node name="Page1" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerCover" unique_id=1352178758]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("73_1xgkc")
+expand_mode = 1
+
+[node name="LayerSetting" type="Control" parent="UIWindow/UIRoot/HandBook" unique_id=1687677567]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Page2" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerSetting" unique_id=274427234]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("74_le2d2")
+expand_mode = 1
+
+[node name="LayerCollection" type="Control" parent="UIWindow/UIRoot/HandBook" unique_id=2090609723]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Page3" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerCollection" unique_id=933338639]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("75_gexia")
+expand_mode = 1
+
 [node name="CollectionBook" type="Control" parent="UIWindow/UIRoot" unique_id=1940227150]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
