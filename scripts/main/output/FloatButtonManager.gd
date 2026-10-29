@@ -49,6 +49,9 @@ const COLLECTED_ITEM_MIN_SCALE_RATIO := 0.6
 @export var move_duration := 0.22
 @export var leave_delay := 0.2
 
+# UI 窗口显示期间停止主窗口的全局鼠标悬停判断。
+@onready var ui_window: Window = %UIWindow
+
 # 四角按钮与参与三态显隐的控件组。
 var _corner_buttons: Array[Button] = []
 var _floating_controls: Array[Control] = []
@@ -86,7 +89,8 @@ var _mini_mode_active := false
 #    四角按钮共用三态布局；CollectedItem 在世界上沿单独定位。
 #    核心：_ready / _validate_targets / _setup_button_layout / _get_target_position
 # 2. 每帧显隐决策与移动动画
-#    二选一或 mini 模式锁定期间跳过更新；优先处理收集聚焦，再处理缩放拖拽，最后处理世界区域与按钮悬停。
+#    二选一或 mini 模式锁定期间跳过更新；UI 窗口显示时收起悬浮组并跳过悬停判断。
+#    UI 关闭后恢复收集聚焦、缩放拖拽与世界区域、按钮悬停的判断。
 #    鼠标离开后按 leave_delay 收起；PEEK 由 Manager 判断命中，展开按钮才接收自身输入。
 #    状态变化时替换对应移动 Tween。
 #    核心：_process / _set_all_states / _set_button_state
@@ -209,6 +213,12 @@ func _process(delta: float) -> void:
 	if _memory_choice_active or _mini_mode_active:
 		return
 
+	if ui_window.visible:
+		_collection_attention_time = 0.0
+		_outside_time = 0.0
+		_set_all_states(RevealState.HIDDEN)
+		return
+
 	if _collection_attention_time > 0.0:
 		_collection_attention_time = maxf(_collection_attention_time - delta, 0.0)
 		for index in _corner_buttons.size():
@@ -255,7 +265,10 @@ func _set_all_states(state: int) -> void:
 
 
 func _set_button_state(index: int, state: int) -> void:
-	if index == ZOOMING_INDEX and _is_zooming_dragging():
+	# 全局坐标查询不受 Back 的鼠标过滤影响，UI 显示时统一收起，收集聚焦也不能重新展开。
+	if ui_window.visible:
+		state = RevealState.HIDDEN
+	elif index == ZOOMING_INDEX and _is_zooming_dragging():
 		state = RevealState.OPEN
 
 	var control := _floating_controls[index]

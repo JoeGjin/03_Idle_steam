@@ -71,20 +71,26 @@
 [ext_resource type="Texture2D" uid="uid://m8lin72q3vjx" path="res://assets/worldroot/landform/front/landform_front_4.png" id="61_1x1rp"]
 [ext_resource type="Texture2D" uid="uid://bleojeppqywl5" path="res://assets/uiroot/handbook/handbook_cover.png" id="71_csfbn"]
 [ext_resource type="Texture2D" uid="uid://dacb5xbpghcp0" path="res://assets/uiroot/handbook/handbook_rope.png" id="71_sj5fg"]
-[ext_resource type="Texture2D" path="res://assets/uiroot/handbook/handbook_setting.png" id="73_1xgkc"]
 [ext_resource type="Script" uid="uid://dcyb4abjdhqk2" path="res://scripts/main/output/AllOutput.gd" id="73_ugmlg"]
 [ext_resource type="Texture2D" uid="uid://bk74yqg8i6fyn" path="res://assets/uiroot/handbook/handbook_page_2.png" id="74_le2d2"]
 [ext_resource type="Texture2D" uid="uid://ck80l1mvkqjwb" path="res://assets/uiroot/handbook/handbook_page_3.png" id="75_gexia"]
 [ext_resource type="Script" uid="uid://ba5uby3x8a6cg" path="res://scripts/main/output/Zooming.gd" id="75_qd1pt"]
 [ext_resource type="Script" uid="uid://1hk5kvupggqx" path="res://scripts/main/output/FloatButtonManager.gd" id="76_rsknx"]
+[ext_resource type="Texture2D" uid="uid://b3lqw7smmsoel" path="res://assets/uiroot/handbook/handbook_subpage_3.png" id="77_fun0h"]
+[ext_resource type="Texture2D" uid="uid://cbg36y1qgs2kn" path="res://assets/uiroot/handbook/handbook_subpage_2.png" id="77_oqdxe"]
 [ext_resource type="Script" uid="uid://dw33fgxmmlb83" path="res://scripts/main/output/TransientFxWindow.gd" id="77_transient_fx"]
 [ext_resource type="Script" uid="uid://b01oxeqkx7fka" path="res://scripts/main/output/MemoryChoiceWindow.gd" id="78_memory_choice"]
+[ext_resource type="Texture2D" uid="uid://bkkv65617t7y7" path="res://assets/uiroot/handbook/handbook_banner_3.png" id="78_oqdxe"]
 [ext_resource type="PackedScene" path="res://scenes/DepthBand.tscn" id="79_depth_band"]
 [ext_resource type="Shader" uid="uid://dsbn60rfqxy3v" path="res://shaders/SkyAdditive.gdshader" id="80_sky_additive"]
 [ext_resource type="Script" uid="uid://4bnp3sspl5ah" path="res://scripts/main/output/MiniModeController.gd" id="81_mini_mode"]
 [ext_resource type="Texture2D" uid="uid://d1rcsemgd2nl1" path="res://assets/worldroot/pet/sleep/frame_11.png" id="82_sleep_11"]
 [ext_resource type="Texture2D" uid="uid://cw0gjk61wkbms" path="res://assets/worldroot/pet/sleep/frame_12.png" id="83_sleep_12"]
 [ext_resource type="Texture2D" uid="uid://blyqj83enkp6o" path="res://assets/worldroot/pet/sleep/frame_13.png" id="84_sleep_13"]
+[ext_resource type="Script" uid="uid://bdka3w33c0p74" path="res://scripts/main/ui/LayerSetting.gd" id="85_layer_setting"]
+[ext_resource type="Texture2D" uid="uid://c6e2aeursafde" path="res://assets/uiroot/handbook/handbook_tab_1.png" id="86_handbook_tab_1"]
+[ext_resource type="Texture2D" uid="uid://dn1oe28snhdxf" path="res://assets/uiroot/handbook/handbook_tab_2.png" id="87_handbook_tab_2"]
+[ext_resource type="Texture2D" uid="uid://ggpxp6a64qyd" path="res://assets/uiroot/handbook/handbook_tab_3.png" id="88_handbook_tab_3"]
 
 [sub_resource type="Environment" id="Environment_8t8ul"]
 background_mode = 3
@@ -722,6 +728,112 @@ animations = [{
 Window/styles/embedded_border = SubResource("StyleBoxEmpty_cvmbd")
 Window/styles/embedded_unfocused_border = SubResource("StyleBoxEmpty_ft6cd")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_settings_focus"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.35, 0.26, 0.16, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_settings_hover"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.84, 0.77, 0.63, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.43, 0.34, 0.23, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_settings_button"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.91, 0.86, 0.74, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.52, 0.43, 0.31, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_settings_pressed"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.75, 0.67, 0.52, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.43, 0.34, 0.23, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_settings_fill"]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.48, 0.39, 0.27, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_settings_track"]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.77, 0.71, 0.59, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="Theme" id="Theme_settings"]
+default_font_size = 26
+Button/colors/font_color = Color(0.25, 0.2, 0.14, 1)
+Button/colors/font_focus_color = Color(0.25, 0.2, 0.14, 1)
+Button/colors/font_hover_color = Color(0.25, 0.2, 0.14, 1)
+Button/colors/font_pressed_color = Color(0.25, 0.2, 0.14, 1)
+Button/styles/focus = SubResource("StyleBoxFlat_settings_focus")
+Button/styles/hover = SubResource("StyleBoxFlat_settings_hover")
+Button/styles/normal = SubResource("StyleBoxFlat_settings_button")
+Button/styles/pressed = SubResource("StyleBoxFlat_settings_pressed")
+HBoxContainer/constants/separation = 24
+HSlider/styles/grabber_area = SubResource("StyleBoxFlat_settings_fill")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_settings_fill")
+HSlider/styles/slider = SubResource("StyleBoxFlat_settings_track")
+Label/colors/font_color = Color(0.25, 0.2, 0.14, 1)
+OptionButton/colors/font_color = Color(0.25, 0.2, 0.14, 1)
+OptionButton/colors/font_focus_color = Color(0.25, 0.2, 0.14, 1)
+OptionButton/colors/font_hover_color = Color(0.25, 0.2, 0.14, 1)
+OptionButton/colors/font_pressed_color = Color(0.25, 0.2, 0.14, 1)
+OptionButton/styles/focus = SubResource("StyleBoxFlat_settings_focus")
+OptionButton/styles/hover = SubResource("StyleBoxFlat_settings_hover")
+OptionButton/styles/normal = SubResource("StyleBoxFlat_settings_button")
+OptionButton/styles/pressed = SubResource("StyleBoxFlat_settings_pressed")
+PopupMenu/colors/font_color = Color(0.25, 0.2, 0.14, 1)
+PopupMenu/colors/font_hover_color = Color(0.25, 0.2, 0.14, 1)
+PopupMenu/styles/hover = SubResource("StyleBoxFlat_settings_hover")
+PopupMenu/styles/panel = SubResource("StyleBoxFlat_settings_button")
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_memory_choice_background"]
 bg_color = Color(1, 1, 1, 0.45)
 corner_radius_top_left = 24
@@ -1243,7 +1355,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.5)
-metadata/_edit_lock_ = true
 
 [node name="HandBook" type="Control" parent="UIWindow/UIRoot" unique_id=1536474514]
 unique_name_in_owner = true
@@ -1296,16 +1407,30 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("73_1xgkc")
+texture = ExtResource("74_le2d2")
 expand_mode = 1
 
+[node name="Tab1" type="TextureButton" parent="UIWindow/UIRoot/HandBook" unique_id=785953884]
+layout_mode = 0
+offset_left = 277.0
+offset_top = 657.0
+offset_right = 447.0
+offset_bottom = 865.5
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("86_handbook_tab_1")
+ignore_texture_size = true
+stretch_mode = 5
+
 [node name="LayerSetting" type="Control" parent="UIWindow/UIRoot/HandBook" unique_id=1687677567]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("85_layer_setting")
 
 [node name="Page2" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerSetting" unique_id=274427234]
 layout_mode = 1
@@ -1314,16 +1439,179 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("74_le2d2")
 expand_mode = 1
 
-[node name="LayerCollection" type="Control" parent="UIWindow/UIRoot/HandBook" unique_id=2090609723]
+[node name="SubPage2" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerSetting" unique_id=102874038]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("77_oqdxe")
+expand_mode = 1
+
+[node name="SettingsOptions" type="VBoxContainer" parent="UIWindow/UIRoot/HandBook/LayerSetting" unique_id=376991481]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -200.0
+offset_right = 330.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 0.02617994
+theme = SubResource("Theme_settings")
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="LanguageRow" type="HBoxContainer" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions" unique_id=1967078646]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/LanguageRow" unique_id=1743033180]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+text = "Language"
+vertical_alignment = 1
+
+[node name="LanguageSelect" type="OptionButton" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/LanguageRow" unique_id=1368297062]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "English"
+popup/item_0/id = 0
+popup/item_1/text = "中文"
+popup/item_1/id = 1
+
+[node name="MasterRow" type="HBoxContainer" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions" unique_id=1753962393]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/MasterRow" unique_id=637123015]
+custom_minimum_size = Vector2(240, 0)
+layout_mode = 2
+text = "Master Volume"
+vertical_alignment = 1
+
+[node name="Slider" type="HSlider" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/MasterRow" unique_id=51920030]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+value = 100.0
+scrollable = false
+
+[node name="Value" type="Label" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/MasterRow" unique_id=1001699471]
+custom_minimum_size = Vector2(68, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="AmbientIndent" type="MarginContainer" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions" unique_id=553500734]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_constants/margin_left = 28
+
+[node name="AmbientRow" type="HBoxContainer" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/AmbientIndent" unique_id=1322893823]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/AmbientIndent/AmbientRow" unique_id=906590492]
+custom_minimum_size = Vector2(212, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Ambient"
+vertical_alignment = 1
+
+[node name="Slider" type="HSlider" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/AmbientIndent/AmbientRow" unique_id=1604349867]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+value = 100.0
+scrollable = false
+
+[node name="Value" type="Label" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/AmbientIndent/AmbientRow" unique_id=1553243807]
+custom_minimum_size = Vector2(68, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SfxIndent" type="MarginContainer" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions" unique_id=379585668]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_constants/margin_left = 28
+
+[node name="SfxRow" type="HBoxContainer" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/SfxIndent" unique_id=723672583]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/SfxIndent/SfxRow" unique_id=220634507]
+custom_minimum_size = Vector2(212, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "SFX"
+vertical_alignment = 1
+
+[node name="Slider" type="HSlider" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/SfxIndent/SfxRow" unique_id=487973347]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+value = 100.0
+scrollable = false
+
+[node name="Value" type="Label" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/SfxIndent/SfxRow" unique_id=88054199]
+custom_minimum_size = Vector2(68, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "100%"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="QuitMargin" type="MarginContainer" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions" unique_id=348719028]
+layout_mode = 2
+theme_override_constants/margin_top = 16
+
+[node name="QuitButton" type="Button" parent="UIWindow/UIRoot/HandBook/LayerSetting/SettingsOptions/QuitMargin" unique_id=1538567995]
+custom_minimum_size = Vector2(250, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+text = "Quit"
+
+[node name="Tab2" type="TextureButton" parent="UIWindow/UIRoot/HandBook" unique_id=500901782]
+layout_mode = 0
+offset_left = 1274.0
+offset_top = 21.0
+offset_right = 1397.0
+offset_bottom = 156.0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("87_handbook_tab_2")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="LayerCollection" type="Control" parent="UIWindow/UIRoot/HandBook" unique_id=2090609723]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="Page3" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerCollection" unique_id=933338639]
 layout_mode = 1
@@ -1332,8 +1620,43 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("75_gexia")
 expand_mode = 1
+
+[node name="SubPage3" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerCollection" unique_id=871797179]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("77_fun0h")
+expand_mode = 1
+
+[node name="Banner3" type="TextureRect" parent="UIWindow/UIRoot/HandBook/LayerCollection" unique_id=737363111]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("78_oqdxe")
+expand_mode = 1
+
+[node name="Tab3" type="TextureButton" parent="UIWindow/UIRoot/HandBook" unique_id=1429220629]
+layout_mode = 0
+offset_left = 1485.0
+offset_top = 27.999977
+offset_right = 1721.0
+offset_bottom = 285.49997
+rotation = 0.19236347
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("88_handbook_tab_3")
+ignore_texture_size = true
+stretch_mode = 5
 
 [node name="CollectionBook" type="Control" parent="UIWindow/UIRoot" unique_id=1940227150]
 unique_name_in_owner = true

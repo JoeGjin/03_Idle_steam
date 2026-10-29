@@ -56,16 +56,17 @@ var _collection_flow_active := false
 #
 # 目录（与下方代码分区顺序一致）
 # 1. 生命周期与初始化
+#    在 UIWindow 入树前将其隐藏，避免编辑器中保存的可见状态导致启动闪白。
 #    将世界放入 WorldView，初始化深度渲染、窗口倍率、信号连接和收集 UI。
 #    等待输出布局完成后设置生成线、初始化 POI 强调，再组装世界并启动角色状态。
-#    入口：_ready
+#    入口：_enter_tree / _ready
 # 2. UI 与收集反馈
-#    打开收集窗口、同步待收集数量，协调烟花反馈与逐轮 Memory 二选一。
+#    按按钮请求切换手册设置页或收藏页并打开 UI 窗口，同步待收集数量，协调烟花反馈与逐轮 Memory 二选一。
 #    二选一窗口通过 FloatButtonManager 获取叠加弹窗大小参数后的显示倍率。
 #    接入 mini 模式请求与按钮锁定，避免模式转换和收集流程同时进行。
 #    进入 mini 时暂停全局键盘监听，退出动画完成后按原有总开关恢复。
 #    选择期间暂停自动世界切换计时，整批完成后统一更新 Memory 槽位。
-#    入口：_on_collection_requested / _on_collected_item_requested
+#    入口：_on_setting_requested / _on_collection_requested / _on_collected_item_requested
 #          _on_memory_controller_pending_collection_count_changed / _on_minimode_requested
 #          _on_mini_mode_interaction_lock_changed
 # 3. Memory 槽位与世界权重
@@ -87,6 +88,11 @@ var _collection_flow_active := false
 
 
 #region 生命周期与初始化
+
+func _enter_tree() -> void:
+    # 父节点先于子节点入树；此时 @onready 尚未赋值，直接访问子节点，在原生窗口创建前隐藏。
+    $UIWindow.hide()
+
 
 func _ready() -> void:
     _setup_debug_design_bounds()
@@ -130,6 +136,7 @@ func _connect_signals() -> void:
     pet.mouse_exited_body.connect(_on_pet_mouse_exited_body)
     world_assembler.world_changing.connect(_on_world_assembler_world_changing)
     world_assembler.world_changed.connect(_on_world_assembler_world_changed)
+    float_button_manager.connect("setting_requested", _on_setting_requested)
     float_button_manager.connect("collection_requested", _on_collection_requested)
     float_button_manager.connect("collected_item_requested", _on_collected_item_requested)
     float_button_manager.connect("minimode_requested", _on_minimode_requested)
@@ -147,9 +154,17 @@ func _on_exit_pressed() -> void:
     get_tree().quit()
 
 
+func _on_setting_requested() -> void:
+    if not mini_mode_controller.call("is_normal_mode"):
+        return
+    ui_root.call("show_setting_page")
+    ui_window.call("open_uiwindow")
+
+
 func _on_collection_requested() -> void:
     if not mini_mode_controller.call("is_normal_mode"):
         return
+    ui_root.call("show_collection_page")
     ui_window.call("open_uiwindow")
 
 
