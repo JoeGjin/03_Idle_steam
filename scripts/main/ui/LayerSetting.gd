@@ -1,6 +1,13 @@
 extends Control
 
 
+signal settings_changed
+signal language_selected(locale: String)
+signal quit_requested
+
+const LANGUAGE_CODES: Array[String] = ["en", "zh_CN"]
+
+@onready var language_select: OptionButton = $SettingsOptions/LanguageRow/LanguageSelect
 @onready var master_row: HBoxContainer = $SettingsOptions/MasterRow
 @onready var ambient_row: HBoxContainer = $SettingsOptions/AmbientIndent/AmbientRow
 @onready var sfx_row: HBoxContainer = $SettingsOptions/SfxIndent/SfxRow
@@ -8,10 +15,22 @@ extends Control
 
 
 func _ready() -> void:
+	language_select.item_selected.connect(_on_language_selected)
 	_setup_volume_row(master_row, &"Master")
 	_setup_volume_row(ambient_row, &"Ambient")
 	_setup_volume_row(sfx_row, &"SFX")
 	quit_button.pressed.connect(_on_quit_pressed)
+
+
+func set_language_selection(locale: String) -> void:
+	var index := LANGUAGE_CODES.find(locale)
+	language_select.select(index if index >= 0 else 0)
+
+
+func _on_language_selected(index: int) -> void:
+	# 当前仅记忆选项；实际界面翻译后续接入。
+	if index >= 0 and index < LANGUAGE_CODES.size():
+		language_selected.emit(LANGUAGE_CODES[index])
 
 
 func _setup_volume_row(row: HBoxContainer, bus_name: StringName) -> void:
@@ -42,7 +61,8 @@ func _on_volume_changed(value: float, bus_name: StringName, value_label: Label) 
 	AudioServer.set_bus_mute(bus_index, is_zero_approx(value))
 	if value > 0.0:
 		AudioServer.set_bus_volume_db(bus_index, linear_to_db(value / 100.0))
+	settings_changed.emit()
 
 
 func _on_quit_pressed() -> void:
-	get_tree().quit()
+	quit_requested.emit()

@@ -15,6 +15,8 @@ signal pending_collection_count_changed(count: int, max_count: int)
 @export_group("Debug")
 ## 启动时提供一次待领取事件，便于检查收集按钮。
 @export var debug_show_collected_item := false
+## 启动时在调试构建中打印 Memory 数据库。
+@export var debug_print_memory_database := false
 
 
 # 资源索引容器：Tag → MemoryPools.by_pool → MemoryList.memories。
@@ -42,7 +44,7 @@ var _collection_event_timer: Timer
 #
 # 目录（与下方代码分区顺序一致）
 # 1. 生命周期与初始化
-#    建立资源索引，在调试构建中打印数据库，然后启动累计计时并按调试开关补一次待领取事件。
+#    建立资源索引，在调试构建中按开关打印数据库，然后启动累计计时并按调试开关补一次待领取事件。
 #    入口：_ready
 # 2. Memory 资源加载与索引
 #    递归扫描 memory/defs 下的 .tres，加载 MemoryDef，建立标签与池索引及可收集列表。
@@ -66,7 +68,7 @@ var _collection_event_timer: Timer
 
 func _ready() -> void:
     _build_memories_by_tag()
-    if OS.is_debug_build():
+    if debug_print_memory_database and OS.is_debug_build():
         _print_memory_database()
     _setup_collection_event_timer()
     if debug_show_collected_item:

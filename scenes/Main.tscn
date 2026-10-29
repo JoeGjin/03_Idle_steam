@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://f4x5vd3ygkkh" path="res://assets/uiroot/collectionbook.png" id="16_cvmbd"]
 [ext_resource type="Script" uid="uid://bcj2p3ix0giel" path="res://scripts/main/controllers/MemoryController.gd" id="18_pnhog"]
 [ext_resource type="Script" uid="uid://cl4vky6sgevbj" path="res://scripts/main/controllers/WorldAssembler.gd" id="19_2c4at"]
+[ext_resource type="Script" uid="uid://n62ampjb4fb3" path="res://scripts/main/controllers/SettingsController.gd" id="19_tcd68"]
 [ext_resource type="Script" uid="uid://dth0o1ceru2kl" path="res://scripts/main/controllers/AudioController.gd" id="20_gia1l"]
 [ext_resource type="AudioStream" uid="uid://cqfgpucy1r6t1" path="res://assets/worldroot/pet/tap.mp3" id="21_aw8hi"]
 [ext_resource type="Script" uid="uid://sqaoa0fmr7ch" path="res://scripts/main/ui/Book.gd" id="24_8cp6k"]
@@ -902,6 +903,10 @@ bus = &"Ambient"
 [node name="Tap" type="AudioStreamPlayer" parent="Controllers/AudioController" unique_id=809333615]
 stream = ExtResource("21_aw8hi")
 bus = &"SFX"
+
+[node name="SettingsController" type="Node" parent="Controllers" unique_id=1414224005]
+unique_name_in_owner = true
+script = ExtResource("19_tcd68")
 
 [node name="WorldView" type="SubViewport" parent="." unique_id=742230146]
 unique_name_in_owner = true

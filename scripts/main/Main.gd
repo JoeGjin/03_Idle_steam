@@ -62,6 +62,7 @@ var _collection_flow_active := false
 #    入口：_enter_tree / _ready
 # 2. UI 与收集反馈
 #    按按钮请求切换手册设置页或收藏页并打开 UI 窗口，同步待收集数量，协调烟花反馈与逐轮 Memory 二选一。
+#    原有退出入口转交 SettingsController，统一在保存设置后退出。
 #    二选一窗口通过 FloatButtonManager 获取叠加弹窗大小参数后的显示倍率。
 #    接入 mini 模式请求与按钮锁定，避免模式转换和收集流程同时进行。
 #    进入 mini 时暂停全局键盘监听，退出动画完成后按原有总开关恢复。
@@ -151,7 +152,7 @@ func _connect_signals() -> void:
 #region UI 与收集反馈
 
 func _on_exit_pressed() -> void:
-    get_tree().quit()
+    $Controllers/SettingsController.call("request_quit")
 
 
 func _on_setting_requested() -> void:

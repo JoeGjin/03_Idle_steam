@@ -42,9 +42,11 @@ var _fitted_window_position := Vector2i.ZERO
 #    将 Shader 可见范围居中并应用垂直偏移，保留原窗口中心，完成后发出 layout_ready。
 #    入口：_ready / set_initial_window_scale；核心：_setup_fixed_layout
 # 2. 布局状态与范围查询
-#    提供就绪状态、基础窗口尺寸、世界可见矩形和右侧生成线。
+#    提供就绪状态、基础窗口尺寸、用户倍率、普通模式窗口位置、世界可见矩形和右侧生成线。
 #    基础窗口尺寸包含初始倍率；可见矩形使用 AllOutput 设计坐标，生成线使用 WorldOutput 局部坐标。
+#    SettingsController 保存用户倍率和普通模式位置；mini 期间的位置包含累计拖动位移。
 #    入口：is_layout_ready / get_base_window_size / get_world_visual_rect / get_world_spawn_x
+#          get_window_zoom_scale / get_normal_window_position
 # 3. 窗口缩放
 #    将请求倍率乘以初始倍率，同步原生窗口尺寸与 AllOutput 的显示缩放。
 #    保留设计尺寸及 WorldOutput 的布局；窗口贴合期间忽略缩放请求。
@@ -126,6 +128,16 @@ func is_layout_ready() -> bool:
 
 func get_base_window_size() -> Vector2i:
     return _base_window_size
+
+
+func get_window_zoom_scale() -> float:
+    return scale.x / _initial_content_scale
+
+
+func get_normal_window_position() -> Vector2i:
+    if _window_fit_active:
+        return _normal_window_rect.position + get_window().position - _fitted_window_position
+    return get_window().position
 
 
 func get_world_visual_rect() -> Rect2:
